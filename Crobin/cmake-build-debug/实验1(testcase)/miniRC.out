@@ -1,0 +1,138 @@
+<id, miniRC>
+<=>
+<function>
+<(>
+<integer>
+ <id, N>
+<,> 
+<integer>
+<id, K>
+<,> 
+<double> 
+<id, rc>
+<)>
+<{>
+<integer> 
+<id, a>
+<[>
+<INT, 10>
+<]>
+<[>
+<INT, 20>
+<]>
+<;>
+ <double>
+<id, b>
+<[>
+<INT, 19>
+<]>
+<;>
+ <if>
+<(>
+<id, N>
+<==>
+<INT, 1>
+<)>
+ <return>
+<(>
+<NUM, 0>
+<)>
+<;>
+ <integer> 
+<id, KL>
+<=>
+<id, floor>
+<(>
+<id, K>
+ <*>
+<id, rc>
+<)>
+<;>   
+ <if>
+<(>
+<id, KL> 
+<<>
+<INT, 1>
+<||>
+<id, KL>
+<>>
+<(>
+<id, K>
+<->
+<INT, 1>
+<)>
+<)>
+ <id, KL> 
+<=>
+<INT, 1>
+<;>
+ <else> 
+<if> 
+<(>
+<id, KL>
+ <>>
+<REAL, 0.5>
+<*>
+<id,K>
+<)>
+ <id, KL>
+ <=> 
+<id, ceiling>
+<(>
+<id, KL>
+</>
+<REAL, 2.0>
+<)>
+<id, KR>
+<=>
+<id, K>
+<->
+<id, KL>
+<integer>
+<id, NL>
+<=>
+<id, ceiling>
+<(>
+<id, N>
+<*> 
+<id, KL>
+</>
+<id, K>
+<)>  
+<integer>
+<id, NR>
+<=>
+<id, N>
+<->
+<id, NL>
+<return>
+<(>
+<INT, 1>
+<+>
+<(>
+<id, NL>
+<*>
+<id, miniRC>
+<(>
+<id, NL>
+<,>
+<id, KL>
+<,>
+<id, rc>
+<)>
+<+>
+<id, NR>
+<*>
+<id, miniRC>
+<(>
+<id, NR>
+<,>
+<id, KR>
+<,>
+<id, rc>
+<)>
+<)>
+</>
+<id, N>
+<)>     
+<}>
