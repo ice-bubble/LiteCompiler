@@ -36,9 +36,9 @@
 
 ### 方法二：
 
-要求：安装[cmake](https://cmake.org/)和c编译器工具链（例如gcc,g++,make,gdb等，在windows平台上推荐使用[msys2](https://www.msys2.org/))
+要求：安装[cmake](https://cmake.org/)和c编译器工具链（例如gcc,g++,make,gdb等，在windows平台上推荐使用[msys2](https://code.visualstudio.com/docs/cpp/config-mingw#_installing-the-mingww64-toolchain))，文件路径上不能有中文
 
-#### windows平台（这里以使用msys为例）[^1]：
+#### windows平台（这里以使用gnu工具链为例）[^1]：
 
 步骤：进入Crobin文件夹，运行以下四条命令
 
@@ -55,7 +55,7 @@ cmake -G "MinGW Makefiles" ..
 ```
 
 ```sh
-mingw32-make           														  #mingw32-make是msys2中的make工具
+mingw32-make        #mingw32-make是msys2中的make工具
 ```
 
 build文件夹内会生成目标：`Crobin.exe`
