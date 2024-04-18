@@ -28,17 +28,19 @@
 
 构建平台：linux或window10及以上
 
-#### 方法一：
+### 方法一：（推荐使用）
 
-要求：安装[clion](https://www.jetbrains.com/clion/)
+要求：安装[clion](https://www.jetbrains.com/clion/)（可以使用学校邮箱注册官方正版）
 
 步骤：使用clion打开Crobin文件夹运行该项目
 
-#### 方法二：
+### 方法二：
 
-要求：安装[cmake](https://cmake.org/)
+要求：安装[cmake](https://cmake.org/)和c编译器工具链（例如gcc,g++,make,gdb等，在windows平台上推荐使用[msys2](https://www.msys2.org/))
 
-步骤：进入Crobin文件夹，运行以下三条命令
+#### windows平台（这里以使用msys为例）[^1]：
+
+步骤：进入Crobin文件夹，运行以下四条命令
 
 ```sh
 mkdir build
@@ -49,7 +51,21 @@ cd build
 ```
 
 ```sh
-../cmake
+cmake -G "MinGW Makefiles" ..
+```
+
+```sh
+mingw32-make           														  #mingw32-make是msys2中的make工具
+```
+
+build文件夹内会生成目标：`Crobin.exe`
+
+#### linux平台：
+
+步骤：进入Crobin文件夹，运行这条命令
+
+```sh
+mkdir build && cd build && cmake .. && make
 ```
 
 build文件夹内会生成目标：`Crobin`
@@ -120,4 +136,6 @@ graph LR
     I -->|匹配到关键字|J[TOKEN_KEYWORD]
     I -->|未匹配到关键字| K[TOKEN_IDENTIFIER]
 ```
+
+[^1]: 对于其他工具链，命令三和命令四会有所不同。可能可以使用默认的设置，直接运行`cmake ..`和`make`，也可能要更改命令，手动指定使用的编译器和make工具
 
