@@ -5,7 +5,7 @@
 #include "./src/scanner/scanner.h"
 
 
-#ifdef DEBUG_TRACE_EXECUTION
+#ifdef DEBUG_FLAG
 
 #include "./src/debug/debug.h"
 
@@ -13,6 +13,7 @@
 
 static void repl() {
     Scanner scanner;
+    TokenList tokenlist;
     char line[1024];
     for (;;) {
         printf("> ");
@@ -22,7 +23,13 @@ static void repl() {
             break;
         }
         initScanner(&scanner, line);
-        scanTokens(&scanner);
+        initTokenList(&tokenlist);
+        scanTokens(&scanner, &tokenlist);
+#ifdef DEBUG_PRINT_TOKENLIST
+
+        printTokenList(&tokenlist);
+
+#endif
     }
 }
 
@@ -61,8 +68,11 @@ static char *readFile(const char *path) {
 static void runFile(const char *path) {
     char *source = readFile(path);
     Scanner scanner;
+    TokenList tokenlist;
     initScanner(&scanner, source);
-    scanTokens(&scanner);
+    initTokenList(&tokenlist);
+    scanTokens(&scanner, &tokenlist);
+    freeTokenList(&tokenlist);
     free(source);
 }
 

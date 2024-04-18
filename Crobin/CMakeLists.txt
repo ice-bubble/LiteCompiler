@@ -8,4 +8,9 @@ add_executable(Crobin main.c
         src/scanner/scanner.c
         src/common.h
         src/debug/debug.h
-        src/debug/debug.c)
+        src/debug/debug.c
+        src/memory/memory.h
+        src/memory/memory.c
+        src/token/token.h
+        src/token/token.c
+)

@@ -1,9 +1,9 @@
 # ninja log v5
-1	38	1713144445494585044	CMakeFiles/Crobin.dir/main.c.o	d8d8b24eb185777f
-57	85	1713144445541251506	Crobin	256859c59007042e
-1	57	1713144445514584956	CMakeFiles/Crobin.dir/src/scanner/scanner.c.o	a44f86f65ad16e22
-0	13	1713100383018255833	CMakeFiles/Crobin.dir/src/debug/debug.c.o	86eb24f60bdc7a5b
-1	18	1713145881606338282	CMakeFiles/Crobin.dir/src/debug/debug.c.o	67e18c3431b42397
-1	40	1713145881629672059	CMakeFiles/Crobin.dir/main.c.o	bf0cc1567e9fa6b3
-1	55	1713145881646339045	CMakeFiles/Crobin.dir/src/scanner/scanner.c.o	7c5ea379662ad173
-55	84	1713145881673006220	Crobin	256859c59007042e
+0	38	1713408328778147070	CMakeFiles/Crobin.dir/main.c.o	bf0cc1567e9fa6b3
+1	21	1713407737499434949	CMakeFiles/Crobin.dir/src/token/tokenstrings.c.o	75835b4471e9ea90
+1	31	1713408587082750830	build.ninja	bddef08ed4ba21fa
+58	86	1713408328828148561	Crobin	f8ac250215443068
+1	58	1713408328798147666	CMakeFiles/Crobin.dir/src/scanner/scanner.c.o	7c5ea379662ad173
+1	32	1713408328774813637	CMakeFiles/Crobin.dir/src/memory/memory.c.o	538b69f5b3b959f0
+2	32	1713408328774813637	CMakeFiles/Crobin.dir/src/token/token.c.o	6048131be86d9e51
+1	32	1713408328774813637	CMakeFiles/Crobin.dir/src/debug/debug.c.o	67e18c3431b42397

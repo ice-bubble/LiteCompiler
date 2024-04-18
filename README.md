@@ -3,16 +3,25 @@
 ## 文件结构
 
 ```
-├── CMakeLists.txt              cmake文件
-├── main.c						主函数
-└── src							存放所有头文件和源文件
-    ├── common.h				存放常用的宏定义和数据
-    ├── debug					存放debug代码
-    │   ├── debug.c				暂时为空
-    │   └── debug.h				暂时为空
-    └── scanner					存放词法分析器代码
-        ├── scanner.c			词法分析器源代码
-        └── scanner.h			存放词法分析器定义，TOKEN定义
+├── Crobin							项目文件夹
+│   ├── CMakeLists.txt				cmake文件
+│   ├── main.c						主函数
+│   └── src							存放所有头文件和源文件
+│       ├── common.h				存放常用的宏定义和数据
+│       ├── debug					debug文件
+│       │   ├── debug.c				debug函数
+│       │   └── debug.h				debug头文件
+│       ├── memory					内存分配相关
+│       │   ├── memory.c			存放内存分配宏定义
+│       │   └── memory.h			存放内存分配函数
+│       ├── scanner					词法分析器
+│       │   ├── scanner.c			词法分析器源代码
+│       │   └── scanner.h			词法分析器头文件
+│       └── token					token相关
+│           ├── token.c				tokenType定义和token相关函数声明
+│           └── token.h				token相关函数
+└── README.md						本文件
+
 ```
 
 
@@ -44,7 +53,6 @@
    - `TOKEN_VAR`: `var`，定义变量的关键字。
    - `TOKEN_WHILE`: `while`，循环语句中的关键字。
 2. **符号（Symbols）**：
-   
    - `TOKEN_LEFT_PAREN`, `TOKEN_RIGHT_PAREN`: 左右括号`(`和`)`，用于表示代码中的分组或函数调用。
    - `TOKEN_LEFT_BRACE`, `TOKEN_RIGHT_BRACE`: 左右花括号`{`和`}`，表示代码块的开始和结束。
    - `TOKEN_LEFT_BRACKET`, `TOKEN_RIGHT_BRACKET`: 左右方括号`[`和`]`，用于数组下标访问等。
@@ -57,7 +65,7 @@
    - `TOKEN_NOT_EQUAL`, `TOKEN_EQUAL_EQUAL`: 不等号`!=`、双等号`==`，用于比较操作。
    - `TOKEN_GREATER`, `TOKEN_GREATER_EQUAL`: 大于号`>`、大于等于号`>=`，用于比较操作。
    - `TOKEN_LESS`, `TOKEN_LESS_EQUAL`: 小于号`<`、小于等于号`<=`，用于比较操作。
-3.  **其他（Else）**
+3.  **其他（Else）**：
    - `TOKEN_IDENTIFIER`: 标识符字面量，用于表示变量名、函数名等。
    - `TOKEN_STRING`: 字符串字面量。
    - `TOKEN_INT`, `TOKEN_REAL`: 整数和浮点数字面量。
@@ -72,7 +80,8 @@
 
 ```mermaid
 graph LR
-    A[scanTokens] -->|循环调用| B[scanToken]
+	A0[main] --> |调用| A[scanTokens]
+    A -->|循环调用| B[scanToken]
     B -->|处理无用符号| C[skipWhitespace]
     B -->|字母或者下划线| D[identifier]
     B -->|数字| E[number]

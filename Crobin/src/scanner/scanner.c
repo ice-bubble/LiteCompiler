@@ -9,60 +9,6 @@
 #include "../common.h"
 #include "./scanner.h"
 
-const char *tokenStrings[] = {
-        "LEFT_PAREN",
-        "RIGHT_PAREN",
-        "LEFT_BRACE",
-        "RIGHT_BRACE",
-        "LEFT_BRACKET",
-        "RIGHT_BRACKET",
-        "COMMA",
-        "DOT",
-        "MINUS",
-        "PLUS",
-        "SEMICOLON",
-        "SLASH",
-        "STAR",
-        "MOD",
-
-        "NOT_EQUAL",
-        "EQUAL",
-        "EQUAL_EQUAL",
-        "GREATER",
-        "GREATER_EQUAL",
-        "LESS",
-        "LESS_EQUAL",
-
-        "IDENTIFIER",
-        "STRING",
-        "INT",
-        "REAL",
-
-        "AND",
-        "BREAK",
-        "CLASS",
-        "CONTINUE",
-        "DOUBLE",
-        "ELSE",
-        "FALSE",
-        "FOR",
-        "FUNCTION",
-        "IF",
-        "INTEGER",
-        "NIL",
-        "NOT",
-        "OR",
-        "PRINT",
-        "RETURN",
-        "SUPER",
-        "THIS",
-        "TRUE",
-        "VAR",
-        "WHILE",
-
-        "ERROR",
-        "EOF"
-};
 
 void initScanner(Scanner *scanner, const char *source) {
     scanner->start = source;
@@ -346,13 +292,10 @@ Token scanToken(Scanner *scanner) {
     return errorToken(scanner, "Unexpected character.");
 }
 
-Token *scanTokens(Scanner *scanner) {
+void scanTokens(Scanner *scanner, TokenList *tokenlist) {
     for (;;) {
         Token token = scanToken(scanner);
-        printf("line %04d ", token.line);
-        printf("< %s , '%.*s' >\n", tokenStrings[token.type], token.length, token.start);
-
+        writeTokenList(tokenlist, token);
         if (token.type == TOKEN_EOF) break;
     }
-    return NULL;
 }
