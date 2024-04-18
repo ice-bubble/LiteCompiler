@@ -24,7 +24,35 @@
 
 ```
 
+## 构建方法
 
+构建平台：linux或window10及以上
+
+#### 方法一：
+
+要求：安装[clion](https://www.jetbrains.com/clion/)
+
+步骤：使用clion打开Crobin文件夹运行该项目
+
+#### 方法二：
+
+要求：安装[cmake](https://cmake.org/)
+
+步骤：进入Crobin文件夹，运行以下三条命令
+
+```sh
+mkdir build
+```
+
+```sh
+cd build
+```
+
+```sh
+../cmake
+```
+
+build文件夹内会生成目标：`Crobin`
 
 ## 词法分析器
 
