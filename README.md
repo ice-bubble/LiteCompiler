@@ -24,7 +24,7 @@
 │       └── token                   token相关
 │           ├── token.c             tokenType定义和token相关函数声明
 │           └── token.h             token相关函数
-└── README.md                       本文件
+└── README.md                       项目介绍
 
 ```
 
