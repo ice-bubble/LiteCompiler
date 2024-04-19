@@ -25,11 +25,13 @@ static void repl() {
         initScanner(&scanner, line);
         initTokenList(&tokenlist);
         scanTokens(&scanner, &tokenlist);
+
 #ifdef DEBUG_PRINT_TOKENLIST
 
         printTokenList(&tokenlist);
 
 #endif
+
     }
 }
 
@@ -72,6 +74,13 @@ static void runFile(const char *path) {
     initScanner(&scanner, source);
     initTokenList(&tokenlist);
     scanTokens(&scanner, &tokenlist);
+
+#ifdef DEBUG_PRINT_TOKENLIST
+
+    printTokenList(&tokenlist);
+
+#endif
+
     freeTokenList(&tokenlist);
     free(source);
 }

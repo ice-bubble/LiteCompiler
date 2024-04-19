@@ -60,8 +60,7 @@ const char *tokenStrings[] = {
         "EOF"
 };
 
-const char *getTokenStrings(int tokentype)
-{
+const char *getTokenStrings(int tokentype) {
     return tokenStrings[tokentype];
 }
 

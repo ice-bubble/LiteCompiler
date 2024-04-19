@@ -36,7 +36,7 @@
 
 ### 方法二：
 
-要求：安装[cmake](https://cmake.org/)和c编译器工具链（例如gcc,g++,make,gdb等，在windows平台上推荐使用[msys2](https://code.visualstudio.com/docs/cpp/config-mingw#_installing-the-mingww64-toolchain))，文件路径上不能有中文
+要求：安装[cmake](https://cmake.org/)和c编译器工具链（例如gcc,g++,make,gdb等，在windows平台上推荐使用[msys2](https://code.visualstudio.com/docs/cpp/config-mingw#_installing-the-mingww64-toolchain))，**项目路径上不能有中文**
 
 #### windows平台（这里以使用gnu工具链为例）[^1]：
 
