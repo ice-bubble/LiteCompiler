@@ -12,9 +12,9 @@
 │       ├── debug                   debug文件
 │       │   ├── debug.c             debug函数
 │       │   └── debug.h             debug头文件
-|	    ├── environment             环境相关，例如符号表
-|	    │   ├── environment.c       符号表定义
-|	    │   └── environment.h       符号表函数
+|       ├── environment             环境相关，例如符号表
+|       │   ├── environment.c       符号表定义
+|       │   └── environment.h       符号表函数
 │       ├── memory                  内存分配相关
 │       │   ├── memory.c            存放内存分配宏定义
 │       │   └── memory.h            存放内存分配函数
