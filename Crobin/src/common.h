@@ -5,8 +5,9 @@
 #ifndef CROBIN_COMMON_H
 #define CROBIN_COMMON_H
 
-#define DEBUG_PRINT_TOKENLIST
 #define DEBUG_FLAG
+#define DEBUG_PRINT_TOKENLIST
+#define DEBUG_PRINT_SYMBOLTABLE
 
 #include <stdbool.h>
 #include <stddef.h>

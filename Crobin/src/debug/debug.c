@@ -14,3 +14,8 @@ void printTokenList(TokenList *tokenlist) {
                tokenlist->token[i].start);
     }
 }
+
+void printSymbolTable(SymbolTable *symboltable) {
+    printf("    |===symbolTable===|\n");
+    printTokenList(&symboltable->tokenlist);
+}

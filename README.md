@@ -3,24 +3,28 @@
 ## 文件结构
 
 ```
-├── Crobin							项目文件夹
-│   ├── CMakeLists.txt				cmake文件
-│   ├── main.c						主函数
-│   └── src							存放所有头文件和源文件
-│       ├── common.h				存放常用的宏定义和数据
-│       ├── debug					debug文件
-│       │   ├── debug.c				debug函数
-│       │   └── debug.h				debug头文件
-│       ├── memory					内存分配相关
-│       │   ├── memory.c			存放内存分配宏定义
-│       │   └── memory.h			存放内存分配函数
-│       ├── scanner					词法分析器
-│       │   ├── scanner.c			词法分析器源代码
-│       │   └── scanner.h			词法分析器头文件
-│       └── token					token相关
-│           ├── token.c				tokenType定义和token相关函数声明
-│           └── token.h				token相关函数
-└── README.md						本文件
+├── Crobin                          项目文件夹
+│   ├── .idea                       clion配置文件
+│   ├── CMakeLists.txt              cmake文件
+│   ├── main.c                      主函数
+│   └── src                         存放所有头文件和源文件
+│       ├── common.h                存放常用的宏定义和数据
+│       ├── debug                   debug文件
+│       │   ├── debug.c             debug函数
+│       │   └── debug.h             debug头文件
+|		├── environment             环境相关，例如符号表
+|		│   ├── environment.c       符号表定义
+|		│   └── environment.h       符号表函数
+│       ├── memory                  内存分配相关
+│       │   ├── memory.c            存放内存分配宏定义
+│       │   └── memory.h            存放内存分配函数
+│       ├── scanner                 词法分析器
+│       │   ├── scanner.c           词法分析器源代码
+│       │   └── scanner.h           词法分析器头文件
+│       └── token                   token相关
+│           ├── token.c             tokenType定义和token相关函数声明
+│           └── token.h             token相关函数
+└── README.md                       本文件
 
 ```
 

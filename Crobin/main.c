@@ -3,6 +3,7 @@
 #include <string.h>
 #include "./src/common.h"
 #include "./src/scanner/scanner.h"
+#include "./src/environment/environment.h"
 
 
 #ifdef DEBUG_FLAG
@@ -27,9 +28,18 @@ static void repl() {
         scanTokens(&scanner, &tokenlist);
 
 #ifdef DEBUG_PRINT_TOKENLIST
-
         printTokenList(&tokenlist);
-
+#endif
+        printf("enter process SymbolTable\n");
+#ifdef DEBUG_PRINT_SYMBOLTABLE
+        SymbolTable globalSymboltable;
+        initSymbolTable(&globalSymboltable);
+        for (int i = 0; i < tokenlist.count; i++) {
+            if (tokenlist.token[i].type == TOKEN_IDENTIFIER)
+                writeSymbolTable(&globalSymboltable, tokenlist.token[i]);
+        }
+        printSymbolTable(&globalSymboltable);
+        freeSymbolTable(&globalSymboltable);
 #endif
 
     }
@@ -76,9 +86,18 @@ static void runFile(const char *path) {
     scanTokens(&scanner, &tokenlist);
 
 #ifdef DEBUG_PRINT_TOKENLIST
-
     printTokenList(&tokenlist);
+#endif
 
+#ifdef DEBUG_PRINT_SYMBOLTABLE
+    SymbolTable globalSymboltable;
+    initSymbolTable(&globalSymboltable);
+    for (int i = 0; i < tokenlist.count; i++) {
+        if (tokenlist.token[i].type == TOKEN_IDENTIFIER)
+            writeSymbolTable(&globalSymboltable, tokenlist.token[i]);
+    }
+    printSymbolTable(&globalSymboltable);
+    freeSymbolTable(&globalSymboltable);
 #endif
 
     freeTokenList(&tokenlist);
