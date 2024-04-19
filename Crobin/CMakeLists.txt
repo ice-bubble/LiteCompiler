@@ -13,4 +13,6 @@ add_executable(Crobin main.c
         src/memory/memory.c
         src/token/token.h
         src/token/token.c
+        src/environment/environment.h
+        src/environment/environment.c
 )

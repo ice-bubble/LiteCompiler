@@ -1,3 +1,0 @@
-/home/icelake/project/simpleCompiler/Crobin/cmake-build-debug/CMakeFiles/Crobin.dir
-/home/icelake/project/simpleCompiler/Crobin/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/icelake/project/simpleCompiler/Crobin/cmake-build-debug/CMakeFiles/rebuild_cache.dir
