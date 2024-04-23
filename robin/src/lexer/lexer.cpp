@@ -3,6 +3,14 @@
  * @brief Lexer类及相关函数的实现。
  * @author lzy
  * @date 24-4-22
+ *
+ * @note current指向待消费的字符。
+ * @note 消费字符：让current+1。
+ * @note peek()获取待消费的字符，但是不消费它。
+ * @note peekNext()获取待消费的字符的下一个字符，不消费任何字符。
+ * @note advance()获取待消费的字符，同时让current+1，即消费了字符。
+ * @note match(ch)当待消费的字符为ch时，消费这个字符返回true,否则不消费字符返回false。
+ *
  */
 
 #include "lexer.h"
@@ -120,6 +128,7 @@ namespace Lexer {
     }
 
     void Lexer::_identifier() {
+        //一直消费字母和下划线，直到待消费的字符不是字母和下划线
         while (isAlphaNumeric(peek())) advance();
 
         std::string text = source.substr(start, current - start);
