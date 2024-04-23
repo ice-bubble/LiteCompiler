@@ -51,6 +51,16 @@ namespace Lexer {
         this->source = std::move(source);
     }
 
+    Token::TokenType Lexer::getKeywordTypeInMap(const std::string& text)
+    {
+        auto it = keywords.find(text);
+        if (it == keywords.end()) {
+            return Token::TOKEN_EOF;
+        }
+        return it->second;
+    }
+
+
     std::vector<Token::Token> Lexer::scanTokens() {
         while (!isAtEnd()) {
 
@@ -132,12 +142,12 @@ namespace Lexer {
         while (isAlphaNumeric(peek())) advance();
 
         std::string text = source.substr(start, current - start);
-        auto it = keywords.find(text);
-        if (it == keywords.end()) {
+        auto tokentype = getKeywordTypeInMap(text);
+        if (tokentype == Token::TOKEN_EOF) {
             addToken(Token::TOKEN_IDENTIFIER);
             return;
         }
-        addToken(it->second);
+        addToken(tokentype);
     }
 
     void Lexer::_real() {

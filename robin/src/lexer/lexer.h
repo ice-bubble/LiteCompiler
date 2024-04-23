@@ -44,6 +44,8 @@ namespace Lexer {
         */
         std::vector<Token::Token> scanTokens();
 
+        static Token::TokenType getKeywordTypeInMap(const std::string& text);
+
     private:
 
         /**
