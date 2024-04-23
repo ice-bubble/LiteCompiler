@@ -4,3 +4,8 @@
 /LiteCompiler_C++/build/
 /robin/cmake-build-debug/
 /robin/build/
+
+/.vscode/
+/Crobin/.vscode/
+/LiteCompiler_C++/.vscode/
+/robin/.vscode/
