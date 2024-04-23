@@ -12,6 +12,10 @@
 class Debug
 {
 public:
+    /**
+     * @brief 打印标记向量中的所有标记。
+     * @param tokens 要打印的标记向量（vector类型）
+     **/
     static void printTokens(const std::vector<Token> &tokens);
 };
 

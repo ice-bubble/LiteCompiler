@@ -7,7 +7,7 @@
 
 #include <string>
 
-// 定义标记类型
+// 定义标记类型【关键字、标识符（id）、运算符等】
 enum class TokenType
 {
     // KEYWORDS [字符串升序排列]
@@ -47,8 +47,12 @@ enum class TokenType
     // 数据类型
     INTEGER, // int
     FLOAT, // double、float
+    STRING, // string（正常字符串）
 
+    // 分号
     SEMICOLON, // ";"
+
+    // 运算符
     ASSIGNMENT, // "="赋值运算符
     PLUS, // "+"
     PLUS_FORWARD, // "+="
@@ -83,24 +87,38 @@ enum class TokenType
     D_MARKS, // "
     S_MARKS, // '
     MEMBER, // "."
+    MEMBER_PTR, // "->"
     COMMA, // ","
 
     EMPTY, // 空
-    INVALID // 非法的标记
+    INVALID // 非法的标记【词法错误】
 };
 
 class Token
 {
 public:
+    /**
+    * @brief Token类的构造函数
+    * @param type 标记的类型
+    * @param value 标记原始值（字符串类型存储）
+    **/
     Token(TokenType type, const std::string &value);
 
+    /**
+    * @brief Token类的构造函数
+    * @return TokenType 标记类型
+    **/
     TokenType getType() const;
 
+    /**
+    * @brief Token类的构造函数
+    * @return std::string 标记原始值（字符串类型存储）
+    **/
     std::string getValue() const;
 
 private:
-    TokenType type;
-    std::string value;
+    TokenType type; // Token类成员——标记类型
+    std::string value; // Token类成员——标记原始值（字符串类型存储）
 };
 
 #endif // TOKEN_H

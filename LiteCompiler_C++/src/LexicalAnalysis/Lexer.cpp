@@ -9,9 +9,11 @@
 #include <algorithm>
 #include <map>
 
+/*构造函数中，当前所指向的元素位置currentPos初始化为0，行号line_num初始化为1*/
 Lexer::Lexer(const std::string &input) : input(input), currentPos(0), line_num(1)
 {
     keywords = {
+        /*在构造函数中初始化map类型数据——关键字KEYWORD与TokenType的映射关系，*/
         {"and", TokenType::KEYWORD_AND},
         {"break", TokenType::KEYWORD_BREAK},
         {"char", TokenType::KEYWORD_CHAR},
@@ -50,25 +52,22 @@ TokenType Lexer::checkKeyword(const std::string &keyword)
     if (it != keywords.end())
     {
         // 如果找到了，则返回对应的 TokenType
-        return it->second;
+        return it->second; // second对应map类型数据的第2个元素
     }
-    else
-    {
-        // 否则返回 IDENTIFIER
-        return TokenType::IDENTIFIER;
-    }
+    // 否则，只是普通的id，返回 IDENTIFIER
+    return TokenType::IDENTIFIER;
 }
 
 char Lexer::peek() const
 {
-    if (isAtEnd()) return '\0';
-    return input[currentPos];
+    if (isAtEnd()) return '\0'; // 如果isAtENd()为真，说明全部数据读取完毕，返回'\0'表示读取过程结束
+    return input[currentPos];   // 返回当前所指向的元素（char类型）
 }
 
 char Lexer::advance()
 {
-    if (!isAtEnd()) currentPos++;
-    return input[currentPos - 1];
+    if (!isAtEnd()) currentPos++;   // 如果isAtENd()为假，说明全部数据还未读取完毕，指针移向下一个元素
+    return input[currentPos - 1];   // 返回指针+1前所指向的元素（char类型）
 }
 
 bool Lexer::isAtEnd() const
@@ -90,6 +89,7 @@ void Lexer::skipWhitespace()
 {
     while (!isAtEnd() && (peek() == ' ' || peek() == '\t' || peek() == '\n'))
     {
+        /* 跳过空格、换行、制表符，其中遇到换行时行数line_num++ */
         if (peek() == '\n')line_num++;
         advance();
     }
@@ -159,7 +159,11 @@ Token Lexer::parseIdentifier()
 }
 
 
-Token Lexer::parseString() {}
+Token Lexer::parseString()
+{
+
+    return Token(TokenType::STRING,"");
+}
 
 Token Lexer::parseNumber()
 {

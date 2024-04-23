@@ -5,6 +5,7 @@
 #include <iostream>
 #include "error.h"
 
-void error(size_t line, std::string message) {
+void error(size_t line, std::string message)
+{
     std::cerr << "[line: " << line << "] Error:" << message << std::endl;
 }

@@ -29,12 +29,12 @@ int main(int argc, char *argv[])
     }
     // 进行词法分析
     Lexer lexer(input);
-    if (!lexer.LexicalAnalyze(tokens))
+    if(!lexer.LexicalAnalyze(tokens))
     {
-        std::cerr << "Lexical Error!" << std::endl;
+        std::cerr<<"Lexical Error!"<<std::endl;
     }
 
-    // 输出标记
+    // 输出标记（Token）
     Debug::printTokens(tokens);
 
     return 0;
