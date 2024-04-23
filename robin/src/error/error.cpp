@@ -1,0 +1,9 @@
+//
+// Created by icelake on 24-4-23.
+//
+
+#include "error.h"
+
+void error(int line, std::string message) {
+    std::cerr << "[line: " << line << "] Error:" << message << std::endl;
+}
