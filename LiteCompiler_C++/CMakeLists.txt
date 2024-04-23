@@ -12,4 +12,6 @@ add_executable(LiteCompiler_C++ main.cpp
         src/LexicalAnalysis/Lexer.cpp
         src/FileHandler/FileHandler.h
         src/FileHandler/FileHandler.cpp
+        src/error/error.h
+        src/error/error.cpp
 )

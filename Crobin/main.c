@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "./src/common.h"
-#include "./src/scanner/scanner.h"
-#include "./src/environment/environment.h"
+#include "src/common.h"
+#include "src/scanner/scanner.h"
+#include "src/environment/environment.h"
 
 
 #ifdef DEBUG_FLAG
 
-#include "./src/debug/debug.h"
+#include "src/debug/debug.h"
 
 #endif
 
@@ -30,7 +30,7 @@ static void repl() {
 #ifdef DEBUG_PRINT_TOKENLIST
         printTokenList(&tokenlist);
 #endif
-        printf("enter process SymbolTable\n");
+        //printf("enter process SymbolTable\n");
 #ifdef DEBUG_PRINT_SYMBOLTABLE
         SymbolTable globalSymboltable;
         initSymbolTable(&globalSymboltable);

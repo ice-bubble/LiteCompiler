@@ -43,6 +43,8 @@ private:
 
     Token parseIdentifier();
 
+    Token parseString();
+
     Token parseNumber();
 
     Token parseSymbol();

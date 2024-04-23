@@ -2,7 +2,7 @@
 // Created by icelake on 24-4-14.
 //
 
-#include "./debug.h"
+#include "debug.h"
 #include <stdio.h>
 
 void printTokenList(TokenList *tokenlist) {

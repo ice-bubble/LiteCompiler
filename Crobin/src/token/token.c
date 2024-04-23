@@ -2,7 +2,7 @@
 // Created by icelake on 24-4-18.
 //
 
-#include "./token.h"
+#include "token.h"
 #include "../memory/memory.h"
 
 const char *tokenStrings[] = {

@@ -7,7 +7,7 @@
 #include <string.h>
 
 #include "../common.h"
-#include "./scanner.h"
+#include "scanner.h"
 
 
 void initScanner(Scanner *scanner, const char *source) {
