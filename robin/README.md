@@ -120,12 +120,13 @@ build文件夹内会生成目标：`Crobin`
 
 ```mermaid
 graph LR
-    A["main(argc, argv)"] -- argc == 1 --> B["repl()"]
-    A -- argc == 2 --> C["runFile(argv[1])"]
-    A -- argc > 2 --> D["Usage: robin [path]"]
-    C -- readFile(path) --> E["lexer.scanTokens()"]
-    E -- lexer.scanTokens() --> F[TokenList]
-    F -- DEBUG_PRINT_TOKENLIST --> G["printTokenList(TokenList)"]
+    A["main(argc, argv)"] -- 无启动参数 --> B["进入交互式命令行 repl()"]
+    A -- 一个传入参数 --> C["传入参数当作文件路径运行 runFile(argv[1])"]
+    A -- 传入参数大于1 --> D["报错 Usage: robin [path]"]
+    B --read(stdin)获取源代码--> E
+    C -- readFile(path)获取源代码 --> E["lexer.scanTokens()"]
+    E -- Lexer::scanTokens()获取 --> F[TokenList]
+    F -- 有启用DEBUG_PRINT_TOKENLIST宏定义 --> G["printTokenList(TokenList)"]
 
 ```
 
@@ -134,30 +135,31 @@ graph LR
 ```mermaid
 graph LR
     scanTokens["scanTokens()"] -->|循环调用| scanToken["scanToken()"]
-    scanToken -->|处理无用符号| pass[pass]
-    scanToken -->|/| slash["slash()"]
-    scanToken -->|#| comment
+    scanToken -->|"使用advance()获取一个字符"|char
+    char -->|无用符号| pass[pass]
+    char -->|/| slash["slash()"]
+    char -->|#| comment
     slash -->|单行注释或多行注释|comment
     comment --> pass
     slash -->|TOKEN_SLASH| TOKEN_SLASH
     TOKEN_SLASH --> matched_type
-    scanToken -->|处理换行| line++
-    scanToken -->|字母或者下划线| maybeid["_identifier()"]
-    scanToken -->|数字| num["_number()"]
-    scanToken -->|'""'| str["_string()"]
-    scanToken -->|'.'| dotOrReal[符号点或者浮点数]
+    char -->|换行符| line++
+    char -->|字母或者下划线| maybeid["_identifier()"]
+    char -->|数字| num["_number()"]
+    char -->|'""'| str["_string()"]
+    char -->|'.'| dotOrReal[符号点或者浮点数]
     dotOrReal -->|'.'|TOKEN_DOT
     TOKEN_DOT --> matched_type
     dotOrReal -->|浮点数|real["_real()"]
     real --> matched_type
-    scanToken -->|匹配到的符号| matched_type["addToken()"]
-    scanToken -->|未匹配到的符号| unmatched_type["error()"]
+    char -->|匹配到的运算符| matched_type["addToken()"]
     maybeid -->|查询vector匹配到关键字|keyword[TOKEN_KEYWORD]
     maybeid -->|查询vector未匹配到关键字| id[TOKEN_IDENTIFIER]
     num --> matched_type
     str --> matched_type
     keyword --> matched_type
     id --> matched_type
+    char -->|未匹配到的符号| unmatched_type["error()"]
 ```
 
 [^1]: 对于其他工具链，命令三和命令四会有所不同。可能可以使用默认的设置，直接运行`cmake ..`和`make`，也可能要更改命令，手动指定使用的编译器和make工具
