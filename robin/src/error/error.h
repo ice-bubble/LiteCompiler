@@ -7,6 +7,6 @@
 
 #include "../common.h"
 
-void error(int line, std::string message);
+void error(size_t line, const std::string& message);
 
 #endif //ROBIN_ERROR_H

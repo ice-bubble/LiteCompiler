@@ -4,7 +4,7 @@
 
 #include "debug.h"
 
-void printRequestedTokenList(std::vector<Token::Token> tokenList) {
+void printRequestedTokenList(const std::vector<Token::Token>& tokenList) {
     for (const auto &token: tokenList) {
         std::cout << token.toString() << std::endl;
     }
