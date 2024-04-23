@@ -135,6 +135,12 @@ graph LR
 graph LR
     scanTokens["scanTokens()"] -->|循环调用| scanToken["scanToken()"]
     scanToken -->|处理无用符号| pass[pass]
+    scanToken -->|/| slash["slash()"]
+    scanToken -->|#| comment
+    slash -->|单行注释或多行注释|comment
+    comment --> pass
+    slash -->|TOKEN_SLASH| TOKEN_SLASH
+    TOKEN_SLASH --> matched_type
     scanToken -->|处理换行| line++
     scanToken -->|字母或者下划线| maybeid["_identifier()"]
     scanToken -->|数字| num["_number()"]
