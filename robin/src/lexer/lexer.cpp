@@ -128,7 +128,7 @@ namespace Lexer {
     }
 
     void Lexer::_identifier() {
-        //一直消费字母和下划线，直到待消费的字符不是字母和下划线
+        // 一直消费字母和下划线，直到待消费的字符不是字母和下划线
         while (isAlphaNumeric(peek())) advance();
 
         std::string text = source.substr(start, current - start);
@@ -141,23 +141,29 @@ namespace Lexer {
     }
 
     void Lexer::_real() {
+        // 一直消费数字，直到待消费的字符不是数字
         while (isDigit(peek())) advance();
         addToken(Token::TOKEN_REAL, std::stod(source.substr(start, current - start)));
     }
 
     void Lexer::_number() {
+        // 一直消费数字，直到待消费的字符不是数字
         while (isDigit(peek())) advance();
 
-        // Look for a fractional part.
+        // 待消费的符号是"."，下一个待消费的符号是数字，说明是小数
         if (peek() == '.' && isDigit(peekNext())) {
-            // Consume the "."
+
+            // 消费"."
             advance();
 
+            // 一直消费数字，直到待消费的字符不是数字
             while (isDigit(peek())) advance();
+
+            // 此时是小数
             addToken(Token::TOKEN_REAL, std::stod(source.substr(start, current - start)));
             return;
         }
-
+       // 非小数，即整数
         addToken(Token::TOKEN_INT,
                  static_cast<long>(std::stod(source.substr(start, current - start))));
     }
@@ -168,39 +174,45 @@ namespace Lexer {
             advance();
         }
 
+        // 处理找不到闭合的 " 的情况
         if (isAtEnd()) {
             error(line, "Unterminated string.");
             return;
         }
 
-        // The closing ".
+        // 消费闭合的 "
         advance();
 
-        // Trim the surrounding quotes.
+        // 截取子串时记得去掉开始和结尾的"
         addToken(Token::TOKEN_STRING, source.substr(start + 1, current - start - 2));
     }
 
     void Lexer::slash() {
         if (match('/')) {
-            // A comment goes until the end of the line.
+            // 单行注释
             while (peek() != '\n' && !isAtEnd()) advance();
         } else if (match('*')) {
+            // 多行注释
             while (true) {
+                // 多行注释未闭合
                 if (isAtEnd()) {
                     error(line, "Unterminated comment.");
                     return;
                 }
-                char nextChar = advance();
+                char Ch = advance();
 
-                if (nextChar == '\n')
+                // 换行时记得把行号加一
+                if (Ch == '\n')
                     line++;
 
-                if (nextChar == '*' && peek() == '/') {
+                if (Ch == '*' && peek() == '/') {
+                    // 消费"/"
                     advance();
                     break;
                 }
             }
         } else {
+            // 是除号的情况
             addToken(Token::TOKEN_SLASH);
         }
     }

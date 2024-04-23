@@ -32,7 +32,7 @@ namespace Token {
         TOKEN_MOD,              ///< 百分号 %，用于表示取模操作
 
         // One or two character tokens. 一或两字符词法
-        TOKEN_NOT_EQUAL,       ///< 双感叹号 !=，用于表示不等于比较操作。
+        TOKEN_NOT_EQUAL,       ///< 感叹号等号 !=，用于表示不等于比较操作。
         TOKEN_EQUAL,            ///< 单个等号 =，用于赋值操作。
         TOKEN_EQUAL_EQUAL,      ///< 双等号 ==，用于相等比较操作。
         TOKEN_GREATER,          ///< 大于号 >，用于大于比较操作。

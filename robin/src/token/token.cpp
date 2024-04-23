@@ -75,14 +75,12 @@ namespace Token {
 
 
     std::string Token::toString() const {
-        return "line:" + std::to_string(line) + " < " + tokenStrings[type] + " " + lexeme + " " + getLiteralString() +
-               " >";
+        return "line:" + std::to_string(line) + " < " + tokenStrings[type] + " " + lexeme + " "
+        + getLiteralString() +" >";
     }
 
     std::string Token::getLiteralString() const {
         switch (type) {
-            case (TOKEN_IDENTIFIER):
-                return "nil";
             case (TOKEN_STRING):
                 return std::any_cast<std::string>(literal);
             case (TOKEN_REAL):
