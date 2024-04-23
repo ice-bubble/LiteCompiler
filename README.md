@@ -4,7 +4,10 @@
 
 ①项目`Crobin`是使用C语言实现的`robin`；
 
-②项目`LiteCompiler_C++`是使用`C++`语言实现的简单编译器；
+②项目`LiteCompiler_C++`是使用`C++`语言实现的简单编译器。
+
+- 项目位置：[LiteCompiler_C++](./LiteCompiler_C++/)
+- 项目介绍文件：[LiteCompiler_C++/Readme.md](./LiteCompiler_C++/Readme.md)
 
 ③项目`robin`是使用`C++`语言实现的`robin`。
 
