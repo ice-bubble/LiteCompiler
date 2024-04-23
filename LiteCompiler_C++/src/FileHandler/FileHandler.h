@@ -7,6 +7,9 @@
 
 #include <string>
 
+/**
+ * @brief FileHandler类，主要用于对文件的输入输出处理
+ */
 class FileHandler
 {
 public:

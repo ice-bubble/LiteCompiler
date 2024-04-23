@@ -7,7 +7,9 @@
 
 #include <string>
 
-// 定义标记类型【关键字、标识符（id）、运算符等】
+/**
+ * @brief 标记类型枚举，包括关键字、标识符（id）、数据类型、运算符等。
+ **/
 enum class TokenType
 {
     // KEYWORDS [字符串升序排列]
@@ -94,6 +96,10 @@ enum class TokenType
     INVALID // 非法的标记【词法错误】
 };
 
+/**
+ * @brief Token类，表示词法分析过程中的标记。
+ *        Token对象包含标记的类型和原始值。
+ **/
 class Token
 {
 public:
@@ -105,13 +111,13 @@ public:
     Token(TokenType type, const std::string &value);
 
     /**
-    * @brief Token类的构造函数
+    * @brief 获取Token的类型
     * @return TokenType 标记类型
     **/
     TokenType getType() const;
 
     /**
-    * @brief Token类的构造函数
+    * @brief 获取Token的原始值
     * @return std::string 标记原始值（字符串类型存储）
     **/
     std::string getValue() const;

@@ -11,6 +11,10 @@
 #include <unordered_set>
 #include <map>
 
+/**
+ * @brief Lexer类，用于对输入字符串进行词法分析，生成标记序列。
+ *        Lexer对象维护了输入字符串、当前位置等状态信息，并提供了词法分析所需的各种功能函数。
+ **/
 class Lexer
 {
 public:

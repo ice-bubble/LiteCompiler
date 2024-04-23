@@ -9,6 +9,9 @@
 #include <vector>
 #include "../Token/Token.h"
 
+/**
+ * @brief Debug类，主要用于输出中间过程的内容
+ */
 class Debug
 {
 public:
