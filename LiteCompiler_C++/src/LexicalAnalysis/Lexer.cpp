@@ -6,8 +6,70 @@
 #include <stdexcept>
 #include <cctype>
 #include <iostream>
+#include <algorithm>
+#include <map>
 
-Lexer::Lexer(const std::string &input) : input(input), currentPos(0), line_num(1) {}
+Lexer::Lexer(const std::string &input) : input(input), currentPos(0), line_num(1)
+{
+    keywords = {
+        {"and",      TokenType::KEYWORD_AND},
+        {"break",    TokenType::KEYWORD_BREAK},
+        {"class",    TokenType::KEYWORD_CLASS},
+        {"continue", TokenType::KEYWORD_CONTINUE},
+        {"double",   TokenType::KEYWORD_DOUBLE},
+        {"else",     TokenType::KEYWORD_ELSE},
+        {"false",    TokenType::KEYWORD_FALSE},
+        {"for",      TokenType::KEYWORD_FOR},
+        {"function", TokenType::KEYWORD_FUNCTION},
+        {"if",       TokenType::KEYWORD_IF},
+        {"integer",  TokenType::KEYWORD_INTEGER},
+        {"nil",      TokenType::KEYWORD_NIL},
+        {"not",      TokenType::KEYWORD_NOT},
+        {"or",       TokenType::KEYWORD_OR},
+        {"print",    TokenType::KEYWORD_PRINT},
+        {"return",   TokenType::KEYWORD_RETURN},
+        {"super",    TokenType::KEYWORD_SUPER},
+        {"this",     TokenType::KEYWORD_THIS},
+        {"true",     TokenType::KEYWORD_TRUE},
+        {"var",      TokenType::KEYWORD_VAR},
+        {"while",    TokenType::KEYWORD_WHILE}
+    };
+
+    /*
+std::unordered_set<std::string> keywords = {
+    "if",
+    "else",
+    "while",
+    "for",
+    "return",
+    "integer",
+    "double",
+    "function",
+    "read",
+    "write",
+    "repeat",
+    "until",
+    "do",
+    "char"
+};
+*/
+}
+
+TokenType Lexer::checkKeyword(const std::string& keyword)
+{
+    // 在 keywords 中查找关键字
+    auto it = keywords.find(keyword);
+    if (it != keywords.end())
+    {
+        // 如果找到了，则返回对应的 TokenType
+        return it->second;
+    }
+    else
+    {
+        // 否则返回 IDENTIFIER
+        return TokenType::IDENTIFIER;
+    }
+}
 
 char Lexer::peek() const
 {
@@ -34,11 +96,6 @@ bool Lexer::isAlpha(char c) const
 bool Lexer::isDigit(char c) const
 {
     return std::isdigit(c);
-}
-
-bool Lexer::isKeyword(const std::string& identifier) const
-{
-    return keywords.find(identifier) != keywords.end(); // 判断标识符是否在关键字集合中
 }
 
 void Lexer::skipWhitespace()
@@ -99,13 +156,13 @@ Token Lexer::parseIdentifier()
 {
     // 解析标识符和关键字
     std::string identifier;
+    char first_char = peek();
     while (!isAtEnd() && (isAlpha(peek()) || isDigit(peek())))
     {
         identifier += peek();
         advance();
     }
-    if (isKeyword(identifier)) return Token(TokenType::KEYWORD, identifier); // 如果是关键字，将其标记为关键字类型
-    else return Token(TokenType::IDENTIFIER, identifier); // 否则标记为普通标识符类型
+    return Token(this->checkKeyword(identifier),identifier);
 }
 
 Token Lexer::parseNumber()
@@ -113,6 +170,10 @@ Token Lexer::parseNumber()
     // 解析数字
     std::string number;
     bool has_exist_point =false;
+    if(peek()=='.') // 数字的第一个为"."，即".5"类型的实数
+    {
+        number+="0";
+    }
     while (!isAtEnd() && (isDigit(peek()) || peek() == '.'))
     {
         if(peek()=='.')
@@ -148,7 +209,16 @@ Token Lexer::parseSymbol()
         case '}':return Token(TokenType::RIGHT_BRACE, "}");
         case '"':return Token(TokenType::D_MARKS, "\"");
         case '\'':return Token(TokenType::S_MARKS, "'");
-        case '.':return Token(TokenType::MEMBER, ".");
+        case '.':
+        {
+            if(isDigit(peek()))    // 是数字".5"类型
+            {
+                currentPos--;
+                return this->parseNumber();     // 继续判断是否为数字
+            }
+            else return Token(TokenType::MEMBER, ".");
+        }
+
         case '+':
         {
             switch(peek())

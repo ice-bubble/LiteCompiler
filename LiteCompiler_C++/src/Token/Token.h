@@ -7,13 +7,40 @@
 
 #include <string>
 
+// 定义标记类型
 enum class TokenType
 {
-    // 定义标记类型
-    KEYWORD,    // 关键字
+    // KEYWORDS
+    KEYWORD_AND,
+    KEYWORD_BREAK,
+    KEYWORD_CLASS,
+    KEYWORD_CONTINUE,
+    KEYWORD_DOUBLE,
+    KEYWORD_ELSE,
+    KEYWORD_FALSE,
+    KEYWORD_FOR,
+    KEYWORD_FUNCTION,
+    KEYWORD_IF,
+    KEYWORD_INTEGER,
+    KEYWORD_NIL,
+    KEYWORD_NULL,
+    KEYWORD_PRINT,
+    KEYWORD_RETURN,
+    KEYWORD_SUPER,
+    KEYWORD_THIS,
+    KEYWORD_TRUE,
+    KEYWORD_VAR,
+    KEYWORD_WHILE,
+    KEYWORD_OR,
+    KEYWORD_NOT,
+
+    // 标识符
     IDENTIFIER, // id
+
+    // 数据类型
     INTEGER, // int
     FLOAT, // double、float
+
     SEMICOLON, // ";"
     ASSIGNMENT, // "="赋值运算符
     PLUS, // "+"
@@ -33,6 +60,7 @@ enum class TokenType
     XOR, // "^"
     XOR_FORWARD, // "^="
     NOT, // "~"
+    NOT_EQUAL, //"!="
     EQUAL, // "=="
     ABOVE, // ">"
     BELOW, // "<"
@@ -48,6 +76,7 @@ enum class TokenType
     S_MARKS, // '
     MEMBER, // "."
     COMMA, // ","
+
     EMPTY, // 空
     INVALID // 非法的标记
 };

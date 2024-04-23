@@ -9,6 +9,7 @@
 #include "../Token/Token.h"
 #include <string>
 #include <unordered_set>
+#include <map>
 
 class Lexer
 {
@@ -22,24 +23,9 @@ public:
 private:
     std::string input;
     size_t currentPos;
-    int line_num;       // 行号
-    // 无序集合存储关键字
-    std::unordered_set<std::string> keywords = {
-        "if",
-        "else",
-        "while",
-        "for",
-        "return",
-        "integer",
-        "double",
-        "function",
-        "read",
-        "write",
-        "repeat",
-        "until",
-        "do",
-        "char"
-    };
+    size_t line_num;       // 行号
+    std::string *str_temp; // 比较字符串是的临时变量
+    std::map<std::string, TokenType> keywords; // 添加关键字映射表
 
     char peek() const;
 
@@ -62,7 +48,7 @@ private:
     Token parseSymbol();
 
     // 判断标识符是否为关键字
-    bool isKeyword(const std::string &identifier) const;
+    TokenType checkKeyword(const std::string& keyword);
 };
 
 #endif // LEXER_H

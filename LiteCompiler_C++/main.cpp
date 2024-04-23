@@ -6,7 +6,6 @@
 #include "./src/Token/Token.h"
 #include "./src/LexicalAnalysis/Lexer.h"
 #include "./src/FileHandler/FileHandler.h"
-using namespace std;
 
 int main(int argc, char *argv[])
 {
