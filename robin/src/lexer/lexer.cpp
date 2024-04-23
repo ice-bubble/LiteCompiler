@@ -1,6 +1,9 @@
-//
-// Created by icelake on 24-4-22.
-//
+/**
+ * @file lexer.cpp
+ * @brief Lexer类及相关函数的实现。
+ * @author lzy
+ * @date 24-4-22
+ */
 
 #include "lexer.h"
 
@@ -8,28 +11,32 @@
 #include "../error/error.h"
 
 namespace Lexer {
+
+    /**
+     * @brief 关键字到标记类型的映射表。
+     */
     std::map<std::string, Token::TokenType> Lexer::keywords = {
-            {"and",      Token::TOKEN_AND},
-            {"break",    Token::TOKEN_BREAK},
-            {"class",    Token::TOKEN_CLASS},
-            {"continue", Token::TOKEN_CONTINUE},
-            {"double",   Token::TOKEN_DOUBLE},
-            {"else",     Token::TOKEN_ELSE},
-            {"false",    Token::TOKEN_FALSE},
-            {"for",      Token::TOKEN_FOR},
-            {"function", Token::TOKEN_FUNCTION},
-            {"if",       Token::TOKEN_IF},
-            {"integer",  Token::TOKEN_INTEGER},
-            {"nil",      Token::TOKEN_NIL},
-            {"not",      Token::TOKEN_NOT},
-            {"or",       Token::TOKEN_OR},
-            {"print",    Token::TOKEN_PRINT},
-            {"return",   Token::TOKEN_RETURN},
-            {"super",    Token::TOKEN_SUPER},
-            {"this",     Token::TOKEN_THIS},
-            {"true",     Token::TOKEN_TRUE},
-            {"var",      Token::TOKEN_VAR},
-            {"while",    Token::TOKEN_WHILE}
+            {"and",      Token::TOKEN_AND},        /**< "and" 关键字对应的标记类型。 */
+            {"break",    Token::TOKEN_BREAK},      /**< "break" 关键字对应的标记类型。 */
+            {"class",    Token::TOKEN_CLASS},      /**< "class" 关键字对应的标记类型。 */
+            {"continue", Token::TOKEN_CONTINUE},   /**< "continue" 关键字对应的标记类型。 */
+            {"double",   Token::TOKEN_DOUBLE},     /**< "double" 关键字对应的标记类型。 */
+            {"else",     Token::TOKEN_ELSE},       /**< "else" 关键字对应的标记类型。 */
+            {"false",    Token::TOKEN_FALSE},      /**< "false" 关键字对应的标记类型。 */
+            {"for",      Token::TOKEN_FOR},        /**< "for" 关键字对应的标记类型。 */
+            {"function", Token::TOKEN_FUNCTION},   /**< "function" 关键字对应的标记类型。 */
+            {"if",       Token::TOKEN_IF},         /**< "if" 关键字对应的标记类型。 */
+            {"integer",  Token::TOKEN_INTEGER},    /**< "integer" 关键字对应的标记类型。 */
+            {"nil",      Token::TOKEN_NIL},        /**< "nil" 关键字对应的标记类型。 */
+            {"not",      Token::TOKEN_NOT},        /**< "not" 关键字对应的标记类型。 */
+            {"or",       Token::TOKEN_OR},         /**< "or" 关键字对应的标记类型。 */
+            {"print",    Token::TOKEN_PRINT},      /**< "print" 关键字对应的标记类型。 */
+            {"return",   Token::TOKEN_RETURN},     /**< "return" 关键字对应的标记类型。 */
+            {"super",    Token::TOKEN_SUPER},      /**< "super" 关键字对应的标记类型。 */
+            {"this",     Token::TOKEN_THIS},       /**< "this" 关键字对应的标记类型。 */
+            {"true",     Token::TOKEN_TRUE},       /**< "true" 关键字对应的标记类型。 */
+            {"var",      Token::TOKEN_VAR},        /**< "var" 关键字对应的标记类型。 */
+            {"while",    Token::TOKEN_WHILE}       /**< "while" 关键字对应的标记类型。 */
     };
 
     Lexer::Lexer(std::string source) {
@@ -161,8 +168,7 @@ namespace Lexer {
         advance();
 
         // Trim the surrounding quotes.
-        std::string value = source.substr(start + 1, current - start - 2);
-        addToken(Token::TOKEN_STRING, value);
+        addToken(Token::TOKEN_STRING, source.substr(start + 1, current - start - 2));
     }
 
     void Lexer::slash() {

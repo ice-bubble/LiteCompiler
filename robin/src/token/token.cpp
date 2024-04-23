@@ -1,11 +1,20 @@
-//
-// Created by icelake on 24-4-22.
-//
+/**
+ * @file token.cpp
+ * @brief Token类及相关函数的实现。
+ * @author lzy
+ * @date 24-4-22
+ */
+
 #include "token.h"
 
-
+/**
+ * @brief 命名空间，包含了关于Token定义的类和函数。
+ */
 namespace Token {
 
+    /**
+     * @brief 将TokenType枚举值映射到它们的字符串表示的向量。
+     */
     std::vector<std::string> tokenStrings = {
             "LEFT_PAREN",
             "RIGHT_PAREN",
