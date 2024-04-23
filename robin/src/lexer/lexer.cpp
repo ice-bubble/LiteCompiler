@@ -6,9 +6,9 @@
  *
  * @note current指向待消费的字符。
  * @note 消费字符：让current+1。
- * @note peek()获取待消费的字符，但是不消费它。
- * @note peekNext()获取待消费的字符的下一个字符，不消费任何字符。
- * @note advance()获取待消费的字符，同时让current+1，即消费了字符。
+ * @note peek()返回待消费的字符，但是不消费它。
+ * @note peekNext()返回待消费的字符的下一个字符，不消费任何字符。
+ * @note advance()返回待消费的字符，同时让current+1，即消费了字符。
  * @note match(ch)当待消费的字符为ch时，消费这个字符返回true,否则不消费字符返回false。
  *
  */
