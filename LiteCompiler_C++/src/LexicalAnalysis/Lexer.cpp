@@ -299,6 +299,21 @@ Token Lexer::parseSymbol()
                 };
             }
         }
+        case '!':
+        {
+            switch(peek())
+            {
+                case'=':
+                {
+                    advance();
+                    return Token(TokenType::NOT_EQUAL,"!=");
+                }
+                default:
+                {
+                    return Token(TokenType::LOGICAL_NOT,"!");
+                }
+            }
+        }
         case '&':
         {
             switch(peek())

@@ -108,9 +108,6 @@ void Debug::printTokens(const std::vector<Token> &tokens)
                 // case TokenType::MEMBER:
                 //     std::cout << "Member";
                 //     break;
-                // case TokenType::EMPTY:
-                //     std::cout << "Empty";
-                //     break;
                 case TokenType::INVALID:
                     if (token.getValue() != "\n" && token.getValue() != "\0" && token.getValue() != "\t")
                         std::cout << "Error: " << "<Invalid, ";

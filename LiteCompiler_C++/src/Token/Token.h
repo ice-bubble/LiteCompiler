@@ -59,7 +59,8 @@ enum class TokenType
     LOGICAL_OR, // "||"
     XOR, // "^"
     XOR_FORWARD, // "^="
-    NOT, // "~"
+    NOT, // "~"，按位取反
+    LOGICAL_NOT, // "!"，逻辑非
     NOT_EQUAL, //"!="
     EQUAL, // "=="
     ABOVE, // ">"
