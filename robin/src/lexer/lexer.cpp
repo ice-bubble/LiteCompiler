@@ -3,6 +3,14 @@
  * @brief Lexer类及相关函数的实现。
  * @author lzy
  * @date 24-4-22
+ *
+ * @note current指向待消费的字符。
+ * @note 消费字符：让current+1。
+ * @note peek()返回待消费的字符，但是不消费它。
+ * @note peekNext()返回待消费的字符的下一个字符，不消费任何字符。
+ * @note advance()返回待消费的字符，同时让current+1，即消费了字符。
+ * @note match(ch)当待消费的字符为ch时，消费这个字符返回true,否则不消费字符返回false。
+ *
  */
 
 #include "lexer.h"
@@ -12,36 +20,10 @@
 
 namespace Lexer {
 
-    /**
-     * @brief 关键字到标记类型的映射表。
-     */
-    std::map<std::string, Token::TokenType> Lexer::keywords = {
-            {"and",      Token::TOKEN_AND},        /**< "and" 关键字对应的标记类型。 */
-            {"break",    Token::TOKEN_BREAK},      /**< "break" 关键字对应的标记类型。 */
-            {"class",    Token::TOKEN_CLASS},      /**< "class" 关键字对应的标记类型。 */
-            {"continue", Token::TOKEN_CONTINUE},   /**< "continue" 关键字对应的标记类型。 */
-            {"double",   Token::TOKEN_DOUBLE},     /**< "double" 关键字对应的标记类型。 */
-            {"else",     Token::TOKEN_ELSE},       /**< "else" 关键字对应的标记类型。 */
-            {"false",    Token::TOKEN_FALSE},      /**< "false" 关键字对应的标记类型。 */
-            {"for",      Token::TOKEN_FOR},        /**< "for" 关键字对应的标记类型。 */
-            {"function", Token::TOKEN_FUNCTION},   /**< "function" 关键字对应的标记类型。 */
-            {"if",       Token::TOKEN_IF},         /**< "if" 关键字对应的标记类型。 */
-            {"integer",  Token::TOKEN_INTEGER},    /**< "integer" 关键字对应的标记类型。 */
-            {"nil",      Token::TOKEN_NIL},        /**< "nil" 关键字对应的标记类型。 */
-            {"not",      Token::TOKEN_NOT},        /**< "not" 关键字对应的标记类型。 */
-            {"or",       Token::TOKEN_OR},         /**< "or" 关键字对应的标记类型。 */
-            {"print",    Token::TOKEN_PRINT},      /**< "print" 关键字对应的标记类型。 */
-            {"return",   Token::TOKEN_RETURN},     /**< "return" 关键字对应的标记类型。 */
-            {"super",    Token::TOKEN_SUPER},      /**< "super" 关键字对应的标记类型。 */
-            {"this",     Token::TOKEN_THIS},       /**< "this" 关键字对应的标记类型。 */
-            {"true",     Token::TOKEN_TRUE},       /**< "true" 关键字对应的标记类型。 */
-            {"var",      Token::TOKEN_VAR},        /**< "var" 关键字对应的标记类型。 */
-            {"while",    Token::TOKEN_WHILE}       /**< "while" 关键字对应的标记类型。 */
-    };
-
     Lexer::Lexer(std::string source) {
         this->source = std::move(source);
     }
+
 
     std::vector<Token::Token> Lexer::scanTokens() {
         while (!isAtEnd()) {
@@ -120,35 +102,42 @@ namespace Lexer {
     }
 
     void Lexer::_identifier() {
+        // 一直消费字母和下划线，直到待消费的字符不是字母和下划线
         while (isAlphaNumeric(peek())) advance();
 
         std::string text = source.substr(start, current - start);
-        auto it = keywords.find(text);
-        if (it == keywords.end()) {
+        auto tokentype = Token::Token::getKeywordTypeInMap(text);
+        if (tokentype == Token::TOKEN_EOF) {
             addToken(Token::TOKEN_IDENTIFIER);
             return;
         }
-        addToken(it->second);
+        addToken(tokentype);
     }
 
     void Lexer::_real() {
+        // 一直消费数字，直到待消费的字符不是数字
         while (isDigit(peek())) advance();
         addToken(Token::TOKEN_REAL, std::stod(source.substr(start, current - start)));
     }
 
     void Lexer::_number() {
+        // 一直消费数字，直到待消费的字符不是数字
         while (isDigit(peek())) advance();
 
-        // Look for a fractional part.
+        // 待消费的符号是"."，下一个待消费的符号是数字，说明是小数
         if (peek() == '.' && isDigit(peekNext())) {
-            // Consume the "."
+
+            // 消费"."
             advance();
 
+            // 一直消费数字，直到待消费的字符不是数字
             while (isDigit(peek())) advance();
+
+            // 此时是小数
             addToken(Token::TOKEN_REAL, std::stod(source.substr(start, current - start)));
             return;
         }
-
+       // 非小数，即整数
         addToken(Token::TOKEN_INT,
                  static_cast<long>(std::stod(source.substr(start, current - start))));
     }
@@ -159,39 +148,45 @@ namespace Lexer {
             advance();
         }
 
+        // 处理找不到闭合的 " 的情况
         if (isAtEnd()) {
             error(line, "Unterminated string.");
             return;
         }
 
-        // The closing ".
+        // 消费闭合的 "
         advance();
 
-        // Trim the surrounding quotes.
+        // 截取子串时记得去掉开始和结尾的"
         addToken(Token::TOKEN_STRING, source.substr(start + 1, current - start - 2));
     }
 
     void Lexer::slash() {
         if (match('/')) {
-            // A comment goes until the end of the line.
+            // 单行注释
             while (peek() != '\n' && !isAtEnd()) advance();
         } else if (match('*')) {
+            // 多行注释
             while (true) {
+                // 多行注释未闭合
                 if (isAtEnd()) {
                     error(line, "Unterminated comment.");
                     return;
                 }
-                char nextChar = advance();
+                char Ch = advance();
 
-                if (nextChar == '\n')
+                // 换行时记得把行号加一
+                if (Ch == '\n')
                     line++;
 
-                if (nextChar == '*' && peek() == '/') {
+                if (Ch == '*' && peek() == '/') {
+                    // 消费"/"
                     advance();
                     break;
                 }
             }
         } else {
+            // 是除号的情况
             addToken(Token::TOKEN_SLASH);
         }
     }

@@ -6,6 +6,8 @@
  */
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include "src/lexer/lexer.h"
 
 #ifdef DEBUG_FLAG
@@ -13,7 +15,10 @@
 #endif
 
 /**
- * @brief REPL（交互式解释器）循环。用户可以在控制台输入代码，并对其进行词法分析。
+ * @brief REPL（交互式解释器）循环。
+ *
+ * 用户可以在控制台输入代码，并对其进行词法分析,按下ctrl+C强制退出。
+ *
  */
 static void repl() {
 
@@ -36,61 +41,49 @@ static void repl() {
 /**
  * @brief 读取文件内容并返回其内容。
  * @param path 要读取的文件路径。
- * @return char* 文件内容的字符指针。
- * @throw std::bad_alloc 内存不足时抛出异常。
+ * @return std::string 文件内容的字符串形式。
  */
-static char *readFile(const char *path) {
-    // 打开文件
-    FILE *file = fopen(path, "rb");
-
-    if (file == nullptr) {
-        fprintf(stderr, "Could not open file \"%s\".\n", path);
-        exit(74);
+std::string readFile(const std::string& path) {
+    std::ifstream file(path, std::ios::binary);
+    if (!file) {
+        throw std::runtime_error("Failed to open file: " + path);
     }
 
-    // 获取文件大小
-    fseek(file, 0L, SEEK_END);
-    size_t fileSize = ftell(file);
-    rewind(file);
-
-    // 分配内存并读取文件内容
-    char *buffer;
-    try {
-        buffer = new char[fileSize + 1];
-    } catch (const std::bad_alloc &e) {
-        fprintf(stderr, "Not enough memory to read \"%s\".\n", path);
-        exit(74);
-    }
-
-
-    size_t bytesRead = fread(buffer, sizeof(char), fileSize, file);
-
-    if (bytesRead < fileSize) {
-        fprintf(stderr, "Could not read file \"%s\".\n", path);
-        exit(74);
-    }
-
-    // 添加字符串结束符
-    buffer[bytesRead] = '\0';
-
-    // 关闭文件并返回文件内容
-    fclose(file);
-    return buffer;
+    std::stringstream buffer;
+    buffer << file.rdbuf(); // 将文件内容读入缓冲区
+    return buffer.str();    // 返回缓冲区内容作为字符串
 }
 
 /**
- * @brief 运行指定路径的文件。对其进行词法分析。
+ * @brief 运行指定路径的文件，并进行词法分析。
+ *
+ * 这个函数打开指定路径的文件，将文件内容传递给词法分析器进行处理，并打印词法分析结果（可选）。
+ * 如果文件无法打开或词法分析出现异常，将会捕获异常并输出错误信息，然后退出程序。
+ *
  * @param path 要运行的文件路径。
  */
-static void runFile(const char *path) {
-    char *source = readFile(path);
-    Lexer::Lexer lexer = Lexer::Lexer(source);
-    std::vector<Token::Token> tokenList = lexer.scanTokens();
-#ifdef DEBUG_PRINT_TOKENLIST
-    printTokenList(tokenList);
-#endif
+static void runFile(const std::string& path) {
+    try {
+        // 读取文件内容
+        std::string source = readFile(path);
 
+        // 创建词法分析器并进行词法分析
+        Lexer::Lexer lexer(source);
+        std::vector<Token::Token> tokenList = lexer.scanTokens();
+
+#ifdef DEBUG_PRINT_TOKENLIST
+        // 打印词法分析结果（仅在调试模式下有效）
+        printTokenList(tokenList);
+#endif
+    } catch (const std::exception& e) {
+        // 捕获异常并输出错误信息
+        std::cerr << e.what() << std::endl;
+
+        // 退出程序，返回错误状态码 74
+        exit(74);
+    }
 }
+
 
 /**
  * @brief 主函数，用于处理命令行参数和启动交互式解释器或运行文件。
