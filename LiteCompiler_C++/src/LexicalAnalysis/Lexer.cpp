@@ -12,8 +12,10 @@
 /*构造函数中，当前所指向的元素位置currentPos初始化为0，行号line_num初始化为1*/
 Lexer::Lexer(const std::string &input) : input(input), currentPos(0), line_num(1)
 {
-    keywords = {
-        /*在构造函数中初始化map类型数据——关键字KEYWORD与TokenType的映射关系，*/
+    
+}
+// 初始化静态成员变量 keywords
+std::map<std::string, TokenType> Lexer::keywords = {
         {"and", TokenType::KEYWORD_AND},
         {"break", TokenType::KEYWORD_BREAK},
         {"char", TokenType::KEYWORD_CHAR},
@@ -42,10 +44,9 @@ Lexer::Lexer(const std::string &input) : input(input), currentPos(0), line_num(1
         {"var", TokenType::KEYWORD_VAR},
         {"while", TokenType::KEYWORD_WHILE},
         {"write", TokenType::KEYWORD_WRITE}
-    };
-}
+};
 
-TokenType Lexer::checkKeyword(const std::string &keyword)
+TokenType Lexer::checkKeyword(const std::string &keyword) const
 {
     // 在 keywords 中查找关键字
     auto it = keywords.find(keyword);
@@ -56,6 +57,19 @@ TokenType Lexer::checkKeyword(const std::string &keyword)
     }
     // 否则，只是普通的id，返回 IDENTIFIER
     return TokenType::IDENTIFIER;
+}
+
+bool Lexer::isKeyword(const std::string &keyword)
+{
+    // 在 keywords 中查找关键字
+    auto it = keywords.find(keyword);
+    if (it != keywords.end())
+    {
+        // 如果找到了，则返回true
+        return true;
+    }
+    // 否则，只是普通的id，返回 IDENTIFIER
+    return false;
 }
 
 char Lexer::peek() const
@@ -170,11 +184,12 @@ Token Lexer::parseNumber()
     // 解析数字
     std::string number;
     bool has_exist_point = false;
+    bool has_exist_Alpha = false;
     if (peek() == '.') // 数字的第一个为"."，即".5"类型的实数
     {
         number += "0";
     }
-    while (!isAtEnd() && (isDigit(peek()) || peek() == '.'))
+    while (!isAtEnd() && (isDigit(peek()) || peek() == '.' || isAlpha(peek()) ))
     {
         if (peek() == '.')
         {
@@ -187,8 +202,19 @@ Token Lexer::parseNumber()
                 return Token(TokenType::INVALID, ".");
             }
         }
+        if(isAlpha(peek())){
+            number += peek();
+            advance();
+            has_exist_Alpha = true;
+        }
+        
         number += peek();
         advance();
+    }
+    if (has_exist_Alpha) 
+    {
+        error(line_num, number);
+        return Token(TokenType::INVALID, number);
     }
     if (has_exist_point) return Token(TokenType::FLOAT, number);
     else return Token(TokenType::INTEGER, number);

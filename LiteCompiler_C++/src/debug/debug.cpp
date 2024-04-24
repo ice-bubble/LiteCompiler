@@ -7,7 +7,7 @@ void Debug::printTokens(const std::vector<Token> &tokens)
 {
     for (const Token &token: tokens)
     {
-        if (token.getType() != TokenType::EMPTY && token.getValue() != "\n" && token.getValue() != "\0" && token.getValue() != "\t")
+        if (token.getType() != TokenType::INVALID && token.getType() != TokenType::EMPTY && token.getValue() != "\n" && token.getValue() != "\0" && token.getValue() != "\t")
         {
             std::cout << "<";
             switch (token.getType())
@@ -108,15 +108,79 @@ void Debug::printTokens(const std::vector<Token> &tokens)
                 // case TokenType::MEMBER:
                 //     std::cout << "Member";
                 //     break;
-                case TokenType::INVALID:
-                    if (token.getValue() != "\n" && token.getValue() != "\0" && token.getValue() != "\t")
-                        std::cout << "Error: " << "<Invalid, ";
-                    break;
+                // case TokenType::INVALID:
+                //     if (token.getValue() != "\n" && token.getValue() != "\0" && token.getValue() != "\t")
+                //         std::cout << "Error: " << "<Invalid, ";
+                //     break;
                 default:
                     break;
             }
         }
-        if (token.getType() != TokenType::EMPTY && token.getValue() != "\n" && token.getValue() != "\0" && token.getValue() != "\t")
+        if (token.getType() != TokenType::INVALID && token.getType() != TokenType::EMPTY && token.getValue() != "\n" && token.getValue() != "\0" && token.getValue() != "\t")
             std::cout << token.getValue() << ">" << std::endl;
     }
+}
+// void Debug::printsymbolTokens(const std::vector<Token> &tokens){
+//     for (const Token &token: tokens)
+//     {
+//         if (token.getType() != TokenType::INVALID && token.getType() != TokenType::EMPTY && token.getValue() != "\n" && token.getValue() != "\0" && token.getValue() != "\t")
+//         {
+//             char keyword[][];
+//             // 获取标记的值，作为参数传递给checkKeyword函数
+//             if(Lexer::isKeyword(token.getValue())){
+
+//                 std::cout << "KEYWORD " << token.getValue() << std::endl;
+//             }
+//             if(token.getType() == TokenType::IDENTIFIER){
+//                 std::cout << "IDENTIFIER " << token.getValue() << std::endl;
+//             }
+//         }
+//     }
+// }
+void Debug::printsymbolTokens(const std::vector<Token> &tokens) {
+    std::vector<std::string> keywords;
+    std::vector<std::string> identifiers;
+
+    for (const Token &token : tokens) {
+        if (token.getType() != TokenType::INVALID && token.getType() != TokenType::EMPTY &&
+            token.getValue() != "\n" && token.getValue() != "\0" && token.getValue() != "\t") {
+            // 获取标记的值，作为参数传递给 isKeyword 函数
+            if (Lexer::isKeyword(token.getValue())) {
+                keywords.push_back(token.getValue());
+            }
+            if (token.getType() == TokenType::IDENTIFIER) {
+                identifiers.push_back(token.getValue());
+            }
+        }
+    }
+
+    // 去除重复元素
+    //keywords = removeDuplicates(keywords);
+    identifiers = removeDuplicates(identifiers);
+
+    // 输出关键字
+    for (const auto &keyword : keywords) {
+        std::cout << "KEYWORD " << keyword << std::endl;
+    }
+
+    // 输出标识符
+    for (const auto &identifier : identifiers) {
+        std::cout << "IDENTIFIER " << identifier << std::endl;
+    }
+}
+
+// 去除重复元素函数
+std::vector<std::string> removeDuplicates(const std::vector<std::string> &input) {
+    std::unordered_set<std::string> seen;
+    std::vector<std::string> result;
+
+    for (const std::string &element : input) {
+        // 如果元素第一次出现，将其添加到结果中并记录在集合中
+        if (seen.find(element) == seen.end()) {
+            result.push_back(element);
+            seen.insert(element);
+        }
+    }
+
+    return result;
 }

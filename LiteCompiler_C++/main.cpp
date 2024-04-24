@@ -36,6 +36,6 @@ int main(int argc, char *argv[])
 
     // 输出标记（Token）
     Debug::printTokens(tokens);
-
+    Debug::printsymbolTokens(tokens);
     return 0;
 }

@@ -29,13 +29,24 @@ public:
     * @return bool 如果词法分析成功则返回true，否则返回false
     **/
     bool LexicalAnalyze(std::vector<Token> &tokens);
-
+    /**
+     * @brief 检查给定的标识符是否为关键字，并返回相应的标记类型。
+     * @param keyword 要检查的标识符
+     * @return TokenType 关键字的标记类型，如果不是关键字则返回IDENTIFIER
+     **/
+    TokenType checkKeyword(const std::string &keyword) const;//声明为常量成员函数
+    /**
+     * @brief 检查给定的标识符是否为关键字，并返回相应的标记类型。
+     * @param keyword 要检查的标识符
+     * @return bool 如果匹配Keyword则返回true，如果不是关键字则返回false
+     **/
+    bool static isKeyword(const std::string &keyword);
 private:
     std::string input; // 输入的内容
     size_t currentPos; // 当前所指向的元素位置
     size_t line_num; // 行号
     std::string *str_temp; // 比较字符串是的临时变量
-    std::map<std::string, TokenType> keywords; // map类型数据，关键字KEYWORD与TokenType关系映射表
+    static std::map<std::string, TokenType> keywords; // map类型数据，关键字KEYWORD与TokenType关系映射表
     /**
      * @brief 返回当前字符流的下一个字符，但不消耗它。
      * @return char 下一个字符
@@ -102,12 +113,12 @@ private:
      **/
     Token parseSymbol();
 
-    /**
-     * @brief 检查给定的标识符是否为关键字，并返回相应的标记类型。
-     * @param keyword 要检查的标识符
-     * @return TokenType 关键字的标记类型，如果不是关键字则返回IDENTIFIER
-     **/
-    TokenType checkKeyword(const std::string &keyword);
+    // /**
+    //  * @brief 检查给定的标识符是否为关键字，并返回相应的标记类型。
+    //  * @param keyword 要检查的标识符
+    //  * @return TokenType 关键字的标记类型，如果不是关键字则返回IDENTIFIER
+    //  **/
+    // TokenType checkKeyword(const std::string &keyword);
 };
 
 #endif // LEXER_H

@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include "../Token/Token.h"
+#include "../LexicalAnalysis/Lexer.h"
 
 /**
  * @brief Debug类，主要用于输出中间过程的内容
@@ -20,6 +21,7 @@ public:
      * @param tokens 要打印的标记向量（vector类型）
      **/
     static void printTokens(const std::vector<Token> &tokens);
+    static void printsymbolTokens(const std::vector<Token> &tokens);
 };
-
+std::vector<std::string> removeDuplicates(const std::vector<std::string> &input);
 #endif // DEBUG_H
