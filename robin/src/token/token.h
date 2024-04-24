@@ -10,6 +10,9 @@
 
 #include "../common.h"
 
+/**
+ * @brief 命名空间，包含了token相关的类和函数。
+ */
 namespace Token {
     /**
      * @brief 用于区分不同token类型的枚举体，一种token对应一种成员。
