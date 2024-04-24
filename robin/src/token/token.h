@@ -54,6 +54,7 @@ namespace Token {
         TOKEN_BREAK,            ///< break
         TOKEN_CLASS,            ///< class
         TOKEN_CONTINUE,         ///< continue
+        TOKEN_DO,               ///< do
         TOKEN_DOUBLE,           ///< double
         TOKEN_ELSE,             ///< else
         TOKEN_FALSE,            ///< false
@@ -65,12 +66,16 @@ namespace Token {
         TOKEN_NOT,              ///< not !
         TOKEN_OR,               ///< or ||
         TOKEN_PRINT,            ///< print
+        TOKEN_READ,             ///< read
+        TOKEN_REPEAT,           ///< repeat
         TOKEN_RETURN,           ///< return
         TOKEN_SUPER,            ///< super
         TOKEN_THIS,             ///< this
         TOKEN_TRUE,             ///< true
+        TOKEN_UNTIL,            ///< until
         TOKEN_VAR,              ///< var
         TOKEN_WHILE,            ///< while
+        TOKEN_WRITE,            ///< write
 
         TOKEN_EOF               ///< EOF,表示已经到达代码文件的末尾。
     };

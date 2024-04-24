@@ -15,8 +15,9 @@ namespace Token {
     std::map<std::string, TokenType> Token::keywords = {
             {"and",      TOKEN_AND},        /**< "and" 关键字对应的标记类型。 */
             {"break",    TOKEN_BREAK},      /**< "break" 关键字对应的标记类型。 */
-            {"class",   TOKEN_CLASS},      /**< "class" 关键字对应的标记类型。 */
+            {"class",    TOKEN_CLASS},      /**< "class" 关键字对应的标记类型。 */
             {"continue", TOKEN_CONTINUE},   /**< "continue" 关键字对应的标记类型。 */
+            {"do",       TOKEN_DO},         /**< "do" 关键字对应的标记类型。 */
             {"double",   TOKEN_DOUBLE},     /**< "double" 关键字对应的标记类型。 */
             {"else",     TOKEN_ELSE},       /**< "else" 关键字对应的标记类型。 */
             {"false",    TOKEN_FALSE},      /**< "false" 关键字对应的标记类型。 */
@@ -28,12 +29,16 @@ namespace Token {
             {"not",      TOKEN_NOT},        /**< "not" 关键字对应的标记类型。 */
             {"or",       TOKEN_OR},         /**< "or" 关键字对应的标记类型。 */
             {"print",    TOKEN_PRINT},      /**< "print" 关键字对应的标记类型。 */
+            {"read",     TOKEN_READ},       /**< "read" 关键字对应的标记类型。 */
+            {"repeat",   TOKEN_REPEAT},     /**< "repeat" 关键字对应的标记类型。 */
             {"return",   TOKEN_RETURN},     /**< "return" 关键字对应的标记类型。 */
             {"super",    TOKEN_SUPER},      /**< "super" 关键字对应的标记类型。 */
             {"this",     TOKEN_THIS},       /**< "this" 关键字对应的标记类型。 */
             {"true",     TOKEN_TRUE},       /**< "true" 关键字对应的标记类型。 */
+            {"until",    TOKEN_UNTIL},      /**< "until" 关键字对应的标记类型。 */
             {"var",      TOKEN_VAR},        /**< "var" 关键字对应的标记类型。 */
-            {"while",    TOKEN_WHILE}       /**< "while" 关键字对应的标记类型。 */
+            {"while",    TOKEN_WHILE},      /**< "while" 关键字对应的标记类型。 */
+            {"write",   TOKEN_WRITE}        /**< "return" 关键字对应的标记类型。 */
     };
 
     std::vector<std::string> Token::tokenStrings = {
@@ -69,6 +74,7 @@ namespace Token {
             "BREAK",
             "CLASS",
             "CONTINUE",
+            "DO",
             "DOUBLE",
             "ELSE",
             "FALSE",
@@ -80,12 +86,16 @@ namespace Token {
             "NOT",
             "OR",
             "PRINT",
+            "READ",
+            "REPEAT",
             "RETURN",
             "SUPER",
             "THIS",
             "TRUE",
+            "UNTIL",
             "VAR",
             "WHILE",
+            "WRITE",
 
             "EOF"
     };
