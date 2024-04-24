@@ -20,44 +20,8 @@
 
 namespace Lexer {
 
-    /**
-     * @brief 关键字到标记类型的映射表。
-     */
-    std::map<std::string, Token::TokenType> Lexer::keywords = {
-            {"and",      Token::TOKEN_AND},        /**< "and" 关键字对应的标记类型。 */
-            {"break",    Token::TOKEN_BREAK},      /**< "break" 关键字对应的标记类型。 */
-            {"class",    Token::TOKEN_CLASS},      /**< "class" 关键字对应的标记类型。 */
-            {"continue", Token::TOKEN_CONTINUE},   /**< "continue" 关键字对应的标记类型。 */
-            {"double",   Token::TOKEN_DOUBLE},     /**< "double" 关键字对应的标记类型。 */
-            {"else",     Token::TOKEN_ELSE},       /**< "else" 关键字对应的标记类型。 */
-            {"false",    Token::TOKEN_FALSE},      /**< "false" 关键字对应的标记类型。 */
-            {"for",      Token::TOKEN_FOR},        /**< "for" 关键字对应的标记类型。 */
-            {"function", Token::TOKEN_FUNCTION},   /**< "function" 关键字对应的标记类型。 */
-            {"if",       Token::TOKEN_IF},         /**< "if" 关键字对应的标记类型。 */
-            {"integer",  Token::TOKEN_INTEGER},    /**< "integer" 关键字对应的标记类型。 */
-            {"nil",      Token::TOKEN_NIL},        /**< "nil" 关键字对应的标记类型。 */
-            {"not",      Token::TOKEN_NOT},        /**< "not" 关键字对应的标记类型。 */
-            {"or",       Token::TOKEN_OR},         /**< "or" 关键字对应的标记类型。 */
-            {"print",    Token::TOKEN_PRINT},      /**< "print" 关键字对应的标记类型。 */
-            {"return",   Token::TOKEN_RETURN},     /**< "return" 关键字对应的标记类型。 */
-            {"super",    Token::TOKEN_SUPER},      /**< "super" 关键字对应的标记类型。 */
-            {"this",     Token::TOKEN_THIS},       /**< "this" 关键字对应的标记类型。 */
-            {"true",     Token::TOKEN_TRUE},       /**< "true" 关键字对应的标记类型。 */
-            {"var",      Token::TOKEN_VAR},        /**< "var" 关键字对应的标记类型。 */
-            {"while",    Token::TOKEN_WHILE}       /**< "while" 关键字对应的标记类型。 */
-    };
-
     Lexer::Lexer(std::string source) {
         this->source = std::move(source);
-    }
-
-    Token::TokenType Lexer::getKeywordTypeInMap(const std::string& text)
-    {
-        auto it = keywords.find(text);
-        if (it == keywords.end()) {
-            return Token::TOKEN_EOF;
-        }
-        return it->second;
     }
 
 
@@ -142,7 +106,7 @@ namespace Lexer {
         while (isAlphaNumeric(peek())) advance();
 
         std::string text = source.substr(start, current - start);
-        auto tokentype = getKeywordTypeInMap(text);
+        auto tokentype = Token::Token::getKeywordTypeInMap(text);
         if (tokentype == Token::TOKEN_EOF) {
             addToken(Token::TOKEN_IDENTIFIER);
             return;

@@ -27,7 +27,6 @@ namespace Lexer {
         size_t start = 0;                                         ///< 用于进行词法分析的起始索引。
         size_t current = 0;                                       ///< 当前用于词法分析的索引。
         size_t line = 1;                                          ///< 当前处理的行号。
-        static std::map<std::string, Token::TokenType> keywords;  ///< 关键字到标记类型的映射表。
         std::vector<Token::Token> tokens;                         ///< 从源代码生成的token列表。
     public:
 
@@ -43,8 +42,6 @@ namespace Lexer {
         * @return 包含源代码标记的token列表。
         */
         std::vector<Token::Token> scanTokens();
-
-        static Token::TokenType getKeywordTypeInMap(const std::string& text);
 
     private:
 

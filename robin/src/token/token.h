@@ -82,6 +82,9 @@ namespace Token {
         Object literal;           ///< literal: 表示标记的字面量值，可以是任意类型的对象，用于表示标记的具体值。
         size_t line;              ///< line: 表示标记在源代码中所在的行号。
 
+        static std::map<std::string, TokenType> keywords;  ///< 关键字字符串到标记类型(TokenType)的映射表。
+        static std::vector<std::string> tokenStrings;      ///< 将TokenType枚举值映射到它们的字符串表示的向量。
+
     public:
 
         /**
@@ -105,6 +108,23 @@ namespace Token {
          * @return  std::string 字面量值的字符串表示。
          */
         std::string getLiteralString() const;
+
+        /**
+         * @brief 根据关键字文本获取对应的 TokenType。
+         * @note 对于不是关键字的文本，返回TOKEN_EOF
+         * @param text 关键字文本。
+         * @return TokenType 对应的 TokenType 值，如果关键字不存在则返回 TOKEN_EOF。
+        */
+        static TokenType getKeywordTypeInMap(const std::string& text);
+
+       /**
+        * @brief 根据 TokenType 获取对应的字符串表示。
+        * @note 错误字符串:"Error: Invalid token type"
+        * @param tokentype 要获取字符串的 TokenType。
+        * @return std::string  TokenType 对应的字符串表示，如果 TokenType 无效则返回错误字符串。
+        */
+        static std::string gettokenStringInMap(TokenType tokentype);
+
     };
 }
 
