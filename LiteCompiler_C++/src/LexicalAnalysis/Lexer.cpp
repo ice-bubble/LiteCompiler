@@ -72,6 +72,13 @@ char Lexer::peek() const
     return input[currentPos]; // 返回当前所指向的元素（char类型）
 }
 
+char Lexer::peekNext() const
+{
+    if (currentPos + 1 >= input.size()) return '\0'; // 判断是否到达输入末尾
+    return input[currentPos + 1]; // 返回下一个字符
+}
+
+
 char Lexer::advance()
 {
     if (!isAtEnd()) currentPos++; // 如果isAtENd()为假，说明全部数据还未读取完毕，指针移向下一个元素
@@ -107,52 +114,44 @@ void Lexer::skipWhitespace()
 bool Lexer::skipComment()
 {
     currentPos--; // 进入函数时，制作指向触发注释符号位置的下一位，因此先回退再处理
-    // 略过注释
-    if (peek() == '/')
-    {
-        advance(); // consume '/'
-        if (peek() == '/')
-        {
-            // 单行注释
-            while (!isAtEnd() && peek() != '\n') advance();
-        }
-        else if (peek() == '*')
-        { // 多行注释
-            advance(); // consume '*'
 
-            while (true)
-            {
-                char ch = peek(); // consume '\n'
-                if (ch == '\n')
-                {
-                    line_num++;
-                }
-                if (peek() == '*' && peek() == '/')
-                {
-                    advance(); // consume '*'
-                    advance(); // consume '/'
-                    break;
-                }
-                if (isAtEnd())
-                {
-                    error(line_num, "Unterminated comment.");
-                    exist_error = true;
-                    return false;
-                }
-                advance();
-            }
-        }
-        else
-        {
-            // 不是注释，回退 '/'
-            currentPos--;
-        }
-    }
-    else if (peek() == '#') // '#'也认为是注释
+    if (peek() == '/' && peekNext() == '/') ///< // 单行注释
     {
+        advance();
+        advance(); // consume '//'
         while (!isAtEnd() && peek() != '\n') advance();
+        return true;
     }
-    return true;
+    if (peek() == '#') ///< # 单行注释
+    {
+        advance(); // consume '#'
+        while (!isAtEnd() && peek() != '\n') advance();
+        return true;
+    }
+    ///< /**/ 多行注释
+    advance();
+    advance(); // consume '/*'
+    while (true)
+    {
+        char ch = peek(); // consume '\n'
+        if (ch == '\n')
+        {
+            line_num++;
+        }
+        if (peek() == '*' && peekNext() == '/')
+        {
+            advance();
+            advance(); // consume '/*'
+            return true;
+        }
+        if (isAtEnd())
+        {
+            error(line_num, "Unterminated comment.");
+            exist_error = true;
+            return false;
+        }
+        advance();
+    }
 }
 
 Token Lexer::parseIdentifier()
@@ -195,7 +194,7 @@ Token Lexer::parseNumber()
     {
         number += "0";
     }
-    while (!isAtEnd() && (isDigit(peek()) || peek() == '.' || isAlpha(peek())))
+    while (!isAtEnd() && (isDigit(peek()) || peek() == '.'))
     {
         if (peek() == '.')
         {
@@ -210,7 +209,7 @@ Token Lexer::parseNumber()
                 return Token(TokenType::INVALID, number, line_num);
             }
         }
-        advance();
+        number += advance();
     }
     if (has_exist_point) return Token(TokenType::FLOAT, number, line_num);
     else return Token(TokenType::INTEGER, number, line_num);
@@ -291,6 +290,12 @@ Token Lexer::parseSymbol()
                     return Token(TokenType::DIVIDE_ASSIGNMENT, "/=", line_num);
                 }
                 case '/':
+                {
+                    if (!skipComment())
+                        return Token(TokenType::INVALID, "Unterminated comment.", line_num);
+                    return Token(TokenType::EMPTY, "", line_num);
+                }
+                case '*':
                 {
                     if (!skipComment())
                         return Token(TokenType::INVALID, "Unterminated comment.", line_num);

@@ -163,15 +163,21 @@ namespace Lexer {
         addToken(Token::TOKEN_STRING, source.substr(start + 1, current - start - 2));
     }
 
-    void Lexer::slash() {
-        if (match('/')) {
+    void Lexer::slash()
+    {
+        if (match('/'))
+        {
             // 单行注释
             while (peek() != '\n' && !isAtEnd()) advance();
-        } else if (match('*')) {
+        }
+        else if (match('*'))
+        {
             // 多行注释
-            while (true) {
+            while (true)
+            {
                 // 多行注释未闭合
-                if (isAtEnd()) {
+                if (isAtEnd())
+                {
                     error(line, "Unterminated comment.");
                     return;
                 }
@@ -181,13 +187,16 @@ namespace Lexer {
                 if (Ch == '\n')
                     line++;
 
-                if (Ch == '*' && peek() == '/') {
+                if (Ch == '*' && peek() == '/')
+                {
                     // 消费"/"
                     advance();
                     break;
                 }
             }
-        } else {
+        }
+        else
+        {
             // 是除号的情况
             addToken(Token::TOKEN_SLASH);
         }

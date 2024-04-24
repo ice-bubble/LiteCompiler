@@ -48,7 +48,11 @@ private:
      * @return char 下一个字符
      **/
     char peek() const;
-
+    /**
+     * @brief 返回当前字符流的下一个字符，但不消耗它。
+     * @return char 下一个字符
+     **/
+    char peekNext() const;
     /**
      * @brief 消耗并返回当前字符流的下一个字符。
      * @return char 消耗的字符
