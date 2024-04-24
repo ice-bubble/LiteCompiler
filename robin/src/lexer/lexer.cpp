@@ -70,7 +70,7 @@ namespace Lexer {
                 return addToken(Token::TOKEN_STAR);
             case '#':
                 while (peek() != '\n' && !isAtEnd()) advance();
-                break;
+                return;
             case '|':
                 if (match('|')) return addToken(Token::TOKEN_OR);
                 break;
