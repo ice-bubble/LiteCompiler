@@ -71,7 +71,7 @@ namespace Lexer {
         /**
          * @brief 处理字符串标记。
          */
-        void _string();
+        void _string(char front);
 
         /**
          * @brief 处理斜杠标记。
