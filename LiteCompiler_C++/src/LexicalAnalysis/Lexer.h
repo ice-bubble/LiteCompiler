@@ -5,8 +5,8 @@
 #ifndef LEXER_H
 #define LEXER_H
 
-#include <vector>
 #include "../Token/Token.h"
+#include <vector>
 #include <string>
 #include <unordered_set>
 #include <map>
@@ -18,29 +18,26 @@
 class Lexer
 {
 public:
-   /**
-    * @brief Lexer类的构造函数，用于初始化Lexer对象。
-    * @param input 要进行词法分析的输入字符串
-    **/
-    Lexer(const std::string &input);
-   /**
-    * @brief 对输入的字符串进行词法分析，生成对应的标记序列。
-    * @param tokens 词法分析得到的标记将存储在此向量中
-    * @return bool 如果词法分析成功则返回true，否则返回false
-    **/
-    bool LexicalAnalyze(std::vector<Token> &tokens);
     /**
-     * @brief 检查给定的标识符是否为关键字，并返回相应的标记类型。
-     * @param keyword 要检查的标识符
-     * @return TokenType 关键字的标记类型，如果不是关键字则返回IDENTIFIER
+     * @brief Lexer类的构造函数，用于初始化Lexer对象。
+     * @param input 要进行词法分析的输入字符串
      **/
-    TokenType checkKeyword(const std::string &keyword) const;//声明为常量成员函数
+    Lexer(const std::string &input);
+
     /**
-     * @brief 检查给定的标识符是否为关键字，并返回相应的标记类型。
+     * @brief 对输入的字符串进行词法分析，生成对应的标记序列。
+     * @param tokens 词法分析得到的标记将存储在此向量中
+     * @return bool 如果词法分析成功则返回true，否则返回false
+     **/
+    bool LexicalAnalyze(std::vector<Token> &tokens);
+
+    /**
+     * @brief 检查给定的标识符是否为关键字，并返回布尔值。
      * @param keyword 要检查的标识符
      * @return bool 如果匹配Keyword则返回true，如果不是关键字则返回false
      **/
     bool static isKeyword(const std::string &keyword);
+
 private:
     std::string input; // 输入的内容
     size_t currentPos; // 当前所指向的元素位置
@@ -113,12 +110,12 @@ private:
      **/
     Token parseSymbol();
 
-    // /**
-    //  * @brief 检查给定的标识符是否为关键字，并返回相应的标记类型。
-    //  * @param keyword 要检查的标识符
-    //  * @return TokenType 关键字的标记类型，如果不是关键字则返回IDENTIFIER
-    //  **/
-    // TokenType checkKeyword(const std::string &keyword);
+    /**
+     * @brief 检查给定的标识符是否为关键字，并返回相应的标记类型。
+     * @param keyword 要检查的标识符
+     * @return TokenType 关键字的标记类型，如果不是关键字则返回IDENTIFIER
+     **/
+    TokenType checkKeyword(const std::string &keyword) const; //声明为常量成员函数
 };
 
 #endif // LEXER_H

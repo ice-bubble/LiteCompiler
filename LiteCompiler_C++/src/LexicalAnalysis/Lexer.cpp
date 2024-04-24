@@ -10,40 +10,37 @@
 #include <map>
 
 /*构造函数中，当前所指向的元素位置currentPos初始化为0，行号line_num初始化为1*/
-Lexer::Lexer(const std::string &input) : input(input), currentPos(0), line_num(1)
-{
-    
-}
+Lexer::Lexer(const std::string &input) : input(input), currentPos(0), line_num(1) {}
 // 初始化静态成员变量 keywords
 std::map<std::string, TokenType> Lexer::keywords = {
-        {"and", TokenType::KEYWORD_AND},
-        {"break", TokenType::KEYWORD_BREAK},
-        {"char", TokenType::KEYWORD_CHAR},
-        {"class", TokenType::KEYWORD_CLASS},
-        {"continue", TokenType::KEYWORD_CONTINUE},
-        {"do", TokenType::KEYWORD_DO},
-        {"double", TokenType::KEYWORD_DOUBLE},
-        {"else", TokenType::KEYWORD_ELSE},
-        {"false", TokenType::KEYWORD_FALSE},
-        {"for", TokenType::KEYWORD_FOR},
-        {"function", TokenType::KEYWORD_FUNCTION},
-        {"if", TokenType::KEYWORD_IF},
-        {"integer", TokenType::KEYWORD_INTEGER},
-        {"nil", TokenType::KEYWORD_NIL},
-        {"null", TokenType::KEYWORD_NULL},
-        {"not", TokenType::KEYWORD_NOT},
-        {"or", TokenType::KEYWORD_OR},
-        {"print", TokenType::KEYWORD_PRINT},
-        {"read", TokenType::KEYWORD_READ},
-        {"repeat", TokenType::KEYWORD_REPEAT},
-        {"return", TokenType::KEYWORD_RETURN},
-        {"super", TokenType::KEYWORD_SUPER},
-        {"this", TokenType::KEYWORD_THIS},
-        {"true", TokenType::KEYWORD_TRUE},
-        {"until", TokenType::KEYWORD_UNTIL},
-        {"var", TokenType::KEYWORD_VAR},
-        {"while", TokenType::KEYWORD_WHILE},
-        {"write", TokenType::KEYWORD_WRITE}
+    {"and", TokenType::KEYWORD_AND},
+    {"break", TokenType::KEYWORD_BREAK},
+    {"char", TokenType::KEYWORD_CHAR},
+    {"class", TokenType::KEYWORD_CLASS},
+    {"continue", TokenType::KEYWORD_CONTINUE},
+    {"do", TokenType::KEYWORD_DO},
+    {"double", TokenType::KEYWORD_DOUBLE},
+    {"else", TokenType::KEYWORD_ELSE},
+    {"false", TokenType::KEYWORD_FALSE},
+    {"for", TokenType::KEYWORD_FOR},
+    {"function", TokenType::KEYWORD_FUNCTION},
+    {"if", TokenType::KEYWORD_IF},
+    {"integer", TokenType::KEYWORD_INTEGER},
+    {"nil", TokenType::KEYWORD_NIL},
+    {"null", TokenType::KEYWORD_NULL},
+    {"not", TokenType::KEYWORD_NOT},
+    {"or", TokenType::KEYWORD_OR},
+    {"print", TokenType::KEYWORD_PRINT},
+    {"read", TokenType::KEYWORD_READ},
+    {"repeat", TokenType::KEYWORD_REPEAT},
+    {"return", TokenType::KEYWORD_RETURN},
+    {"super", TokenType::KEYWORD_SUPER},
+    {"this", TokenType::KEYWORD_THIS},
+    {"true", TokenType::KEYWORD_TRUE},
+    {"until", TokenType::KEYWORD_UNTIL},
+    {"var", TokenType::KEYWORD_VAR},
+    {"while", TokenType::KEYWORD_WHILE},
+    {"write", TokenType::KEYWORD_WRITE}
 };
 
 TokenType Lexer::checkKeyword(const std::string &keyword) const
@@ -75,13 +72,13 @@ bool Lexer::isKeyword(const std::string &keyword)
 char Lexer::peek() const
 {
     if (isAtEnd()) return '\0'; // 如果isAtENd()为真，说明全部数据读取完毕，返回'\0'表示读取过程结束
-    return input[currentPos];   // 返回当前所指向的元素（char类型）
+    return input[currentPos]; // 返回当前所指向的元素（char类型）
 }
 
 char Lexer::advance()
 {
-    if (!isAtEnd()) currentPos++;   // 如果isAtENd()为假，说明全部数据还未读取完毕，指针移向下一个元素
-    return input[currentPos - 1];   // 返回指针+1前所指向的元素（char类型）
+    if (!isAtEnd()) currentPos++; // 如果isAtENd()为假，说明全部数据还未读取完毕，指针移向下一个元素
+    return input[currentPos - 1]; // 返回指针+1前所指向的元素（char类型）
 }
 
 bool Lexer::isAtEnd() const
@@ -175,8 +172,7 @@ Token Lexer::parseIdentifier()
 
 Token Lexer::parseString()
 {
-
-    return Token(TokenType::STRING,"");
+    return Token(TokenType::STRING, "");
 }
 
 Token Lexer::parseNumber()
@@ -189,7 +185,7 @@ Token Lexer::parseNumber()
     {
         number += "0";
     }
-    while (!isAtEnd() && (isDigit(peek()) || peek() == '.' || isAlpha(peek()) ))
+    while (!isAtEnd() && (isDigit(peek()) || peek() == '.' || isAlpha(peek())))
     {
         if (peek() == '.')
         {
@@ -202,16 +198,17 @@ Token Lexer::parseNumber()
                 return Token(TokenType::INVALID, ".");
             }
         }
-        if(isAlpha(peek())){
+        if (isAlpha(peek()))
+        {
             number += peek();
             advance();
             has_exist_Alpha = true;
         }
-        
+
         number += peek();
         advance();
     }
-    if (has_exist_Alpha) 
+    if (has_exist_Alpha)
     {
         error(line_num, number);
         return Token(TokenType::INVALID, number);

@@ -19,10 +19,9 @@ int main(int argc, char *argv[])
     std::vector<Token> tokens;
 
     // 读取文件
-    FileHandler fileHandler;
     std::string errorMessage;
     std::string filename(argv[1]); // 传递文件名
-    if (!fileHandler.readFile(filename, input, errorMessage))
+    if (!FileHandler::readFile(filename, input, errorMessage))
     {
         std::cerr << "Error reading file: " << errorMessage << std::endl;
         return 1;
