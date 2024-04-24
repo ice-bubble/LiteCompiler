@@ -453,7 +453,7 @@ bool Lexer::LexicalAnalyze(std::vector<Token> &tokens)
         skipWhitespace(); // 跳过' '、'\n'、'\t'
         if (isAtEnd())
         {
-            if (exist_error)return false; // 存在词法错误情况下【判断方式暂未添加】
+            if (exist_error)return false; // 存在词法错误情况下
             return true;
         }
         if (isAlpha(peek())) // id
@@ -469,6 +469,6 @@ bool Lexer::LexicalAnalyze(std::vector<Token> &tokens)
             tokens.push_back(parseSymbol());
         }
     }
-    if (exist_error)return false; // 存在词法错误情况下【判断方式暂未添加】
+    if (exist_error)return false; // 存在词法错误情况下
     return true;
 }
