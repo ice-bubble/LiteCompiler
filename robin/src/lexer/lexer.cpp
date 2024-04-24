@@ -87,8 +87,10 @@ namespace Lexer {
                 return addToken(match('=') ? Token::TOKEN_GREATER_EQUAL : Token::TOKEN_GREATER);
             case '/':
                 return slash();
-            case '"':
-                return _string();
+            case '\'':
+                return _string('\'');
+            case '\"':
+                return _string('\"');
             case '\n':
                 line++;
                 return;
@@ -142,22 +144,22 @@ namespace Lexer {
                  static_cast<long>(std::stod(source.substr(start, current - start))));
     }
 
-    void Lexer::_string() {
-        while (peek() != '"' && !isAtEnd()) {
+    void Lexer::_string(char front) {
+        while (peek() != front && !isAtEnd()) {
             if (peek() == '\n') line++;
             advance();
         }
 
-        // 处理找不到闭合的 " 的情况
+        // 处理找不到闭合的 " 或 ' 的情况
         if (isAtEnd()) {
             error(line, "Unterminated string.");
             return;
         }
 
-        // 消费闭合的 "
+        // 消费闭合的 " 或 '
         advance();
 
-        // 截取子串时记得去掉开始和结尾的"
+        // 截取子串时记得去掉开始和结尾的 " 或 '
         addToken(Token::TOKEN_STRING, source.substr(start + 1, current - start - 2));
     }
 

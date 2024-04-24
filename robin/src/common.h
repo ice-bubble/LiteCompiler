@@ -19,6 +19,9 @@
 #define DEBUG_FLAG                  ///< 启用此宏定义使得主函数#include<debug.h>
 #define DEBUG_PRINT_TOKENLIST       ///< 启用此宏定义使得主函数打印tokenList
 
+
+#define toVarString(var) #var       ///< 将变量名转为字符串
+
 typedef std::any Object;
 
 template<typename T>
