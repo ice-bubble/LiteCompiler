@@ -32,11 +32,9 @@ public:
     bool LexicalAnalyze(std::vector<Token> &tokens);
 
     /**
-     * @brief 检查给定的标识符是否为关键字，并返回布尔值。
-     * @param keyword 要检查的标识符
-     * @return bool 如果匹配Keyword则返回true，如果不是关键字则返回false
+     * @brief 遍历map输出所有Keyword。
      **/
-    bool static isKeyword(const std::string &keyword);
+    static void printKeyword();
 
 private:
     bool exist_error;  // 是否存在词法错误，初始值为false

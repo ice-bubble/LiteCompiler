@@ -57,17 +57,13 @@ TokenType Lexer::checkKeyword(const std::string &keyword) const
     return TokenType::IDENTIFIER;
 }
 
-bool Lexer::isKeyword(const std::string &keyword)
+void Lexer::printKeyword()
 {
     // 在 keywords 中查找关键字
-    auto it = keywords.find(keyword);
-    if (it != keywords.end())
-    {
-        // 如果找到了，则返回true
-        return true;
+    for(auto it:keywords){
+        std::cout << "KEYWORD " << it.first << std::endl;
     }
-    // 否则，只是普通的id，返回 IDENTIFIER
-    return false;
+    
 }
 
 char Lexer::peek() const

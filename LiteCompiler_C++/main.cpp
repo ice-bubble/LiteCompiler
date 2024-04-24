@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     Debug::printTokens(tokens);
 
     // 输出KEYWORD和IDENTIFIER
-    // Debug::printsymbolTokens(tokens);
+    Debug::printsymbolTokens(tokens);
 
     return 0;
 }

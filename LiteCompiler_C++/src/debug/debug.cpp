@@ -126,19 +126,15 @@ void Debug::printTokens(const std::vector<Token> &tokens)
 
 void Debug::printsymbolTokens(const std::vector<Token> &tokens)
 {
-    std::vector<std::string> keywords;
+    //输出全部Keyword
+    Lexer::printKeyword();
     std::vector<std::string> identifiers;
-
     for (const Token &token: tokens)
     {
         if (token.getType() != TokenType::INVALID && token.getType() != TokenType::EMPTY &&
             token.getValue() != "\n" && token.getValue() != "\0" && token.getValue() != "\t")
         {
-            // 获取标记的值，作为参数传递给 isKeyword 函数
-            if (Lexer::isKeyword(token.getValue()))
-            {
-                keywords.push_back(token.getValue());
-            }
+            // 获取标记的TYPE，匹配IDENTIFIER则存储
             if (token.getType() == TokenType::IDENTIFIER)
             {
                 identifiers.push_back(token.getValue());
@@ -147,14 +143,7 @@ void Debug::printsymbolTokens(const std::vector<Token> &tokens)
     }
 
     // 去除重复元素
-    //keywords = removeDuplicates(keywords);
     identifiers = removeDuplicates(identifiers);
-
-    // 输出关键字
-    for (const auto &keyword: keywords)
-    {
-        std::cout << "KEYWORD " << keyword << std::endl;
-    }
 
     // 输出标识符
     for (const auto &identifier: identifiers)
