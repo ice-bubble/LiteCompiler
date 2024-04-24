@@ -180,13 +180,30 @@ Token Lexer::parseString(char start_ch)
     if (start_ch == '\'')
     {
         while (peek() != '\'')
+        {
             matched_str += advance();
+            if (isAtEnd()) // 未找到闭合，Error
+            {
+                error(line_num, "Unterminated \"'\".");
+                exist_error = true;
+                return Token(TokenType::INVALID, "'", line_num);
+            }
+        }
+
         advance(); // consume '
     }
     else if (start_ch == '"')
     {
         while (peek() != '"')
+        {
             matched_str += advance();
+            if (isAtEnd()) // 未找到闭合，Error
+            {
+                error(line_num, "Unterminated '\"'.");
+                exist_error = true;
+                return Token(TokenType::INVALID, "\"", line_num);
+            }
+        }
         advance(); // consume "
     }
     return Token(TokenType::STRING, matched_str, line_num);
