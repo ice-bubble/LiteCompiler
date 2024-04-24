@@ -9,8 +9,9 @@
 #include <algorithm>
 #include <map>
 
-/*构造函数中，当前所指向的元素位置currentPos初始化为0，行号line_num初始化为1*/
-Lexer::Lexer(const std::string &input) : input(input), currentPos(0), line_num(1) {}
+/*构造函数中，当前所指向的元素位置currentPos初始化为0，行号line_num初始化为1，变量exist_error初始化为false*/
+Lexer::Lexer(const std::string &input) : input(input), currentPos(0), line_num(1), exist_error(false){}
+
 // 初始化静态成员变量 keywords
 std::map<std::string, TokenType> Lexer::keywords = {
     {"and", TokenType::KEYWORD_AND},
@@ -107,7 +108,7 @@ void Lexer::skipWhitespace()
 }
 
 
-void Lexer::skipComment()
+bool Lexer::skipComment()
 {
     currentPos--; // 进入函数时，制作指向触发注释符号位置的下一位，因此先回退再处理
     // 略过注释
@@ -139,7 +140,8 @@ void Lexer::skipComment()
                 if (isAtEnd())
                 {
                     error(line_num, "Unterminated comment.");
-                    return;
+                    exist_error = true;
+                    return false;
                 }
                 advance();
             }
@@ -154,6 +156,7 @@ void Lexer::skipComment()
     {
         while (!isAtEnd() && peek() != '\n') advance();
     }
+    return true;
 }
 
 Token Lexer::parseIdentifier()
@@ -170,9 +173,22 @@ Token Lexer::parseIdentifier()
 }
 
 
-Token Lexer::parseString()
+Token Lexer::parseString(char start_ch)
 {
-    return Token(TokenType::STRING, "");
+    std::string matched_str;
+    if(start_ch == '\'')
+    {
+        while(peek()!='\'')
+            matched_str+=advance();
+        advance(); // consume '
+    }
+    else if(start_ch == '"')
+    {
+        while(peek()!='"')
+            matched_str+=advance();
+        advance(); // consume "
+    }
+    return Token(TokenType::STRING, matched_str);
 }
 
 Token Lexer::parseNumber()
@@ -194,8 +210,10 @@ Token Lexer::parseNumber()
             else
             {
                 // Error
-                advance();
-                return Token(TokenType::INVALID, ".");
+                number += advance();
+                error(line_num, number);
+                exist_error = true;
+                return Token(TokenType::INVALID, number);
             }
         }
         if (isAlpha(peek()))
@@ -204,13 +222,12 @@ Token Lexer::parseNumber()
             advance();
             has_exist_Alpha = true;
         }
-
-        number += peek();
-        advance();
+        else number += advance();
     }
     if (has_exist_Alpha)
     {
         error(line_num, number);
+        exist_error = true;
         return Token(TokenType::INVALID, number);
     }
     if (has_exist_point) return Token(TokenType::FLOAT, number);
@@ -238,9 +255,17 @@ Token Lexer::parseSymbol()
         case '}':
             return Token(TokenType::RIGHT_BRACE, "}");
         case '"':
-            return parseString();
+        {
+            return parseString(symbol);
+            // return Token(TokenType::D_MARKS, "\"");
+        }
+
         case '\'':
-            return Token(TokenType::S_MARKS, "'");
+        {
+            return parseString(symbol);
+            // return Token(TokenType::S_MARKS, "'");
+        }
+
         case '.':
         {
             if (isDigit(peek())) // 是数字".5"类型
@@ -255,14 +280,14 @@ Token Lexer::parseSymbol()
             if (peek() == '=')
             {
                 advance();
-                return Token(TokenType::PLUS_FORWARD, "+=");
+                return Token(TokenType::PLUS_ASSIGNMENT, "+=");
             }
             return Token(TokenType::PLUS, "+");
         case '-':
             if (peek() == '=')
             {
                 advance();
-                return Token(TokenType::MINUS_FORWARD, "-=");
+                return Token(TokenType::MINUS_ASSIGNMENT, "-=");
             }
             return Token(TokenType::MINUS, "-");
         case '*':
@@ -270,7 +295,7 @@ Token Lexer::parseSymbol()
             if (peek() == '=')
             {
                 advance();
-                return Token(TokenType::MULTIPLY_FORWARD, "*=");
+                return Token(TokenType::MULTIPLY_ASSIGNMENT, "*=");
             }
             return Token(TokenType::MULTIPLY, "*");
         }
@@ -281,11 +306,12 @@ Token Lexer::parseSymbol()
                 case '=':
                 {
                     advance();
-                    return Token(TokenType::DIVIDE_FORWARD, "/=");
+                    return Token(TokenType::DIVIDE_ASSIGNMENT, "/=");
                 }
                 case '/':
                 {
-                    skipComment();
+                    if (!skipComment())
+                        return Token(TokenType::INVALID, "Unterminated comment.");
                     return Token(TokenType::EMPTY, "");
                 }
                 default:
@@ -319,7 +345,7 @@ Token Lexer::parseSymbol()
                 case '=':
                 {
                     advance();
-                    return Token(TokenType::AND_FORWARD, "&=");
+                    return Token(TokenType::AND_ASSIGNMENT, "&=");
                 }
                 case '&':
                 {
@@ -339,7 +365,7 @@ Token Lexer::parseSymbol()
                 case '=':
                 {
                     advance();
-                    return Token(TokenType::OR_FORWARD, "|=");
+                    return Token(TokenType::OR_ASSIGNMENT, "|=");
                 }
                 case '|':
                 {
@@ -357,7 +383,7 @@ Token Lexer::parseSymbol()
             if (peek() == '=')
             {
                 advance();
-                return Token(TokenType::XOR_FORWARD, "^=");
+                return Token(TokenType::XOR_ASSIGNMENT, "^=");
             }
             return Token(TokenType::XOR, "^");
         }
@@ -365,7 +391,8 @@ Token Lexer::parseSymbol()
             return Token(TokenType::NOT, "~");
         case '#':
         {
-            skipComment();
+            if (!skipComment())
+                return Token(TokenType::INVALID, "Unterminated comment.");
             return Token(TokenType::EMPTY, "");
         }
         case ',':
@@ -388,11 +415,21 @@ Token Lexer::parseSymbol()
             }
             return Token(TokenType::BELOW, "<");
         }
+        case '%':
+        {
+            if (peek() == '=')
+            {
+                advance();
+                return Token(TokenType::MOD_ASSIGNMENT, "%=");
+            }
+            return Token(TokenType::MOD, "%");
+        }
         default:
         {
             std::string invalid_string;
             invalid_string += symbol;
             error(line_num, "Unexpected character '" + invalid_string + "'.");
+            exist_error = true;
             return Token(TokenType::INVALID, invalid_string);
         }
     }
@@ -403,7 +440,11 @@ bool Lexer::LexicalAnalyze(std::vector<Token> &tokens)
     while (!isAtEnd())
     {
         skipWhitespace(); // 跳过' '、'\n'、'\t'
-        if (isAtEnd()) return true;
+        if (isAtEnd())
+        {
+            if (exist_error)return false; // 存在词法错误情况下【判断方式暂未添加】
+            return true;
+        }
         if (isAlpha(peek())) // id
         {
             tokens.push_back(parseIdentifier());
@@ -417,5 +458,6 @@ bool Lexer::LexicalAnalyze(std::vector<Token> &tokens)
             tokens.push_back(parseSymbol());
         }
     }
+    if (exist_error)return false; // 存在词法错误情况下【判断方式暂未添加】
     return true;
 }

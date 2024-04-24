@@ -39,6 +39,7 @@ public:
     bool static isKeyword(const std::string &keyword);
 
 private:
+    bool exist_error;  // 是否存在词法错误，初始值为false
     std::string input; // 输入的内容
     size_t currentPos; // 当前所指向的元素位置
     size_t line_num; // 行号
@@ -83,8 +84,9 @@ private:
 
     /**
      * @brief 跳过当前字符流中的注释。
+     * @return 单行注释返回true；多行注释返回true表示正常闭合，false表示多行注释未闭合
      **/
-    void skipComment();
+    bool skipComment();
 
     /**
      * @brief 解析标识符并返回相应的标记。
@@ -94,9 +96,10 @@ private:
 
     /**
      * @brief 解析字符串并返回相应的标记。
+     * @param start_ch 字符串开头的符号，用于后续判断是否是同一个符号闭合【这里字符串用单引号闭合或双引号闭合表示】
      * @return Token 解析得到的字符串标记
      **/
-    Token parseString();
+    Token parseString(char start_ch);
 
     /**
      * @brief 解析数字并返回相应的标记。

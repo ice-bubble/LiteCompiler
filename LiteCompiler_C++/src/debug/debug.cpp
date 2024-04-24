@@ -21,6 +21,9 @@ void Debug::printTokens(const std::vector<Token> &tokens)
                 case TokenType::FLOAT:
                     std::cout << "REAL, ";
                     break;
+                case TokenType::STRING:
+                    std::cout << "STRING, ";
+                    break;
                 // case TokenType::SEMICOLON:
                 //     std::cout << "Semicolon";
                 //     break;
