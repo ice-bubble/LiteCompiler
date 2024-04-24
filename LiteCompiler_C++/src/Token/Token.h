@@ -109,8 +109,9 @@ public:
     * @brief Token类的构造函数
     * @param type 标记的类型
     * @param value 标记原始值（字符串类型存储）
+    * @param line_n 标记所在的行号
     **/
-    Token(TokenType type, const std::string &value);
+    Token(TokenType type, const std::string &value, size_t line_n);
 
     /**
     * @brief 获取Token的类型
@@ -127,6 +128,7 @@ public:
 private:
     TokenType type; // Token类成员——标记类型
     std::string value; // Token类成员——标记原始值（字符串类型存储）
+    size_t line_num; // 标记位置的行号
 };
 
 #endif // TOKEN_H

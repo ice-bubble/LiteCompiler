@@ -10,7 +10,7 @@
 #include <map>
 
 /*构造函数中，当前所指向的元素位置currentPos初始化为0，行号line_num初始化为1，变量exist_error初始化为false*/
-Lexer::Lexer(const std::string &input) : input(input), currentPos(0), line_num(1), exist_error(false){}
+Lexer::Lexer(const std::string &input) : input(input), currentPos(0), line_num(1), exist_error(false) {}
 
 // 初始化静态成员变量 keywords
 std::map<std::string, TokenType> Lexer::keywords = {
@@ -60,10 +60,10 @@ TokenType Lexer::checkKeyword(const std::string &keyword) const
 void Lexer::printKeyword()
 {
     // 在 keywords 中查找关键字
-    for(auto it:keywords){
+    for (auto it: keywords)
+    {
         std::cout << "KEYWORD " << it.first << std::endl;
     }
-    
 }
 
 char Lexer::peek() const
@@ -159,32 +159,31 @@ Token Lexer::parseIdentifier()
 {
     // 解析标识符和关键字
     std::string identifier;
-    char first_char = peek();
     while (!isAtEnd() && (isAlpha(peek()) || isDigit(peek())))
     {
         identifier += peek();
         advance();
     }
-    return Token(this->checkKeyword(identifier), identifier);
+    return Token(this->checkKeyword(identifier), identifier, line_num);
 }
 
 
 Token Lexer::parseString(char start_ch)
 {
     std::string matched_str;
-    if(start_ch == '\'')
+    if (start_ch == '\'')
     {
-        while(peek()!='\'')
-            matched_str+=advance();
+        while (peek() != '\'')
+            matched_str += advance();
         advance(); // consume '
     }
-    else if(start_ch == '"')
+    else if (start_ch == '"')
     {
-        while(peek()!='"')
-            matched_str+=advance();
+        while (peek() != '"')
+            matched_str += advance();
         advance(); // consume "
     }
-    return Token(TokenType::STRING, matched_str);
+    return Token(TokenType::STRING, matched_str, line_num);
 }
 
 Token Lexer::parseNumber()
@@ -192,7 +191,6 @@ Token Lexer::parseNumber()
     // 解析数字
     std::string number;
     bool has_exist_point = false;
-    bool has_exist_Alpha = false;
     if (peek() == '.') // 数字的第一个为"."，即".5"类型的实数
     {
         number += "0";
@@ -209,25 +207,13 @@ Token Lexer::parseNumber()
                 number += advance();
                 error(line_num, number);
                 exist_error = true;
-                return Token(TokenType::INVALID, number);
+                return Token(TokenType::INVALID, number, line_num);
             }
         }
-        if (isAlpha(peek()))
-        {
-            number += peek();
-            advance();
-            has_exist_Alpha = true;
-        }
-        else number += advance();
+        advance();
     }
-    if (has_exist_Alpha)
-    {
-        error(line_num, number);
-        exist_error = true;
-        return Token(TokenType::INVALID, number);
-    }
-    if (has_exist_point) return Token(TokenType::FLOAT, number);
-    else return Token(TokenType::INTEGER, number);
+    if (has_exist_point) return Token(TokenType::FLOAT, number, line_num);
+    else return Token(TokenType::INTEGER, number, line_num);
 }
 
 Token Lexer::parseSymbol()
@@ -237,19 +223,19 @@ Token Lexer::parseSymbol()
     switch (symbol)
     {
         case ';':
-            return Token(TokenType::SEMICOLON, ";");
+            return Token(TokenType::SEMICOLON, ";", line_num);
         case '(':
-            return Token(TokenType::LEFT_PAREN, "(");
+            return Token(TokenType::LEFT_PAREN, "(", line_num);
         case ')':
-            return Token(TokenType::RIGHT_PAREN, ")");
+            return Token(TokenType::RIGHT_PAREN, ")", line_num);
         case '[':
-            return Token(TokenType::LEFT_BRACKET, "[");
+            return Token(TokenType::LEFT_BRACKET, "[", line_num);
         case ']':
-            return Token(TokenType::RIGHT_BRACKET, "]");
+            return Token(TokenType::RIGHT_BRACKET, "]", line_num);
         case '{':
-            return Token(TokenType::LEFT_BRACE, "{");
+            return Token(TokenType::LEFT_BRACE, "{", line_num);
         case '}':
-            return Token(TokenType::RIGHT_BRACE, "}");
+            return Token(TokenType::RIGHT_BRACE, "}", line_num);
         case '"':
         {
             return parseString(symbol);
@@ -269,31 +255,31 @@ Token Lexer::parseSymbol()
                 currentPos--;
                 return parseNumber(); // 继续判断是否为数字
             }
-            return Token(TokenType::MEMBER, ".");
+            return Token(TokenType::MEMBER, ".", line_num);
         }
 
         case '+':
             if (peek() == '=')
             {
                 advance();
-                return Token(TokenType::PLUS_ASSIGNMENT, "+=");
+                return Token(TokenType::PLUS_ASSIGNMENT, "+=", line_num);
             }
-            return Token(TokenType::PLUS, "+");
+            return Token(TokenType::PLUS, "+", line_num);
         case '-':
             if (peek() == '=')
             {
                 advance();
-                return Token(TokenType::MINUS_ASSIGNMENT, "-=");
+                return Token(TokenType::MINUS_ASSIGNMENT, "-=", line_num);
             }
-            return Token(TokenType::MINUS, "-");
+            return Token(TokenType::MINUS, "-", line_num);
         case '*':
         {
             if (peek() == '=')
             {
                 advance();
-                return Token(TokenType::MULTIPLY_ASSIGNMENT, "*=");
+                return Token(TokenType::MULTIPLY_ASSIGNMENT, "*=", line_num);
             }
-            return Token(TokenType::MULTIPLY, "*");
+            return Token(TokenType::MULTIPLY, "*", line_num);
         }
         case '/':
         {
@@ -302,17 +288,17 @@ Token Lexer::parseSymbol()
                 case '=':
                 {
                     advance();
-                    return Token(TokenType::DIVIDE_ASSIGNMENT, "/=");
+                    return Token(TokenType::DIVIDE_ASSIGNMENT, "/=", line_num);
                 }
                 case '/':
                 {
                     if (!skipComment())
-                        return Token(TokenType::INVALID, "Unterminated comment.");
-                    return Token(TokenType::EMPTY, "");
+                        return Token(TokenType::INVALID, "Unterminated comment.", line_num);
+                    return Token(TokenType::EMPTY, "", line_num);
                 }
                 default:
                 {
-                    return Token(TokenType::DIVIDE, "/");
+                    return Token(TokenType::DIVIDE, "/", line_num);
                 };
             }
         }
@@ -321,18 +307,18 @@ Token Lexer::parseSymbol()
             if (peek() == '=')
             {
                 advance();
-                return Token(TokenType::EQUAL, "==");
+                return Token(TokenType::EQUAL, "==", line_num);
             }
-            return Token(TokenType::ASSIGNMENT, "=");
+            return Token(TokenType::ASSIGNMENT, "=", line_num);
         }
         case '!':
         {
             if (peek() == '=')
             {
                 advance();
-                return Token(TokenType::NOT_EQUAL, "!=");
+                return Token(TokenType::NOT_EQUAL, "!=", line_num);
             }
-            return Token(TokenType::LOGICAL_NOT, "!");
+            return Token(TokenType::LOGICAL_NOT, "!", line_num);
         }
         case '&':
         {
@@ -341,16 +327,16 @@ Token Lexer::parseSymbol()
                 case '=':
                 {
                     advance();
-                    return Token(TokenType::AND_ASSIGNMENT, "&=");
+                    return Token(TokenType::AND_ASSIGNMENT, "&=", line_num);
                 }
                 case '&':
                 {
                     advance();
-                    return Token(TokenType::LOGICAL_AND, "&&");
+                    return Token(TokenType::LOGICAL_AND, "&&", line_num);
                 }
                 default:
                 {
-                    return Token(TokenType::AND, "&");
+                    return Token(TokenType::AND, "&", line_num);
                 };
             }
         }
@@ -361,16 +347,16 @@ Token Lexer::parseSymbol()
                 case '=':
                 {
                     advance();
-                    return Token(TokenType::OR_ASSIGNMENT, "|=");
+                    return Token(TokenType::OR_ASSIGNMENT, "|=", line_num);
                 }
                 case '|':
                 {
                     advance();
-                    return Token(TokenType::LOGICAL_OR, "||");
+                    return Token(TokenType::LOGICAL_OR, "||", line_num);
                 }
                 default:
                 {
-                    return Token(TokenType::OR, "|");
+                    return Token(TokenType::OR, "|", line_num);
                 };
             }
         }
@@ -379,46 +365,46 @@ Token Lexer::parseSymbol()
             if (peek() == '=')
             {
                 advance();
-                return Token(TokenType::XOR_ASSIGNMENT, "^=");
+                return Token(TokenType::XOR_ASSIGNMENT, "^=", line_num);
             }
-            return Token(TokenType::XOR, "^");
+            return Token(TokenType::XOR, "^", line_num);
         }
         case '~':
-            return Token(TokenType::NOT, "~");
+            return Token(TokenType::NOT, "~", line_num);
         case '#':
         {
             if (!skipComment())
-                return Token(TokenType::INVALID, "Unterminated comment.");
-            return Token(TokenType::EMPTY, "");
+                return Token(TokenType::INVALID, "Unterminated comment.", line_num);
+            return Token(TokenType::EMPTY, "", line_num);
         }
         case ',':
-            return Token(TokenType::COMMA, ",");
+            return Token(TokenType::COMMA, ",", line_num);
         case '>':
         {
             if (peek() == '=')
             {
                 advance();
-                return Token(TokenType::ABOVE_OR_EUQAL, ">=");
+                return Token(TokenType::ABOVE_OR_EUQAL, ">=", line_num);
             }
-            return Token(TokenType::ABOVE, ">");
+            return Token(TokenType::ABOVE, ">", line_num);
         }
         case '<':
         {
             if (peek() == '<')
             {
                 advance();
-                return Token(TokenType::BELOW_OR_EUQAL, "<=");
+                return Token(TokenType::BELOW_OR_EUQAL, "<=", line_num);
             }
-            return Token(TokenType::BELOW, "<");
+            return Token(TokenType::BELOW, "<", line_num);
         }
         case '%':
         {
             if (peek() == '=')
             {
                 advance();
-                return Token(TokenType::MOD_ASSIGNMENT, "%=");
+                return Token(TokenType::MOD_ASSIGNMENT, "%=", line_num);
             }
-            return Token(TokenType::MOD, "%");
+            return Token(TokenType::MOD, "%", line_num);
         }
         default:
         {
@@ -426,7 +412,7 @@ Token Lexer::parseSymbol()
             invalid_string += symbol;
             error(line_num, "Unexpected character '" + invalid_string + "'.");
             exist_error = true;
-            return Token(TokenType::INVALID, invalid_string);
+            return Token(TokenType::INVALID, invalid_string, line_num);
         }
     }
 }

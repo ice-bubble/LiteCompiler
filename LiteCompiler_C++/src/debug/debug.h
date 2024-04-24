@@ -21,6 +21,7 @@ public:
      * @param tokens 要打印的标记向量（vector类型）
      **/
     static void printTokens(const std::vector<Token> &tokens);
+
     /**
      * @brief 输出标记向量中的KEYWORD和IDENTIFIER标记【其中相同的IDENTIFIER标记只输出一次】。
      * @param tokens 要打印的标记向量（vector类型）

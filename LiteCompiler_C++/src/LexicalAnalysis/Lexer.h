@@ -37,7 +37,7 @@ public:
     static void printKeyword();
 
 private:
-    bool exist_error;  // 是否存在词法错误，初始值为false
+    bool exist_error; // 是否存在词法错误，初始值为false
     std::string input; // 输入的内容
     size_t currentPos; // 当前所指向的元素位置
     size_t line_num; // 行号
