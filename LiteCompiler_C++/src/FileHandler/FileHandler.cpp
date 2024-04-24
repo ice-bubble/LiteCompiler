@@ -20,3 +20,24 @@ bool FileHandler::readFile(const std::string &filename, std::string &content, st
     content = buffer.str();
     return true;
 }
+
+bool FileHandler::writeFile(const std::string &filename, const std::string &content, std::string &errorMessage)
+{
+    std::ofstream file(filename);
+    if (!file.is_open())
+    {
+        errorMessage = "Failed to open file for writing: " + filename;
+        return false;
+    }
+
+    file << content;
+    file.close();
+
+    if (file.fail())
+    {
+        errorMessage = "Error occurred while writing to file: " + filename;
+        return false;
+    }
+
+    return true;
+}

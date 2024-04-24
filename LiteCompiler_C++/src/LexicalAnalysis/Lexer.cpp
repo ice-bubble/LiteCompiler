@@ -14,32 +14,32 @@ Lexer::Lexer(const std::string &input) : input(input), currentPos(0), line_num(1
 
 // 初始化静态成员变量 keywords
 std::map<std::string, TokenType> Lexer::keywords = {
-    {"and", TokenType::KEYWORD_AND},
-    {"break", TokenType::KEYWORD_BREAK},
+    //{"and", TokenType::KEYWORD_AND},
+    //{"break", TokenType::KEYWORD_BREAK},
     {"char", TokenType::KEYWORD_CHAR},
-    {"class", TokenType::KEYWORD_CLASS},
-    {"continue", TokenType::KEYWORD_CONTINUE},
+    //{"class", TokenType::KEYWORD_CLASS},
+    //{"continue", TokenType::KEYWORD_CONTINUE},
     {"do", TokenType::KEYWORD_DO},
     {"double", TokenType::KEYWORD_DOUBLE},
     {"else", TokenType::KEYWORD_ELSE},
-    {"false", TokenType::KEYWORD_FALSE},
+    //{"false", TokenType::KEYWORD_FALSE},
     {"for", TokenType::KEYWORD_FOR},
     {"function", TokenType::KEYWORD_FUNCTION},
     {"if", TokenType::KEYWORD_IF},
     {"integer", TokenType::KEYWORD_INTEGER},
-    {"nil", TokenType::KEYWORD_NIL},
-    {"null", TokenType::KEYWORD_NULL},
-    {"not", TokenType::KEYWORD_NOT},
-    {"or", TokenType::KEYWORD_OR},
-    {"print", TokenType::KEYWORD_PRINT},
+    //{"nil", TokenType::KEYWORD_NIL},
+    //{"null", TokenType::KEYWORD_NULL},
+    //{"not", TokenType::KEYWORD_NOT},
+    //{"or", TokenType::KEYWORD_OR},
+    //{"print", TokenType::KEYWORD_PRINT},
     {"read", TokenType::KEYWORD_READ},
     {"repeat", TokenType::KEYWORD_REPEAT},
     {"return", TokenType::KEYWORD_RETURN},
-    {"super", TokenType::KEYWORD_SUPER},
-    {"this", TokenType::KEYWORD_THIS},
-    {"true", TokenType::KEYWORD_TRUE},
+    //{"super", TokenType::KEYWORD_SUPER},
+    //{"this", TokenType::KEYWORD_THIS},
+    //{"true", TokenType::KEYWORD_TRUE},
     {"until", TokenType::KEYWORD_UNTIL},
-    {"var", TokenType::KEYWORD_VAR},
+    //{"var", TokenType::KEYWORD_VAR},
     {"while", TokenType::KEYWORD_WHILE},
     {"write", TokenType::KEYWORD_WRITE}
 };
@@ -61,9 +61,16 @@ void Lexer::printKeyword()
 {
     // 在 keywords 中查找关键字
     for (auto it: keywords)
-    {
         std::cout << "KEYWORD " << it.first << std::endl;
-    }
+}
+
+std::string Lexer::getAllKeyword()
+{
+    std::string AllKeyword_String;
+    // 在 keywords 中查找关键字，并拼接进字符串
+    for (auto it: keywords)
+        AllKeyword_String += "KEYWORD " + it.first + '\n';
+    return AllKeyword_String;
 }
 
 char Lexer::peek() const

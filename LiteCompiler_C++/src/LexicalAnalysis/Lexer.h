@@ -36,6 +36,12 @@ public:
      **/
     static void printKeyword();
 
+    /**
+     * @brief 遍历map获取所有Keyword。
+     * @return 返回所有待输出字符串按照格式拼接而成的整个字符串【含换行】
+     **/
+    static std::string getAllKeyword();
+
 private:
     bool exist_error; // 是否存在词法错误，初始值为false
     std::string input; // 输入的内容
@@ -48,11 +54,13 @@ private:
      * @return char 下一个字符
      **/
     char peek() const;
+
     /**
      * @brief 返回当前字符流的下一个字符，但不消耗它。
      * @return char 下一个字符
      **/
     char peekNext() const;
+
     /**
      * @brief 消耗并返回当前字符流的下一个字符。
      * @return char 消耗的字符

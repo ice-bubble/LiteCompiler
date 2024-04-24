@@ -3,6 +3,15 @@
 //
 #include "debug.h"
 
+ /*
+ *    注意！！输出到文件和输出到终端的输出函数是不同的，如有修改输出格式请一并修改其对应的函数
+ *    函数对应关系：
+ *    Debug::printTokens         <-->    Debug::getAllTokens
+ *    Debug::printSymbolTokens   <-->    Debug::getAllSymbolTokens
+ *    Lexer::printKeyword        <-->    Lexer::getAllKeyword
+ */
+
+
 void Debug::printTokens(const std::vector<Token> &tokens)
 {
     for (const Token &token: tokens)
@@ -124,7 +133,7 @@ void Debug::printTokens(const std::vector<Token> &tokens)
     }
 }
 
-void Debug::printsymbolTokens(const std::vector<Token> &tokens)
+void Debug::printSymbolTokens(const std::vector<Token> &tokens)
 {
     //输出全部Keyword
     Lexer::printKeyword();
@@ -150,6 +159,73 @@ void Debug::printsymbolTokens(const std::vector<Token> &tokens)
     {
         std::cout << "IDENTIFIER " << identifier << std::endl;
     }
+}
+
+std::string Debug::getAllSymbolTokens(const std::vector<Token> &tokens)
+{
+    std::string output;
+
+    // 获取所有Keyword按照格式拼接而成的字符串
+    output = Lexer::getAllKeyword();
+
+    std::unordered_set<std::string> identifiers;
+    for (const Token &token: tokens)
+    {
+        if (token.getType() != TokenType::INVALID && token.getType() != TokenType::EMPTY &&
+            token.getValue() != "\n" && token.getValue() != "\0" && token.getValue() != "\t")
+        {
+            // 存储 IDENTIFIER
+            if (token.getType() == TokenType::IDENTIFIER)
+            {
+                identifiers.insert(token.getValue());
+            }
+        }
+    }
+
+    // IDENTIFIER需要输出的内容拼接进字符串
+    for (const auto &identifier: identifiers)
+    {
+        output += "IDENTIFIER " + identifier + '\n';
+    }
+
+    return output;
+}
+
+std::string Debug::getAllTokens(const std::vector<Token> &tokens)
+{
+    std::string output;
+    for (const Token &token: tokens)
+    {
+        if (token.getType() != TokenType::INVALID && token.getType() != TokenType::EMPTY &&
+            token.getValue() != "\n" && token.getValue() != "\0" && token.getValue() != "\t")
+        {
+            output += "<";
+            switch (token.getType())
+            {
+                case TokenType::IDENTIFIER:
+                    output += "id, ";
+                    break;
+                case TokenType::INTEGER:
+                    output += "INT, ";
+                    break;
+                case TokenType::FLOAT:
+                    output += "REAL, ";
+                    break;
+                case TokenType::STRING:
+                    output += "STRING, ";
+                    break;
+                // Add other cases as needed
+                default:
+                    break;
+            }
+        }
+        if (token.getType() != TokenType::INVALID && token.getType() != TokenType::EMPTY &&
+            token.getValue() != "\n" && token.getValue() != "\0" && token.getValue() != "\t")
+        {
+            output += token.getValue() + ">" + '\n';
+        }
+    }
+    return output;
 }
 
 // 去除重复元素函数
