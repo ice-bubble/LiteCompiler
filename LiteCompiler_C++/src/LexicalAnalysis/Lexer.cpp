@@ -120,7 +120,7 @@ void Lexer::skipWhitespace()
 
 bool Lexer::skipComment()
 {
-    currentPos--; // 进入函数时，制作指向触发注释符号位置的下一位，因此先回退再处理
+    currentPos--; // 进入函数时，当前指针指向触发注释符号位置的下一位，因此先回退再处理
 
     if (peek() == '/' && peekNext() == '/') ///< // 单行注释
     {
@@ -182,11 +182,11 @@ Token Lexer::parseString(char start_ch)
         while (peek() != '\'')
         {
             matched_str += advance();
-            if (isAtEnd()) // 未找到闭合，Error
+            if (isAtEnd() || peek() == '\n') // 未找到闭合，Error
             {
-                error(line_num, "Unterminated \"'\".");
+                error(line_num, "missing terminating ' character ");
                 exist_error = true;
-                return Token(TokenType::INVALID, "'", line_num);
+                return Token(TokenType::INVALID, "'" + matched_str, line_num);
             }
         }
 
@@ -197,11 +197,11 @@ Token Lexer::parseString(char start_ch)
         while (peek() != '"')
         {
             matched_str += advance();
-            if (isAtEnd()) // 未找到闭合，Error
+            if (isAtEnd() || peek() == '\n') // 未找到闭合，Error
             {
-                error(line_num, "Unterminated '\"'.");
+                error(line_num, "missing terminating \" character.");
                 exist_error = true;
-                return Token(TokenType::INVALID, "\"", line_num);
+                return Token(TokenType::INVALID, "\"" + matched_str, line_num);
             }
         }
         advance(); // consume "
