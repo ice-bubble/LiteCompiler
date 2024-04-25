@@ -1,26 +1,26 @@
-# LiteCompiler
+# robin
 
 ## 文件结构
 
 ```
-└── Crobin                          项目文件夹
-    ├── CMakeLists.txt              cmake文件
-    ├── main.cpp                    主函数
-    ├── README.md                   本文件
-    └── src                         源代码
-        ├── common.h                一些项目用到的宏定义和头文件
-        ├── debug                   debug文件
-        │   ├── debug.cpp           debug函数实现
-        │   └── debug.h             debug函数声明
-        ├── error                   编译器错误处理模块
-        │   ├── error.cpp           error函数定义
-        │   └── error.h             error函数声明
-        ├── lexer                   词法分析器
-        │   ├── lexer.cpp           词法分析器lexer函数实现
-        │   └── lexer.h             词法分析器lexer类声明
-        └── token                   token相关
-            ├── token.cpp           token类函数实现
-            └── token.h             tokenType定义和token类声明
+├── robin                          项目文件夹
+|   ├── CMakeLists.txt              cmake文件
+|   ├── main.cpp                    主函数
+|   ├── README.md                   本文件
+|   └── src                         源代码
+|       ├── common.h                一些项目用到的宏定义和头文件
+|       ├── debug                   debug文件
+|       │   ├── debug.cpp           debug函数实现
+|       │   └── debug.h             debug函数声明
+|       ├── error                   编译器错误处理模块
+|       │   ├── error.cpp           error函数定义
+|       │   └── error.h             error函数声明
+|       ├── lexer                   词法分析器
+|       │   ├── lexer.cpp           词法分析器lexer函数实现
+|       │   └── lexer.h             词法分析器lexer类声明
+|       └── token                   token相关
+|           ├── token.cpp           token类函数实现
+|           └── token.h             tokenType定义和token类声明
 ```
 
 ## 构建方法
@@ -78,6 +78,7 @@ build文件夹内会生成目标：`Crobin`
    - `TOKEN_BREAK`: `break`，用于跳出循环或switch语句。
    - `TOKEN_CLASS`: `class`，表示定义类的关键字。
    - `TOKEN_CONTINUE`: `continue`，继续下一次循环的关键字。
+   - `TOKEN_DO`:`do`，未定义的关键字
    - `TOKEN_DOUBLE`: `double`，浮点数类型关键字。
    - `TOKEN_ELSE`: `else`，条件语句中的否定分支关键字。
    - `TOKEN_FALSE`: `false`，布尔类型的假值关键字。
@@ -89,12 +90,16 @@ build文件夹内会生成目标：`Crobin`
    - `TOKEN_NOT`: `not`和`!`，逻辑非运算符，表示逻辑非操作。
    - `TOKEN_OR`: `or`和`||`，逻辑或运算符，表示逻辑或操作。
    - `TOKEN_PRINT`: `print`，输出语句的关键字。
+   - `TOKEN_READ`:`read`，未定义的关键字
+   - `TOKEN_REPEAT`:`repeat`，未定义的关键字
    - `TOKEN_RETURN`: `return`，函数返回语句的关键字。
    - `TOKEN_SUPER`: `super`，表示父类的关键字。
    - `TOKEN_THIS`: `this`，表示当前对象或实例的关键字。
    - `TOKEN_TRUE`: `true`，布尔类型的真值关键字。
+   - `TOKEN_UNTIL`:`until`，未定义的关键字
    - `TOKEN_VAR`: `var`，定义变量的关键字。
    - `TOKEN_WHILE`: `while`，循环语句中的关键字。
+   - `TOKEN_WRITE`:`write`，未定义的关键字
 2. **符号（Symbols）**：
    - `TOKEN_LEFT_PAREN`, `TOKEN_RIGHT_PAREN`: 左右括号`(`和`)`，用于表示代码中的分组或函数调用。
    - `TOKEN_LEFT_BRACE`, `TOKEN_RIGHT_BRACE`: 左右花括号`{`和`}`，表示代码块的开始和结束。

@@ -139,7 +139,7 @@ namespace Lexer {
             addToken(Token::TOKEN_REAL, std::stod(source.substr(start, current - start)));
             return;
         }
-       // 非小数，即整数
+        // 非小数，即整数
         addToken(Token::TOKEN_INT,
                  static_cast<long>(std::stod(source.substr(start, current - start))));
     }
@@ -151,10 +151,7 @@ namespace Lexer {
         }
 
         // 处理找不到闭合的 " 或 ' 的情况
-        if (isAtEnd()) {
-            error(line, "Unterminated string.");
-            return;
-        }
+        if (isAtEnd()) return error(line, "Unterminated string.");
 
         // 消费闭合的 " 或 '
         advance();
@@ -163,43 +160,30 @@ namespace Lexer {
         addToken(Token::TOKEN_STRING, source.substr(start + 1, current - start - 2));
     }
 
-    void Lexer::slash()
-    {
-        if (match('/'))
-        {
-            // 单行注释
+    void Lexer::slash() {
+        if (match('/')) {
             while (peek() != '\n' && !isAtEnd()) advance();
+            return;
         }
-        else if (match('*'))
-        {
-            // 多行注释
-            while (true)
-            {
+        if (match('*')) {
+            while (true) {
                 // 多行注释未闭合
-                if (isAtEnd())
-                {
-                    error(line, "Unterminated comment.");
-                    return;
-                }
-                char Ch = advance();
+                if (isAtEnd()) return error(line, "Unterminated comment.");
+                char ch = advance();
 
                 // 换行时记得把行号加一
-                if (Ch == '\n')
-                    line++;
+                if (ch == '\n') line++;
 
-                if (Ch == '*' && peek() == '/')
-                {
+                //注释结束
+                if (ch == '*' && peek() == '/') {
                     // 消费"/"
                     advance();
                     break;
                 }
             }
+            return;
         }
-        else
-        {
-            // 是除号的情况
-            addToken(Token::TOKEN_SLASH);
-        }
+        addToken(Token::TOKEN_SLASH);
     }
 
     bool Lexer::match(char expected) {
