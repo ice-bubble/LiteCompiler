@@ -23,7 +23,7 @@
 |           └── token.h             tokenType定义和token类声明
 ```
 
-## 构建方法
+## 构建方法🛠️
 
 构建平台：linux或window10及以上
 
