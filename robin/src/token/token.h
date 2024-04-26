@@ -133,8 +133,18 @@ namespace Token {
         */
         static std::string gettokenStringInMap(TokenType tokentype);
 
+       /**
+        * @brief 获取Token.type
+        * @note 表示标记的类型，是一个枚举类型 TokenType 的实例。
+        * @return TokenType 枚举值，表示Token的类型。
+        */
         TokenType getType() const;
 
+       /**
+        * @brief 获取Token.Lexeme
+        * @note lexeme: 表示标记在源代码中的文本形式，即标记的字符串表示。
+        * @return const std::string& Token的标记的字符串。
+        */
         const std::string &getLexeme() const;
 
 
