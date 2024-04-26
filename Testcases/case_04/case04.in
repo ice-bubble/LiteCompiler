@@ -1,0 +1,29 @@
+// Calculate the maximum value in an array.
+double calculateMax(integer array[], integer size) {
+    integer max = array[0];
+    
+    for (integer i = 1; i < size; i++) {
+        if (array[i] > max) {
+            max = array[i];
+        }
+    }
+    
+    return max;
+}
+
+integer main() {
+    integer matrix[5][5] = {
+        {1, 2, 3, 4, 5},
+        {6, 7, 8, 9, 10},
+        {11, 12, 13, 14, 15},
+        {16, 17, 18, 19, 20},
+        {21, 22, 23, 24, 25}
+    };
+
+    for (integer i = 0; i < 5; i++) {
+        double max = calculateMax(matrix[i], 5);
+        printf("Max of row %d: %.2f\n", i + 1, max);
+    }
+
+    return 0;
+}

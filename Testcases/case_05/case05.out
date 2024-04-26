@@ -1,0 +1,69 @@
+No Lexical Error in the code!
+
+<id, case05>
+<(>
+<)>
+<=>
+<function>
+<{>
+<double>
+<id, a>
+<=>
+<REAL, 3.14>
+<;>
+<double>
+<id, b>
+<=>
+<REAL, 0.5>
+<;>
+<double>
+<id, c>
+<=>
+<REAL, 1.>
+<;>
+<double>
+<id, h>
+<=>
+<REAL, 0.5>
+<*>
+<REAL, 1.>
+<;>
+<integer>
+<id, x>
+<=>
+<INT, 109238>
+<;>
+<id, printf>
+<(>
+<STRING, %lf>
+<,>
+<id, h>
+<)>
+<return>
+<INT, 0>
+<;>
+<}>
+KEYWORD NULL
+KEYWORD char
+KEYWORD do
+KEYWORD double
+KEYWORD else
+KEYWORD float
+KEYWORD for
+KEYWORD function
+KEYWORD if
+KEYWORD integer
+KEYWORD read
+KEYWORD repeat
+KEYWORD return
+KEYWORD string
+KEYWORD until
+KEYWORD while
+KEYWORD write
+IDENTIFIER case05
+IDENTIFIER a
+IDENTIFIER b
+IDENTIFIER c
+IDENTIFIER h
+IDENTIFIER x
+IDENTIFIER printf

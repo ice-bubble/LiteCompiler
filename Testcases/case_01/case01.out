@@ -1,0 +1,71 @@
+[line: 5] Error:Unexpected character '@'.
+[line: 6] Error:Unexpected character '$'.
+The code exists above Lexical Error!
+
+<id, case1>
+<=>
+<function>
+<(>
+<)>
+<{>
+<integer>
+<id, x>
+<=>
+<INT, 5>
+<;>
+<integer>
+<id, y>
+<=>
+<INT, 10>
+<;>
+<integer>
+<id, z>
+<=>
+<id, x>
+<*>
+<id, y>
+<;>
+<double>
+<id, u>
+<=>
+<REAL, 3.14>
+<;>
+<string>
+<id, str>
+<=>
+<STRING, dasda$\faf\|af@%abj??/>
+<;>
+<id, printf>
+<(>
+<STRING, %d\n>
+<,>
+<id, z>
+<)>
+<;>
+<return>
+<INT, 0>
+<;>
+<}>
+KEYWORD char
+KEYWORD do
+KEYWORD double
+KEYWORD else
+KEYWORD float
+KEYWORD for
+KEYWORD function
+KEYWORD if
+KEYWORD integer
+KEYWORD read
+KEYWORD repeat
+KEYWORD return
+KEYWORD string
+KEYWORD until
+KEYWORD while
+KEYWORD write
+IDENTIFIER case1
+IDENTIFIER x
+IDENTIFIER y
+IDENTIFIER z
+IDENTIFIER u
+IDENTIFIER str
+IDENTIFIER printf

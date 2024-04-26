@@ -1,0 +1,118 @@
+[line: 19] Error:Unterminated comment.
+The code exists above Lexical Error!
+
+<id, case02>
+<=>
+<function>
+<(>
+<integer>
+<id, N>
+<,>
+<integer>
+<id, K>
+<,>
+<double>
+<id, rc>
+<)>
+<{>
+<integer>
+<id, a>
+<[>
+<INT, 10>
+<]>
+<[>
+<INT, 20>
+<]>
+<;>
+<double>
+<id, b>
+<[>
+<INT, 19>
+<]>
+<;>
+<if>
+<(>
+<id, N>
+<==>
+<INT, 1>
+<)>
+<return>
+<(>
+<INT, 0>
+<)>
+<;>
+<integer>
+<INT, 1>
+<id, KL>
+<=>
+<id, floor>
+<(>
+<id, K>
+<*>
+<id, rc>
+<)>
+<;>
+<if>
+<(>
+<id, KL>
+<<>
+<INT, 1>
+<||>
+<id, _KL>
+<>>
+<(>
+<id, K>
+<->
+<INT, 1>
+<)>
+<)>
+<id, KL>
+<%=>
+<INT, 1>
+<;>
+<else>
+<if>
+<(>
+<id, KL>
+<>>
+<REAL, 0.5>
+<*>
+<id, K>
+<)>
+<id, KL>
+<=>
+<id, ceiling>
+<(>
+<id, KL>
+<=>
+<id, N>
+<->
+<id, NL>
+KEYWORD NULL
+KEYWORD char
+KEYWORD do
+KEYWORD double
+KEYWORD else
+KEYWORD float
+KEYWORD for
+KEYWORD function
+KEYWORD if
+KEYWORD integer
+KEYWORD read
+KEYWORD repeat
+KEYWORD return
+KEYWORD string
+KEYWORD until
+KEYWORD while
+KEYWORD write
+IDENTIFIER case02
+IDENTIFIER N
+IDENTIFIER K
+IDENTIFIER rc
+IDENTIFIER a
+IDENTIFIER b
+IDENTIFIER KL
+IDENTIFIER floor
+IDENTIFIER _KL
+IDENTIFIER ceiling
+IDENTIFIER NL

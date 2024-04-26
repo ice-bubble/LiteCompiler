@@ -1,0 +1,18 @@
+case02=function(integer N, integer K, double rc){
+     integer a[10][20];
+     double b[19];	
+
+     if(N==1) return(0);
+     integer 1KL=floor(K * rc);         #split N 
+     if(KL < 1 || _KL > (K-1))
+            KL %= 1; ///This is/ a comment
+     else if (KL > .5*K)
+            KL = ceiling(KL // 2.0)
+		/*?*//*
+     KR = K - KL
+
+     integer N_L = ceiling(N * KL / K)      #split N
+     integer _NR*/= N - NL
+	/*
+     return( 1+_*(NL_ * miniRC(NL, KL, _rc) + 1NR * miniRC(NR, KR, rc)) / 2N);
+}

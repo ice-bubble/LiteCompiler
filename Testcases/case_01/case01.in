@@ -1,0 +1,11 @@
+case1=function() {
+    integer x = 5;
+    integer y = 10;
+
+    integer z = x @* y; 
+    double u = 3.14; $
+    string str ="dasda$\faf\|af@%abj??/" ;
+    /*This is a comment.*/
+    printf("%d\n", z);
+    return 0;
+}

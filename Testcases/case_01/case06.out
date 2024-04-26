@@ -1,0 +1,116 @@
+[line: 8] Error:missing terminating " character.
+[line: 9] Error:missing terminating " character.
+[line: 12] Error:Unexpected character '@'.
+[line: 15] Error:Unexpected character '$'.
+[line: 18] Error:Unexpected character '@'.
+[line: 19] Error:Unexpected character '$'.
+[line: 27] Error:Unterminated comment.
+The code exists above Lexical Error!
+
+<id, case06>
+<=>
+<function>
+<(>
+<)>
+<{>
+<float>
+<id, num1>
+<=>
+<REAL, 2.5>
+<;>
+<float>
+<id, num2>
+<=>
+<REAL, 1.>
+<;>
+<float>
+<id, avg>
+<=>
+<(>
+<id, num1>
+<+>
+<id, num2>
+<)>
+</>
+<INT, 2>
+<;>
+<char>
+<*>
+<id, str>
+<=>
+<id, long>
+<string>
+<id, spanning>
+<id, multiple>
+<id, lines>
+<.>
+<integer>
+<id, total>
+<id, number>
+<=>
+<INT, 10>
+<;>
+<integer>
+<id, count>
+<=>
+<INT, 5>
+<;>
+<id, printf>
+<(>
+<STRING, Average: %.1f\n>
+<,>
+<id, avg>
+<)>
+<;>
+<id, printf>
+<(>
+<STRING, Total number: %d\n>
+<,>
+<id, total>
+<id, number>
+<)>
+<;>
+<id, printf>
+<(>
+<STRING, Count: %d\n>
+<,>
+<id, count>
+<)>
+<;>
+<id, printf>
+<(>
+<STRING, String: %s\n>
+<,>
+<id, str>
+<)>
+<;>
+KEYWORD NULL
+KEYWORD char
+KEYWORD do
+KEYWORD double
+KEYWORD else
+KEYWORD float
+KEYWORD for
+KEYWORD function
+KEYWORD if
+KEYWORD integer
+KEYWORD read
+KEYWORD repeat
+KEYWORD return
+KEYWORD string
+KEYWORD until
+KEYWORD while
+KEYWORD write
+IDENTIFIER case06
+IDENTIFIER num1
+IDENTIFIER num2
+IDENTIFIER avg
+IDENTIFIER str
+IDENTIFIER long
+IDENTIFIER spanning
+IDENTIFIER multiple
+IDENTIFIER lines
+IDENTIFIER total
+IDENTIFIER number
+IDENTIFIER count
+IDENTIFIER printf

@@ -1,0 +1,9 @@
+case05()=function{
+	double a=3.14;
+	double b=.5;
+	double c=1.;
+	double h=.5*1.;
+	integer x=109238;
+	printf("%lf",h)
+	return 0;
+}

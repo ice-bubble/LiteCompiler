@@ -1,0 +1,36 @@
+case03=function() {
+    char str1[] = "Hello";
+    char str2[] = "Wor
+ld";
+
+    // 字符串连接
+    char combined[20];
+    strcpy(combined, str1);
+    strcat(combined, " ");
+    strcat(combined, str2);
+    printf("Combined string: %s\n", combined);
+
+    // 字符串长度
+    printf("Length of combined string: %ld\n", strlen(combined));
+
+    // 字符串查找
+    char search[] = "World";
+    char *found = strstr(combined, search);
+    if (found != NULL) {
+        printf("'%s' found at position %ld\n", search, found - combined);
+    } else {
+        printf("'%s' not found\n", search);
+    }
+
+    // 字符串替换
+    char replaced[20];
+    strcpy(replaced, combined);
+    char *replace_pos = strstr(replaced, "World");
+    if (replace_pos != NULL) {
+        strncpy(replace_pos,
+ "Universe", strlen("Universe"));
+        printf("After replacement: %s", replaced);
+    }
+
+    return 0;
+}
