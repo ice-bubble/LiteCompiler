@@ -23,6 +23,7 @@ void printRequestedTokenList(const std::vector<Token::Token> &tokenList) {
         } else if (token.getType() == Token::TOKEN_REAL) {
             std::string stdval;
             if (val[0] == '.') stdval = "0" + val;
+            else if (val[val.size()-1]=='.') stdval=val+'0';
             else stdval = val;
             std::cout << "<REAL, " << stdval << ">" << std::endl;
         } else if (token.getType() == Token::TOKEN_IDENTIFIER) {

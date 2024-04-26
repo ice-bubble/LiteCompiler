@@ -20,7 +20,7 @@ if sys.platform == 'win32':
     exeFile_Path = os.path.join('.', testTarget, mode, f'{testTarget}.exe')
 
 for case in caseFolder:
-    print(f"running testing {case}")
+    print(f"running {case}")
     caseFolderFullPath = os.path.join(caseFolder_Path, case)
     if not os.path.exists(caseFolderFullPath):
         print(f"Folder not found: {caseFolderFullPath}")

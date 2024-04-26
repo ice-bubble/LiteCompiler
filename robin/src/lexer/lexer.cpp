@@ -139,19 +139,24 @@ namespace Lexer {
             addToken(Token::TOKEN_REAL, std::stod(source.substr(start, current - start)));
             return;
         }
+        if (match('.'))
+        {
+            return addToken(Token::TOKEN_REAL,
+                            (std::stod(source.substr(start, current - start))));
+        }
+
         // 非小数，即整数
         addToken(Token::TOKEN_INT,
                  static_cast<long>(std::stod(source.substr(start, current - start))));
     }
 
     void Lexer::_string(char front) {
-        while (peek() != front && !isAtEnd()) {
-            if (peek() == '\n') line++;
+        while (peek() != front) {
+            // 处理跨行字符串
+            // 处理找不到闭合的 " 或 ' 的情况
+            if (peek() == '\n'||isAtEnd()) return error(line, "Unterminated string.");
             advance();
         }
-
-        // 处理找不到闭合的 " 或 ' 的情况
-        if (isAtEnd()) return error(line, "Unterminated string.");
 
         // 消费闭合的 " 或 '
         advance();
@@ -161,6 +166,8 @@ namespace Lexer {
     }
 
     void Lexer::slash() {
+        //为未闭合注释记录下开始的行号
+        size_t tmp_line=line;
         if (match('/')) {
             while (peek() != '\n' && !isAtEnd()) advance();
             return;
@@ -168,7 +175,7 @@ namespace Lexer {
         if (match('*')) {
             while (true) {
                 // 多行注释未闭合
-                if (isAtEnd()) return error(line, "Unterminated comment.");
+                if (isAtEnd()) return error(tmp_line, "Unterminated comment.");
                 char ch = advance();
 
                 // 换行时记得把行号加一
