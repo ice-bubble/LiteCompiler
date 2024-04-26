@@ -121,7 +121,7 @@ void Lexer::skipWhitespace()
 bool Lexer::skipComment()
 {
     currentPos--; // 进入函数时，当前指针指向触发注释符号位置的下一位，因此先回退再处理
-
+    size_t start_line = line_num; // 存储注释开头所在行号，用于多行注释报错未闭合时能输出注释开头所在行号
     if (peek() == '/' && peekNext() == '/') ///< // 单行注释
     {
         advance();
@@ -153,7 +153,7 @@ bool Lexer::skipComment()
         }
         if (isAtEnd())
         {
-            error(line_num, "Unterminated comment.");
+            error(start_line, "Unterminated comment.");
             exist_error = true;
             return false;
         }
@@ -228,12 +228,16 @@ Token Lexer::parseNumber()
             {
                 // Error
                 number += advance();
-                error(line_num, number);
+                error(line_num, "Too many decimal points in number.");
                 exist_error = true;
                 return Token(TokenType::INVALID, number, line_num);
             }
         }
         number += advance();
+    }
+    if (input[currentPos-1] == '.') // 如果数字结尾为"."，说明是形如"1."的浮点数，末尾加上0之后再输出
+    {
+        number += "0";
     }
     if (has_exist_point) return Token(TokenType::FLOAT, number, line_num);
     else return Token(TokenType::INTEGER, number, line_num);

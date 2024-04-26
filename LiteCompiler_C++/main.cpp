@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     std::string output; // 需要输出的数据
 
     // filename_w = "F:\\学习\\编译系统设计实践\\实验1\\实验1(testcase)\\miniRC_3_out.txt"; // 标记（Token）需要写入的文件
-    filename_w = "miniRC_3_out.txt"; // 标记（Token）需要写入的文件
+    filename_w = "miniRC_out.txt"; // 标记（Token）需要写入的文件
     output = Debug::getAllTokens(tokens); // 获取需要写入的数据【标记（Token）】
     if (!FileHandler::writeFile(filename_w, output, errorMessage))
     {
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     }
 
     // filename_w = "F:\\学习\\编译系统设计实践\\实验1\\实验1(testcase)\\miniRC_3_sym.txt"; // 符号表（KEYWORD和IDENTIFIER）需要写入的文件
-    filename_w = "miniRC_3_sym.txt"; // 符号表（KEYWORD和IDENTIFIER）需要写入的文件
+    filename_w = "miniRC_sym.txt"; // 符号表（KEYWORD和IDENTIFIER）需要写入的文件
     output = Debug::getAllSymbolTokens(tokens); // 获取需要写入的数据【符号表（KEYWORD和IDENTIFIER）】
     if (!FileHandler::writeFile(filename_w, output, errorMessage))
     {
