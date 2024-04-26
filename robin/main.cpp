@@ -33,7 +33,8 @@ static void repl() {
         Lexer::Lexer lexer = Lexer::Lexer(line);
         std::vector<Token::Token> tokenList = lexer.scanTokens();
 #ifdef DEBUG_PRINT_TOKENLIST
-        printTokenList(tokenList);
+        //printTokenList(tokenList);
+        printRequestedTokenList(tokenList);
 #endif
     }
 }
@@ -73,7 +74,8 @@ static void runFile(const std::string& path) {
 
 #ifdef DEBUG_PRINT_TOKENLIST
         // 打印词法分析结果（仅在调试模式下有效）
-        printTokenList(tokenList);
+        //printTokenList(tokenList);
+        printRequestedTokenList(tokenList);
 #endif
     } catch (const std::exception& e) {
         // 捕获异常并输出错误信息

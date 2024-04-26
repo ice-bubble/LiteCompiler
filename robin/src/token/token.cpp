@@ -122,6 +122,7 @@ namespace Token {
                 return "true";
             case (TOKEN_FALSE):
                 return "false";
+
             default:
                 return "nil";
         }
@@ -139,6 +140,14 @@ namespace Token {
         if (tokentype > TOKEN_EOF)
             return std::string{"Error: Invalid token type"};
         return tokenStrings[tokentype];
+    }
+
+    TokenType Token::getType() const {
+        return type;
+    }
+
+    const std::string &Token::getLexeme() const {
+        return lexeme;
     }
 
 }

@@ -133,7 +133,13 @@ namespace Token {
         */
         static std::string gettokenStringInMap(TokenType tokentype);
 
+        TokenType getType() const;
+
+        const std::string &getLexeme() const;
+
+
     };
+
 }
 
 #endif //ROBIN_TOKEN_H

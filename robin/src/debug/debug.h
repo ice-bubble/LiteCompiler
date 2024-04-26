@@ -16,4 +16,6 @@
  */
 void printTokenList(const std::vector<Token::Token>& tokenList);
 
+void printRequestedTokenList(const std::vector<Token::Token> &tokenList);
+
 #endif //ROBIN_DEBUG_H

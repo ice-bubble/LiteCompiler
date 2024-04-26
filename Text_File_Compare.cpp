@@ -23,9 +23,21 @@ void compareFiles(const std::string &file1, const std::string &file2)
     std::ifstream fileStream1(file1);
     std::ifstream fileStream2(file2);
 
-    if (!fileStream1.is_open() || !fileStream2.is_open())
+    if (!fileStream1.is_open()&&!fileStream2.is_open())
     {
-        std::cerr << "Unable to open one or both files." << std::endl;
+        std::cerr << "Unable to open both files." << std::endl;
+        return;
+    }
+
+    if (!fileStream1.is_open())
+    {
+        std::cerr << "Unable to open first file." << std::endl;
+        return;
+    }
+
+    if (!fileStream2.is_open())
+    {
+        std::cerr << "Unable to open second file." << std::endl;
         return;
     }
 
@@ -83,6 +95,5 @@ int main()
     std::cout << "Enter path to the second file: ";
     std::getline(std::cin, filename2);
     compareFiles(filename1, filename2);
-    system("pause");
     return 0;
 }
