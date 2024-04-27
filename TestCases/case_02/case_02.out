@@ -1,99 +1,52 @@
-[line: 19] Error:Unterminated comment.
-The code exists above Lexical Error!
+No Lexical Error in the code!
 
 <id, case02>
+<(>
+<)>
 <=>
 <function>
-<(>
-<integer>
-<id, N>
-<,>
-<integer>
-<id, K>
-<,>
-<double>
-<id, rc>
-<)>
 <{>
-<integer>
+<double>
 <id, a>
-<[>
-<INT, 10>
-<]>
-<[>
-<INT, 20>
-<]>
+<=>
+<REAL, 3.14>
 <;>
 <double>
 <id, b>
-<[>
-<INT, 19>
-<]>
-<;>
-<if>
-<(>
-<id, N>
-<==>
-<INT, 1>
-<)>
-<return>
-<(>
-<INT, 0>
-<)>
-<;>
-<integer>
-<INT, 1>
-<id, KL>
 <=>
-<id, floor>
-<(>
-<id, K>
-<*>
-<id, rc>
-<)>
+<REAL, 0.5>
 <;>
-<if>
-<(>
-<id, KL>
-<<>
-<INT, 1>
-<||>
-<id, _KL>
-<>>
-<(>
-<id, K>
-<->
-<INT, 1>
-<)>
-<)>
-<id, KL>
-<%=>
-<INT, 1>
+<double>
+<id, c>
+<=>
+<REAL, 1.0>
 <;>
-<else>
-<if>
-<(>
-<id, KL>
-<>>
+<double>
+<id, h>
+<=>
 <REAL, 0.5>
 <*>
-<id, K>
-<)>
-<id, KL>
+<REAL, 1.0>
+<;>
+<integer>
+<id, x>
 <=>
-<id, ceiling>
+<INT, 109238>
+<;>
+<id, printf>
 <(>
-<id, KL>
-<=>
-<id, N>
-<->
-<id, NL>
-KEYWORD NULL
+<STRING, %lf>
+<,>
+<id, h>
+<)>
+<return>
+<INT, 0>
+<;>
+<}>
 KEYWORD char
 KEYWORD do
 KEYWORD double
 KEYWORD else
-KEYWORD float
 KEYWORD for
 KEYWORD function
 KEYWORD if
@@ -106,13 +59,9 @@ KEYWORD until
 KEYWORD while
 KEYWORD write
 IDENTIFIER case02
-IDENTIFIER N
-IDENTIFIER K
-IDENTIFIER rc
 IDENTIFIER a
 IDENTIFIER b
-IDENTIFIER KL
-IDENTIFIER floor
-IDENTIFIER _KL
-IDENTIFIER ceiling
-IDENTIFIER NL
+IDENTIFIER c
+IDENTIFIER h
+IDENTIFIER x
+IDENTIFIER printf
