@@ -15,6 +15,6 @@
  * @param line 源代码行号
  * @param message 错误消息的描述
  */
-void error(size_t line, const std::string& message);
+void error(size_t line, const String& message);
 
 #endif //ROBIN_ERROR_H

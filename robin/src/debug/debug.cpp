@@ -7,21 +7,21 @@
 
 #include "debug.h"
 
-void printTokenList(const std::vector<Token::Token> &tokenList) {
+void printTokenList(const List<Token::Token> &tokenList) {
     for (const auto &token: tokenList) {
         std::cout << token.toString() << std::endl;
     }
 }
 
-void printRequestedTokenList(const std::vector<Token::Token> &tokenList) {
+void printRequestedTokenList(const List<Token::Token> &tokenList) {
     for (const auto &token: tokenList) {
-        const std::string &val = token.getLexeme();
+        const String &val = token.getLexeme();
         if (token.getType() == Token::TOKEN_STRING) {
             std::cout << "<STRING, " << val << ">" << std::endl;
         } else if (token.getType() == Token::TOKEN_INT) {
             std::cout << "<INT, " << val << ">" << std::endl;
         } else if (token.getType() == Token::TOKEN_REAL) {
-            std::string stdval;
+            String stdval;
             if (val[0] == '.') stdval = "0" + val;
             else if (val[val.size()-1]=='.') stdval=val+'0';
             else stdval = val;

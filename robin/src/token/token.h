@@ -80,18 +80,18 @@ namespace Token {
         TOKEN_EOF               ///< EOF,表示已经到达代码文件的末尾。
     };
 
-     /**
-      * @brief 用于记录一个token的信息。
-      */
+    /**
+     * @brief 用于记录一个token的信息。
+     */
     class Token {
     private:
         TokenType type;           ///< type: 表示标记的类型，是一个枚举类型 TokenType 的实例。
-        std::string lexeme;       ///< lexeme: 表示标记在源代码中的文本形式，即标记的字符串表示。
+        String lexeme;       ///< lexeme: 表示标记在源代码中的文本形式，即标记的字符串表示。
         Object literal;           ///< literal: 表示标记的字面量值，可以是任意类型的对象，用于表示标记的具体值。
         size_t line;              ///< line: 表示标记在源代码中所在的行号。
 
-        static std::map<std::string, TokenType> keywords;  ///< 关键字字符串到标记类型(TokenType)的映射表。
-        static std::vector<std::string> tokenStrings;      ///< 将TokenType枚举值映射到它们的字符串表示的向量。
+        static Map<String, TokenType> keywords;  ///< 关键字字符串到标记类型(TokenType)的映射表。
+        static List<String> tokenStrings;      ///< 将TokenType枚举值映射到它们的字符串表示的向量。
 
     public:
 
@@ -103,19 +103,19 @@ namespace Token {
          * @param line Token所在的行号。
          * @return Token 返回构造的新对象
          */
-        Token(TokenType type, std::string lexeme, Object literal,size_t line);
+        Token(TokenType type, String lexeme, Object literal, size_t line);
 
         /**
          * @brief 生成Token对象的字符串表示。
          * @return std::string Token对象的字符串表示。
          */
-        std::string toString() const;
+        String toString() const;
 
         /**
          * @brief 根据token类型获取字面量值的字符串表示。
          * @return  std::string 字面量值的字符串表示。
          */
-        std::string getLiteralString() const;
+        String getLiteralString() const;
 
         /**
          * @brief 根据关键字文本获取对应的 TokenType。
@@ -123,29 +123,29 @@ namespace Token {
          * @param text 关键字文本。
          * @return TokenType 对应的 TokenType 值，如果关键字不存在则返回 TOKEN_EOF。
         */
-        static TokenType getKeywordTypeInMap(const std::string& text);
+        static TokenType getKeywordTypeInMap(const String &text);
 
-       /**
-        * @brief 根据 TokenType 获取对应的字符串表示。
-        * @note 错误字符串:"Error: Invalid token type"
-        * @param tokentype 要获取字符串的 TokenType。
-        * @return std::string  TokenType 对应的字符串表示，如果 TokenType 无效则返回错误字符串。
-        */
-        static std::string gettokenStringInMap(TokenType tokentype);
+        /**
+         * @brief 根据 TokenType 获取对应的字符串表示。
+         * @note 错误字符串:"Error: Invalid token type"
+         * @param tokentype 要获取字符串的 TokenType。
+         * @return std::string  TokenType 对应的字符串表示，如果 TokenType 无效则返回错误字符串。
+         */
+        static String gettokenStringInMap(TokenType tokentype);
 
-       /**
-        * @brief 获取Token.type
-        * @note 表示标记的类型，是一个枚举类型 TokenType 的实例。
-        * @return TokenType 枚举值，表示Token的类型。
-        */
+        /**
+         * @brief 获取Token.type
+         * @note 表示标记的类型，是一个枚举类型 TokenType 的实例。
+         * @return TokenType 枚举值，表示Token的类型。
+         */
         TokenType getType() const;
 
-       /**
-        * @brief 获取Token.Lexeme
-        * @note lexeme: 表示标记在源代码中的文本形式，即标记的字符串表示。
-        * @return const std::string& Token的标记的字符串。
-        */
-        const std::string &getLexeme() const;
+        /**
+         * @brief 获取Token.Lexeme
+         * @note lexeme: 表示标记在源代码中的文本形式，即标记的字符串表示。
+         * @return const std::string& Token的标记的字符串。
+         */
+        const String &getLexeme() const;
 
 
     };

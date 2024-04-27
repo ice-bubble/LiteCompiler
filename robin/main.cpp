@@ -31,10 +31,10 @@ static void repl() {
             break;
         }
         Lexer::Lexer lexer = Lexer::Lexer(line);
-        std::vector<Token::Token> tokenList = lexer.scanTokens();
+        List<Token::Token> tokenList = lexer.scanTokens();
 #ifdef DEBUG_PRINT_TOKENLIST
-        //printTokenList(tokenList);
-        printRequestedTokenList(tokenList);
+        printTokenList(tokenList);
+        //printRequestedTokenList(tokenList);
 #endif
     }
 }
@@ -44,7 +44,7 @@ static void repl() {
  * @param path 要读取的文件路径。
  * @return std::string 文件内容的字符串形式。
  */
-std::string readFile(const std::string& path) {
+String readFile(const String& path) {
     std::ifstream file(path, std::ios::binary);
     if (!file) {
         throw std::runtime_error("Failed to open file: " + path);
@@ -63,19 +63,19 @@ std::string readFile(const std::string& path) {
  *
  * @param path 要运行的文件路径。
  */
-static void runFile(const std::string& path) {
+static void runFile(const String& path) {
     try {
         // 读取文件内容
-        std::string source = readFile(path);
+        String source = readFile(path);
 
         // 创建词法分析器并进行词法分析
         Lexer::Lexer lexer(source);
-        std::vector<Token::Token> tokenList = lexer.scanTokens();
+        List<Token::Token> tokenList = lexer.scanTokens();
 
 #ifdef DEBUG_PRINT_TOKENLIST
         // 打印词法分析结果（仅在调试模式下有效）
-        //printTokenList(tokenList);
-        printRequestedTokenList(tokenList);
+        printTokenList(tokenList);
+        //printRequestedTokenList(tokenList);
 #endif
     } catch (const std::exception& e) {
         // 捕获异常并输出错误信息
@@ -100,7 +100,7 @@ int main(int argc, const char *argv[]) {
     } else if (argc == 2) {
         runFile(argv[1]);
     } else {
-        fprintf(stderr, "Usage: robin [path]\n");
+        std::cerr<<"Usage: robin [path]"<<std::endl;
         exit(64);
     }
 

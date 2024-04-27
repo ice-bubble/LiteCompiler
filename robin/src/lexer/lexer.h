@@ -23,11 +23,11 @@ namespace Lexer {
     private:
 
 
-        std::string source;                                       ///< 要进行词法分析的源代码字符串。
+        String source;                                       ///< 要进行词法分析的源代码字符串。
         size_t start = 0;                                         ///< 用于进行词法分析的起始索引。
         size_t current = 0;                                       ///< 当前用于词法分析的索引。
         size_t line = 1;                                          ///< 当前处理的行号。
-        std::vector<Token::Token> tokens;                         ///< 从源代码生成的token列表。
+        List<Token::Token> tokens;                         ///< 从源代码生成的token列表。
     public:
 
         /**
@@ -35,13 +35,13 @@ namespace Lexer {
          * @param source 要进行词法分析的源代码字符串。
          * @return Lexer 返回构造的新对象
          */
-        Lexer(std::string source);
+        Lexer(String source);
 
         /**
         * @brief 对源代码进行词法分析，并返回标记列表。
         * @return 包含源代码标记的token列表。
         */
-        std::vector<Token::Token> scanTokens();
+       List<Token::Token> scanTokens();
 
     private:
 

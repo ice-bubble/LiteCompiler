@@ -12,7 +12,7 @@
  */
 namespace Token {
 
-    std::map<std::string, TokenType> Token::keywords = {
+    Map<String, TokenType> Token::keywords = {
             {"and",      TOKEN_AND},        /**< "and" 关键字对应的标记类型。 */
             {"break",    TOKEN_BREAK},      /**< "break" 关键字对应的标记类型。 */
             {"class",    TOKEN_CLASS},      /**< "class" 关键字对应的标记类型。 */
@@ -38,10 +38,10 @@ namespace Token {
             {"until",    TOKEN_UNTIL},      /**< "until" 关键字对应的标记类型。 */
             {"var",      TOKEN_VAR},        /**< "var" 关键字对应的标记类型。 */
             {"while",    TOKEN_WHILE},      /**< "while" 关键字对应的标记类型。 */
-            {"write",   TOKEN_WRITE}        /**< "return" 关键字对应的标记类型。 */
+            {"write",    TOKEN_WRITE}        /**< "return" 关键字对应的标记类型。 */
     };
 
-    std::vector<std::string> Token::tokenStrings = {
+    List<String> Token::tokenStrings = {
             "LEFT_PAREN",
             "RIGHT_PAREN",
             "LEFT_BRACE",
@@ -101,19 +101,19 @@ namespace Token {
     };
 
 
-    Token::Token(TokenType type, std::string lexeme, std::any literal, size_t line)
+    Token::Token(TokenType type, String lexeme, std::any literal, size_t line)
             : type{type}, lexeme{std::move(lexeme)}, literal{std::move(literal)}, line{line} {}
 
 
-    std::string Token::toString() const {
-        return "line:" + std::to_string(line) + " < " + tokenStrings[type] + " " + lexeme + " "
-        + getLiteralString() +" >";
+    String Token::toString() const {
+        return "line:" + std::to_string(line) + " < " + tokenStrings[type] +
+               " " + lexeme + " " + getLiteralString() + " >";
     }
 
-    std::string Token::getLiteralString() const {
+    String Token::getLiteralString() const {
         switch (type) {
             case (TOKEN_STRING):
-                return std::any_cast<std::string>(literal);
+                return std::any_cast<String>(literal);
             case (TOKEN_REAL):
                 return std::to_string(std::any_cast<double>(literal));
             case (TOKEN_INT):
@@ -128,7 +128,7 @@ namespace Token {
         }
     }
 
-    TokenType Token::getKeywordTypeInMap(const std::string& text){
+    TokenType Token::getKeywordTypeInMap(const String &text) {
         auto it = keywords.find(text);
         if (it == keywords.end()) {
             return TOKEN_EOF;
@@ -136,9 +136,9 @@ namespace Token {
         return it->second;
     }
 
-    std::string Token::gettokenStringInMap(TokenType tokentype) {
+    String Token::gettokenStringInMap(TokenType tokentype) {
         if (tokentype > TOKEN_EOF)
-            return std::string{"Error: Invalid token type"};
+            return String{"Error: Invalid token type"};
         return tokenStrings[tokentype];
     }
 
@@ -146,7 +146,7 @@ namespace Token {
         return type;
     }
 
-    const std::string &Token::getLexeme() const {
+    const String &Token::getLexeme() const {
         return lexeme;
     }
 

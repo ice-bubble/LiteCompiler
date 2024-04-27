@@ -20,12 +20,12 @@
 
 namespace Lexer {
 
-    Lexer::Lexer(std::string source) {
+    Lexer::Lexer(String source) {
         this->source = std::move(source);
     }
 
 
-    std::vector<Token::Token> Lexer::scanTokens() {
+    List<Token::Token> Lexer::scanTokens() {
         while (!isAtEnd()) {
 
             start = current;
@@ -93,13 +93,12 @@ namespace Lexer {
                 return _string('\"');
             case '\n':
                 line++;
-                return;
             case ' ':
             case '\r':
             case '\t':
                 return;
         }
-        std::string UnexpectedChar(1, c);
+        String UnexpectedChar(1, c);
         error(line, "Unexpected character '" + UnexpectedChar + "'.");
     }
 
@@ -107,7 +106,7 @@ namespace Lexer {
         // 一直消费字母和下划线，直到待消费的字符不是字母和下划线
         while (isAlphaNumeric(peek())) advance();
 
-        std::string text = source.substr(start, current - start);
+        String text = source.substr(start, current - start);
         auto tokentype = Token::Token::getKeywordTypeInMap(text);
         if (tokentype == Token::TOKEN_EOF) {
             addToken(Token::TOKEN_IDENTIFIER);
@@ -237,7 +236,7 @@ namespace Lexer {
     }
 
     void Lexer::addToken(Token::TokenType type, const Object &literal) {
-        std::string lexeme = source.substr(start, current - start);
+        String lexeme = source.substr(start, current - start);
         tokens.emplace_back(type, lexeme, literal, line);
     }
 

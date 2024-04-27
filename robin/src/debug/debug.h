@@ -14,8 +14,8 @@
  * @brief 打印请求的标记（token）列表。
  * @param tokenList 要打印的标记（token）列表。
  */
-void printTokenList(const std::vector<Token::Token>& tokenList);
+void printTokenList(const List<Token::Token>& tokenList);
 
-void printRequestedTokenList(const std::vector<Token::Token> &tokenList);
+void printRequestedTokenList(const List<Token::Token> &tokenList);
 
 #endif //ROBIN_DEBUG_H
