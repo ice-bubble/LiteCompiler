@@ -1,188 +1,82 @@
-<double>
-<id, calculateMax>
+[line: 13] Error:Unterminated comment.
+The code exists above Lexical Error!
+
+<id, case04>
+<=>
+<function>
 <(>
 <integer>
-<id, array>
-<[>
-<]>
+<id, N>
 <,>
 <integer>
-<id, size>
-<)>
-<{>
-<integer>
-<id, max>
-<=>
-<id, array>
-<[>
-<INT, 0>
-<]>
-<;>
-<for>
-<(>
-<integer>
-<id, i>
-<=>
-<INT, 1>
-<;>
-<id, i>
-<<>
-<id, size>
-<;>
-<id, i>
-<+>
-<+>
+<id, K>
+<,>
+<double>
+<id, rc>
 <)>
 <{>
 <if>
 <(>
-<id, array>
-<[>
-<id, i>
-<]>
-<>>
-<id, max>
-<)>
-<{>
-<id, max>
-<=>
-<id, array>
-<[>
-<id, i>
-<]>
-<;>
-<}>
-<}>
-<return>
-<id, max>
-<;>
-<}>
-<integer>
-<id, main>
-<(>
-<)>
-<{>
-<integer>
-<id, matrix>
-<[>
-<INT, 5>
-<]>
-<[>
-<INT, 5>
-<]>
-<=>
-<{>
-<{>
+<id, N>
+<==>
 <INT, 1>
-<,>
-<INT, 2>
-<,>
-<INT, 3>
-<,>
-<INT, 4>
-<,>
-<INT, 5>
-<}>
-<,>
-<{>
-<INT, 6>
-<,>
-<INT, 7>
-<,>
-<INT, 8>
-<,>
-<INT, 9>
-<,>
-<INT, 10>
-<}>
-<,>
-<{>
-<INT, 11>
-<,>
-<INT, 12>
-<,>
-<INT, 13>
-<,>
-<INT, 14>
-<,>
-<INT, 15>
-<}>
-<,>
-<{>
-<INT, 16>
-<,>
-<INT, 17>
-<,>
-<INT, 18>
-<,>
-<INT, 19>
-<,>
-<INT, 20>
-<}>
-<,>
-<{>
-<INT, 21>
-<,>
-<INT, 22>
-<,>
-<INT, 23>
-<,>
-<INT, 24>
-<,>
-<INT, 25>
-<}>
-<}>
-<;>
-<for>
+<)>
+<return>
 <(>
-<integer>
-<id, i>
-<=>
 <INT, 0>
+<)>
 <;>
-<id, i>
+<integer>
+<INT, 1>
+<id, KL>
+<=>
+<id, floor>
+<(>
+<id, K>
+<*>
+<id, rc>
+<)>
+<;>
+<if>
+<(>
+<id, KL>
 <<>
-<INT, 5>
-<;>
-<id, i>
-<+>
-<+>
-<)>
-<{>
-<double>
-<id, max>
-<=>
-<id, calculateMax>
-<(>
-<id, matrix>
-<[>
-<id, i>
-<]>
-<,>
-<INT, 5>
-<)>
-<;>
-<id, printf>
-<(>
-<STRING, Max of row %d: %.2f\n>
-<,>
-<id, i>
-<+>
 <INT, 1>
-<,>
-<id, max>
+<||>
+<id, _KL>
+<>>
+<(>
+<id, K>
+<->
+<INT, 1>
 <)>
+<)>
+<id, KL>
+<%=>
+<INT, 1>
 <;>
-<}>
-<return>
-<INT, 0>
-<;>
-<}>
+<else>
+<if>
+<(>
+<id, KL>
+<>>
+<REAL, 0.5>
+<*>
+<id, K>
+<)>
+<id, KL>
+<=>
+<id, ceiling>
+<(>
+<id, KL>
+<=>
+<id, N>
+<->
+<id, NL>
 KEYWORD char
 KEYWORD do
 KEYWORD double
 KEYWORD else
-KEYWORD float
 KEYWORD for
 KEYWORD function
 KEYWORD if
@@ -194,11 +88,12 @@ KEYWORD string
 KEYWORD until
 KEYWORD while
 KEYWORD write
-IDENTIFIER calculateMax
-IDENTIFIER array
-IDENTIFIER size
-IDENTIFIER max
-IDENTIFIER i
-IDENTIFIER main
-IDENTIFIER matrix
-IDENTIFIER printf
+IDENTIFIER case04
+IDENTIFIER N
+IDENTIFIER K
+IDENTIFIER rc
+IDENTIFIER KL
+IDENTIFIER floor
+IDENTIFIER _KL
+IDENTIFIER ceiling
+IDENTIFIER NL

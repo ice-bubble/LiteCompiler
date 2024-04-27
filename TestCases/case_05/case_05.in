@@ -1,9 +1,26 @@
-case05()=function{
-	double a=3.14;
-	double b=.5;
-	double c=1.;
-	double h=.5*1.;
-	integer x=109238;
-	printf("%lf",h)
-	return 0;
+case05=function() {
+    // 该程序计算小数点后一位的平均值
+    float num1 = 2.5;
+    float num2 = 1.;
+    float avg = (num1 + num2) / 2;
+
+    // 字符串跨行
+    char *str = "This is a 
+                 long string spanning multiple lines.";
+
+    // 错误的标识符中出现了@
+    integer total@number = 10;
+
+    // 错误的标识符中出现了$
+    integer $count = 5;
+
+    printf("Average: %.1f\n", avg);
+    printf("Total number: %d\n", total@number);
+    printf("Count: %d\n", $count);
+    printf("String: %s\n", str);
+
+    /* 这是一个多行注释
+       演示了注释不闭合的情况
+    return 0;
+
 }

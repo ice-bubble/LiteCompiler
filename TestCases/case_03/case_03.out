@@ -55,124 +55,14 @@ The code exists above Lexical Error!
 <id, combined>
 <)>
 <;>
-<id, printf>
-<(>
-<STRING, Length of combined string: %ld\n>
-<,>
-<id, strlen>
-<(>
-<id, combined>
-<)>
-<)>
-<;>
-<char>
-<id, search>
-<[>
-<]>
-<=>
-<STRING, World>
-<;>
-<char>
-<*>
-<id, found>
-<=>
-<id, strstr>
-<(>
-<id, combined>
-<,>
-<id, search>
-<)>
-<;>
-<if>
-<(>
-<id, found>
-<!=>
-<NULL>
-<)>
-<{>
-<id, printf>
-<(>
-<STRING, '%s' found at position %ld\n>
-<,>
-<id, search>
-<,>
-<id, found>
-<->
-<id, combined>
-<)>
-<;>
-<}>
-<else>
-<{>
-<id, printf>
-<(>
-<STRING, '%s' not found\n>
-<,>
-<id, search>
-<)>
-<;>
-<}>
-<char>
-<id, replaced>
-<[>
-<INT, 20>
-<]>
-<;>
-<id, strcpy>
-<(>
-<id, replaced>
-<,>
-<id, combined>
-<)>
-<;>
-<char>
-<*>
-<id, replace_pos>
-<=>
-<id, strstr>
-<(>
-<id, replaced>
-<,>
-<STRING, World>
-<)>
-<;>
-<if>
-<(>
-<id, replace_pos>
-<!=>
-<NULL>
-<)>
-<{>
-<id, strncpy>
-<(>
-<id, replace_pos>
-<,>
-<STRING, Universe>
-<,>
-<id, strlen>
-<(>
-<STRING, Universe>
-<)>
-<)>
-<;>
-<id, printf>
-<(>
-<STRING, After replacement: %s>
-<,>
-<id, replaced>
-<)>
-<;>
-<}>
 <return>
 <INT, 0>
 <;>
 <}>
-KEYWORD NULL
 KEYWORD char
 KEYWORD do
 KEYWORD double
 KEYWORD else
-KEYWORD float
 KEYWORD for
 KEYWORD function
 KEYWORD if
@@ -192,10 +82,3 @@ IDENTIFIER combined
 IDENTIFIER strcpy
 IDENTIFIER strcat
 IDENTIFIER printf
-IDENTIFIER strlen
-IDENTIFIER search
-IDENTIFIER found
-IDENTIFIER strstr
-IDENTIFIER replaced
-IDENTIFIER replace_pos
-IDENTIFIER strncpy

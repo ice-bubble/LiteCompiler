@@ -1,54 +1,93 @@
-No Lexical Error in the code!
+[line: 8] Error:missing terminating " character.
+[line: 9] Error:missing terminating " character.
+[line: 12] Error:Unexpected character '@'.
+[line: 15] Error:Unexpected character '$'.
+[line: 18] Error:Unexpected character '@'.
+[line: 19] Error:Unexpected character '$'.
+[line: 22] Error:Unterminated comment.
+The code exists above Lexical Error!
 
 <id, case05>
-<(>
-<)>
 <=>
 <function>
+<(>
+<)>
 <{>
-<double>
-<id, a>
+<id, float>
+<id, num1>
 <=>
-<REAL, 3.14>
+<REAL, 2.5>
 <;>
-<double>
-<id, b>
+<id, float>
+<id, num2>
 <=>
-<REAL, 0.5>
+<REAL, 1.0>
 <;>
-<double>
-<id, c>
+<id, float>
+<id, avg>
 <=>
-<REAL, 1.>
+<(>
+<id, num1>
+<+>
+<id, num2>
+<)>
+</>
+<INT, 2>
 <;>
-<double>
-<id, h>
-<=>
-<REAL, 0.5>
+<char>
 <*>
-<REAL, 1.>
+<id, str>
+<=>
+<id, long>
+<string>
+<id, spanning>
+<id, multiple>
+<id, lines>
+<.>
+<integer>
+<id, total>
+<id, number>
+<=>
+<INT, 10>
 <;>
 <integer>
-<id, x>
+<id, count>
 <=>
-<INT, 109238>
+<INT, 5>
 <;>
 <id, printf>
 <(>
-<STRING, %lf>
+<STRING, Average: %.1f\n>
 <,>
-<id, h>
+<id, avg>
 <)>
-<return>
-<INT, 0>
 <;>
-<}>
-KEYWORD NULL
+<id, printf>
+<(>
+<STRING, Total number: %d\n>
+<,>
+<id, total>
+<id, number>
+<)>
+<;>
+<id, printf>
+<(>
+<STRING, Count: %d\n>
+<,>
+<id, count>
+<)>
+<;>
+<id, printf>
+<(>
+<STRING, String: %s\n>
+<,>
+<id, str>
+<)>
+<;>
 KEYWORD char
 KEYWORD do
 KEYWORD double
 KEYWORD else
-KEYWORD float
 KEYWORD for
 KEYWORD function
 KEYWORD if
@@ -61,9 +100,16 @@ KEYWORD until
 KEYWORD while
 KEYWORD write
 IDENTIFIER case05
-IDENTIFIER a
-IDENTIFIER b
-IDENTIFIER c
-IDENTIFIER h
-IDENTIFIER x
+IDENTIFIER float
+IDENTIFIER num1
+IDENTIFIER num2
+IDENTIFIER avg
+IDENTIFIER str
+IDENTIFIER long
+IDENTIFIER spanning
+IDENTIFIER multiple
+IDENTIFIER lines
+IDENTIFIER total
+IDENTIFIER number
+IDENTIFIER count
 IDENTIFIER printf
