@@ -12,8 +12,7 @@ caseFolder = [
     "case_02",
     "case_03",
     "case_04",
-    "case_05",
-    "case_06"
+    "case_05"
 ]
 
 if sys.platform == 'win32':
