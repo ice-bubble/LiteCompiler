@@ -1,7 +1,6 @@
 /**
  * @file lexer.cpp
  * @brief Lexer类及相关函数的实现。
- * @author lzy
  * @date 24-4-22
  *
  * @note current指向待消费的字符。

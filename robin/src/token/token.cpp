@@ -1,7 +1,6 @@
 /**
  * @file token.cpp
  * @brief Token类及相关函数的实现。
- * @author lzy
  * @date 24-4-22
  */
 
@@ -148,6 +147,12 @@ namespace Token {
 
     const String &Token::getLexeme() const {
         return lexeme;
+    }
+
+    void Token::printKeywords(){
+        for (const auto& it: keywords) {
+            std::cout<<"KEYWORD "<<it.first<<std::endl;
+        }
     }
 
 }

@@ -1,7 +1,6 @@
 /**
  * @file lexer.h
  * @brief Lexer类及相关函数的声明。
- * @author lzy
  * @date 24-4-22
  */
 
@@ -23,10 +22,10 @@ namespace Lexer {
     private:
 
 
-        String source;                                       ///< 要进行词法分析的源代码字符串。
-        size_t start = 0;                                         ///< 用于进行词法分析的起始索引。
-        size_t current = 0;                                       ///< 当前用于词法分析的索引。
-        size_t line = 1;                                          ///< 当前处理的行号。
+        String source;                                     ///< 要进行词法分析的源代码字符串。
+        size_t start = 0;                                  ///< 用于进行词法分析的起始索引。
+        size_t current = 0;                                ///< 当前用于词法分析的索引。
+        size_t line = 1;                                   ///< 当前处理的行号。
         List<Token::Token> tokens;                         ///< 从源代码生成的token列表。
     public:
 
@@ -41,7 +40,7 @@ namespace Lexer {
         * @brief 对源代码进行词法分析，并返回标记列表。
         * @return 包含源代码标记的token列表。
         */
-       List<Token::Token> scanTokens();
+        List<Token::Token> scanTokens();
 
     private:
 

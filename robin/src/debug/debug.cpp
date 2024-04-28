@@ -34,3 +34,22 @@ void printRequestedTokenList(const List<Token::Token> &tokenList) {
         }
     }
 }
+
+void printSymbolTable(const List<Token::Token>& tokenList){
+    std::vector<String> symbolTable;
+    for (const auto& t :tokenList) {
+        if (t.getType()==Token::TOKEN_IDENTIFIER){
+            insertToSymbolTable(t,symbolTable);
+        }
+    }
+    for (auto t :symbolTable) {
+        std::cout<<"IDENTIFIER "<<t<<std::endl;
+    }
+}
+
+void insertToSymbolTable(const Token::Token& t, List<String>& symbolTable){
+    for (const auto& item:symbolTable) {
+        if (t.getLiteralString()==item) return;
+    }
+    symbolTable.push_back(t.getLexeme());
+}

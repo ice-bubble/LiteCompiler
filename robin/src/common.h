@@ -1,7 +1,6 @@
 /**
  * @file common.h
  * @brief 一些项目用到的宏定义和头文件存放在这里
- * @author lzy
  * @date 24-4-22
  */
 

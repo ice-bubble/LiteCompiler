@@ -1,7 +1,6 @@
 /**
  * @file main.cpp
  * @brief 主函数
- * @author lzy
  * @date 24-4-22
  */
 
@@ -34,6 +33,8 @@ static void repl() {
         List<Token::Token> tokenList = lexer.scanTokens();
 #ifdef DEBUG_PRINT_TOKENLIST
         printTokenList(tokenList);
+        Token::Token::printKeywords();
+        printSymbolTable(tokenList);
         //printRequestedTokenList(tokenList);
 #endif
     }
@@ -75,6 +76,8 @@ static void runFile(const String& path) {
 #ifdef DEBUG_PRINT_TOKENLIST
         // 打印词法分析结果（仅在调试模式下有效）
         printTokenList(tokenList);
+        Token::Token::printKeywords();
+        printSymbolTable(tokenList);
         //printRequestedTokenList(tokenList);
 #endif
     } catch (const std::exception& e) {

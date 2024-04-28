@@ -1,7 +1,6 @@
 /**
  * @file error.h
  * @brief error函数的声明。
- * @author lzy
  * @date 24-4-22
  */
 

@@ -1,7 +1,6 @@
 /**
  * @file token.h
  * @brief Token类及相关函数的声明。
- * @author lzy
  * @date 24-4-22
  */
 
@@ -86,12 +85,12 @@ namespace Token {
     class Token {
     private:
         TokenType type;           ///< type: 表示标记的类型，是一个枚举类型 TokenType 的实例。
-        String lexeme;       ///< lexeme: 表示标记在源代码中的文本形式，即标记的字符串表示。
+        String lexeme;            ///< lexeme: 表示标记在源代码中的文本形式，即标记的字符串表示。
         Object literal;           ///< literal: 表示标记的字面量值，可以是任意类型的对象，用于表示标记的具体值。
         size_t line;              ///< line: 表示标记在源代码中所在的行号。
 
         static Map<String, TokenType> keywords;  ///< 关键字字符串到标记类型(TokenType)的映射表。
-        static List<String> tokenStrings;      ///< 将TokenType枚举值映射到它们的字符串表示的向量。
+        static List<String> tokenStrings;        ///< 将TokenType枚举值映射到它们的字符串表示的向量。
 
     public:
 
@@ -147,6 +146,10 @@ namespace Token {
          */
         const String &getLexeme() const;
 
+        /**
+         * @brief 打印所有关键字
+         */
+        static void printKeywords();
 
     };
 
