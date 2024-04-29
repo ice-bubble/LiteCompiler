@@ -1,29 +1,29 @@
-# robin
+# LiteCompiler
 
 ## 文件结构
 
 ```
-├── robin                          项目文件夹
-|   ├── CMakeLists.txt              cmake文件
-|   ├── main.cpp                    主函数
-|   ├── README.md                   本文件
-|   └── src                         源代码
-|       ├── common.h                一些项目用到的宏定义和头文件
-|       ├── debug                   debug文件
-|       │   ├── debug.cpp           debug函数实现
-|       │   └── debug.h             debug函数声明
-|       ├── error                   编译器错误处理模块
-|       │   ├── error.cpp           error函数定义
-|       │   └── error.h             error函数声明
-|       ├── lexer                   词法分析器
-|       │   ├── lexer.cpp           词法分析器lexer函数实现
-|       │   └── lexer.h             词法分析器lexer类声明
-|       └── token                   token相关
-|           ├── token.cpp           token类函数实现
-|           └── token.h             tokenType定义和token类声明
+└── robin                          项目文件夹
+    ├── CMakeLists.txt              cmake文件
+    ├── main.cpp                    主函数
+    ├── README.md                   本文件
+    └── src                         源代码
+        ├── common.h                一些项目用到的宏定义和头文件
+        ├── debug                   debug文件
+        │   ├── debug.cpp           debug函数实现
+        │   └── debug.h             debug函数声明
+        ├── error                   编译器错误处理模块
+        │   ├── error.cpp           error函数定义
+        │   └── error.h             error函数声明
+        ├── lexer                   词法分析器
+        │   ├── lexer.cpp           词法分析器lexer函数实现
+        │   └── lexer.h             词法分析器lexer类声明
+        └── token                   token相关
+            ├── token.cpp           token类函数实现
+            └── token.h             tokenType定义和token类声明
 ```
 
-## 构建方法🛠️
+## 构建方法
 
 构建平台：linux或window10及以上
 

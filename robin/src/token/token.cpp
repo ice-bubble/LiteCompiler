@@ -9,7 +9,7 @@
 /**
  * @brief 命名空间，包含了关于Token定义的类和函数。
  */
-namespace Token {
+namespace token {
 
     Map<String, TokenType> Token::keywords = {
             {"and",      TOKEN_AND},        /**< "and" 关键字对应的标记类型。 */

@@ -1,44 +1,43 @@
 /**
  * @file debug.cpp
  * @brief debug函数的实现。
- * @author lzy
  * @date 24-4-23
  */
 
 #include "debug.h"
 
-void printTokenList(const List<Token::Token> &tokenList) {
-    for (const auto &token: tokenList) {
+void printTokenList(const List<token::Token> &tokenlist) {
+    for (const auto &token: tokenlist) {
         std::cout << token.toString() << std::endl;
     }
 }
 
-void printRequestedTokenList(const List<Token::Token> &tokenList) {
-    for (const auto &token: tokenList) {
+void printRequestedTokenList(const List<token::Token> &tokenlist) {
+    for (const auto &token: tokenlist) {
         const String &val = token.getLexeme();
-        if (token.getType() == Token::TOKEN_STRING) {
+        if (token.getType() == token::TOKEN_STRING) {
             std::cout << "<STRING, " << val << ">" << std::endl;
-        } else if (token.getType() == Token::TOKEN_INT) {
+        } else if (token.getType() == token::TOKEN_INT) {
             std::cout << "<INT, " << val << ">" << std::endl;
-        } else if (token.getType() == Token::TOKEN_REAL) {
+        } else if (token.getType() == token::TOKEN_REAL) {
             String stdval;
             if (val[0] == '.') stdval = "0" + val;
             else if (val[val.size()-1]=='.') stdval=val+'0';
             else stdval = val;
             std::cout << "<REAL, " << stdval << ">" << std::endl;
-        } else if (token.getType() == Token::TOKEN_IDENTIFIER) {
+        } else if (token.getType() == token::TOKEN_IDENTIFIER) {
             std::cout << "<id, " << val << ">" << std::endl;
         } else {
-            if (token.getType() == Token::TOKEN_EOF) return;
+            if (token.getType() == token::TOKEN_EOF) return;
             std::cout << "<" << val << ">" << std::endl;
         }
     }
 }
 
-void printSymbolTable(const List<Token::Token>& tokenList){
+void printSymbolTable(const List<token::Token>& tokenlist){
     std::vector<String> symbolTable;
-    for (const auto& t :tokenList) {
-        if (t.getType()==Token::TOKEN_IDENTIFIER){
+    for (const auto& t :tokenlist) {
+        if (t.getType() == token::TOKEN_IDENTIFIER){
             insertToSymbolTable(t,symbolTable);
         }
     }
@@ -47,9 +46,9 @@ void printSymbolTable(const List<Token::Token>& tokenList){
     }
 }
 
-void insertToSymbolTable(const Token::Token& t, List<String>& symbolTable){
-    for (const auto& item:symbolTable) {
+void insertToSymbolTable(const token::Token& t, List<String>& symboltable){
+    for (const auto& item:symboltable) {
         if (t.getLiteralString()==item) return;
     }
-    symbolTable.push_back(t.getLexeme());
+    symboltable.push_back(t.getLexeme());
 }
