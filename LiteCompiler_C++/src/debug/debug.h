@@ -25,31 +25,38 @@
 class Debug
 {
 public:
+     /**
+     * @brief REPL（交互式解释器）循环。
+     *
+     * 用户可以在控制台输入代码，并对其进行词法分析,按下ctrl+C强制退出。
+     *
+     */
+     static void repl();
     /**
      * @brief 输出标记向量中的所有标记。
      * @param tokens 要打印的标记向量（vector类型）
      **/
-    static void printTokens(const std::vector<Token> &tokens);
+     static void printTokens(const std::vector<Token> &tokens);
 
     /**
      * @brief 输出标记向量中的KEYWORD和IDENTIFIER标记【其中相同的KEYWORD或IDENTIFIER标记只输出一次】。
      * @param tokens 要打印的标记向量（vector类型）
      **/
-    static void printSymbolTokens(const std::vector<Token> &tokens);
+     static void printSymbolTokens(const std::vector<Token> &tokens);
 
     /**
      * @brief 输出标记向量中的所有标记。
      * @param tokens 要打印的标记向量（vector类型）
      * @return std::string类型的，所有待输出内容整合成的一个字符串【含换行】
      **/
-    static std::string getAllTokens(const std::vector<Token> &tokens);
+     static std::string getAllTokens(const std::vector<Token> &tokens);
 
     /**
      * @brief 输出标记向量中的KEYWORD和IDENTIFIER标记【其中相同的KEYWORD或IDENTIFIER标记只输出一次】。
      * @param tokens 要打印的标记向量（vector类型）
      * @return std::string类型的，所有待输出内容整合成的一个字符串【含换行】
      **/
-    static std::string getAllSymbolTokens(const std::vector<Token> &tokens);
+     static std::string getAllSymbolTokens(const std::vector<Token> &tokens);
 };
 
 std::vector<std::string> removeDuplicates(const std::vector<std::string> &input);

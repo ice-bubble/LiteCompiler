@@ -226,11 +226,14 @@ Token Lexer::parseNumber()
                 has_exist_point = true;
             else
             {
+                break; // 多个小数点情况，不是词法错误，直接结束本次数字的读取。进入下一个Token的识别
+                /* 非词法报错，因此词法分析阶段不进行报错
                 // Error
                 number += advance();
                 error(line_num, "Too many decimal points in number.");
                 exist_error = true;
                 return Token(TokenType::INVALID, number, line_num);
+                */
             }
         }
         number += advance();

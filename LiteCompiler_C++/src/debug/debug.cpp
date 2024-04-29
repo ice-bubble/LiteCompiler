@@ -3,13 +3,45 @@
 //
 #include "debug.h"
 
- /*
- *    注意！！输出到文件和输出到终端的输出函数是不同的，如有修改输出格式请一并修改其对应的函数
- *    函数对应关系：
- *    Debug::printTokens         <-->    Debug::getAllTokens
- *    Debug::printSymbolTokens   <-->    Debug::getAllSymbolTokens
- *    Lexer::printKeyword        <-->    Lexer::getAllKeyword
- */
+/*
+*    注意！！输出到文件和输出到终端的输出函数是不同的，如有修改输出格式请一并修改其对应的函数
+*    函数对应关系：
+*    Debug::printTokens         <-->    Debug::getAllTokens
+*    Debug::printSymbolTokens   <-->    Debug::getAllSymbolTokens
+*    Lexer::printKeyword        <-->    Lexer::getAllKeyword
+*/
+
+
+void Debug::repl()
+{
+    char input_only_one_line[1024];
+    std::vector<Token> tokens;
+    for (;;)
+    {
+        printf("> ");
+
+        if (!fgets(input_only_one_line, sizeof(input_only_one_line), stdin) || input_only_one_line[0] == EOF)
+        {
+            printf("\n");
+            break;
+        }
+
+        // 创建Lexer类对象
+        Lexer lexer(input_only_one_line);
+
+        // 词法分析
+        lexer.LexicalAnalyze(tokens);
+
+        // 输出本行代码含有的标记（Token）
+        Debug::printTokens(tokens);
+
+        std::vector<Token>().swap(tokens); // 清空本次的Token
+
+        printf("\n");
+        // 输出符号表（KEYWORD和IDENTIFIER）
+        // Debug::printSymbolTokens(tokens);
+    }
+}
 
 
 void Debug::printTokens(const std::vector<Token> &tokens)
