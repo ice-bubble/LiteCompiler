@@ -4,11 +4,10 @@
  * @date 24-4-22
  */
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include "src/lexer/lexer.h"
+#include "src/common.h"
 
+#include "src/token/token.h"
+#include "src/lexer/lexer.h"
 #ifdef DEBUG_FLAG
 #include "src/debug/debug.h"
 #endif
@@ -29,11 +28,11 @@ static void repl() {
             printf("\n");
             break;
         }
-        Lexer::Lexer lexer = Lexer::Lexer(line);
-        List<Token::Token> tokenList = lexer.scanTokens();
+        lexer::Lexer lexer = lexer::Lexer(line);
+        List<token::Token> tokenList = lexer.scanTokens();
 #ifdef DEBUG_PRINT_TOKENLIST
         printTokenList(tokenList);
-        Token::Token::printKeywords();
+        token::Token::printKeywords();
         printSymbolTable(tokenList);
         //printRequestedTokenList(tokenList);
 #endif
@@ -70,13 +69,13 @@ static void runFile(const String& path) {
         String source = readFile(path);
 
         // 创建词法分析器并进行词法分析
-        Lexer::Lexer lexer(source);
-        List<Token::Token> tokenList = lexer.scanTokens();
+        lexer::Lexer lexer(source);
+        List<token::Token> tokenList = lexer.scanTokens();
 
 #ifdef DEBUG_PRINT_TOKENLIST
         // 打印词法分析结果（仅在调试模式下有效）
         printTokenList(tokenList);
-        Token::Token::printKeywords();
+        token::Token::printKeywords();
         printSymbolTable(tokenList);
         //printRequestedTokenList(tokenList);
 #endif

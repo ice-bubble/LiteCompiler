@@ -13,10 +13,10 @@
 /**
  * @brief 命名空间，包含了用于词法分析的类和函数。
  */
-namespace Lexer {
+namespace lexer {
 
     /**
-     * @brief 用于对源代码进行词法分析的 Lexer 类。
+     * @brief 用于对源代码进行词法分析的 lexer 类。
      */
     class Lexer {
     private:
@@ -26,13 +26,13 @@ namespace Lexer {
         size_t start = 0;                                  ///< 用于进行词法分析的起始索引。
         size_t current = 0;                                ///< 当前用于词法分析的索引。
         size_t line = 1;                                   ///< 当前处理的行号。
-        List<Token::Token> tokens;                         ///< 从源代码生成的token列表。
+        List<token::Token> tokens;                         ///< 从源代码生成的token列表。
     public:
 
         /**
-         * @brief 使用给定的源代码字符串构造一个 Lexer 对象。
+         * @brief 使用给定的源代码字符串构造一个 lexer 对象。
          * @param source 要进行词法分析的源代码字符串。
-         * @return Lexer 返回构造的新对象
+         * @return lexer 返回构造的新对象
          */
         Lexer(String source);
 
@@ -40,7 +40,7 @@ namespace Lexer {
         * @brief 对源代码进行词法分析，并返回标记列表。
         * @return 包含源代码标记的token列表。
         */
-        List<Token::Token> scanTokens();
+        List<token::Token> scanTokens();
 
     private:
 
@@ -137,14 +137,14 @@ namespace Lexer {
          * @brief 添加标记到标记列表。
          * @param type 标记类型。
          */
-        void addToken(Token::TokenType type);
+        void addToken(token::TokenType type);
 
         /**
          * @brief 添加带字面量的标记到标记列表。
          * @param type 标记类型。
          * @param literal 标记字面量。
          */
-        void addToken(Token::TokenType type, const Object &literal);
+        void addToken(token::TokenType type, const Object &literal);
     };
 
 }

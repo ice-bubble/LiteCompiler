@@ -15,22 +15,23 @@
 #include "lexer.h"
 
 #include <utility>
+
 #include "../error/error.h"
 
-namespace Lexer {
+namespace lexer {
 
     Lexer::Lexer(String source) {
         this->source = std::move(source);
     }
 
 
-    List<Token::Token> Lexer::scanTokens() {
+    List<token::Token> Lexer::scanTokens() {
         while (!isAtEnd()) {
 
             start = current;
             scanToken();
         }
-        tokens.emplace_back(Token::TOKEN_EOF, "", std::any{}, line);
+        tokens.emplace_back(token::TOKEN_EOF, "", std::any{}, line);
         return tokens;
     }
 
@@ -41,49 +42,49 @@ namespace Lexer {
         if (isAlpha(c))return _identifier();
         switch (c) {
             case '(':
-                return addToken(Token::TOKEN_LEFT_PAREN);
+                return addToken(token::TOKEN_LEFT_PAREN);
             case ')':
-                return addToken(Token::TOKEN_RIGHT_PAREN);
+                return addToken(token::TOKEN_RIGHT_PAREN);
             case '[':
-                return addToken(Token::TOKEN_LEFT_BRACKET);
+                return addToken(token::TOKEN_LEFT_BRACKET);
             case ']':
-                return addToken(Token::TOKEN_RIGHT_BRACKET);
+                return addToken(token::TOKEN_RIGHT_BRACKET);
             case '{':
-                return addToken(Token::TOKEN_LEFT_BRACE);
+                return addToken(token::TOKEN_LEFT_BRACE);
             case '}':
-                return addToken(Token::TOKEN_RIGHT_BRACE);
+                return addToken(token::TOKEN_RIGHT_BRACE);
             case ',':
-                return addToken(Token::TOKEN_COMMA);
+                return addToken(token::TOKEN_COMMA);
             case '.':
                 if (isDigit(peek())) return _real();
-                return addToken(Token::TOKEN_DOT);
+                return addToken(token::TOKEN_DOT);
             case '-':
-                return addToken(Token::TOKEN_MINUS);
+                return addToken(token::TOKEN_MINUS);
             case '+':
-                return addToken(Token::TOKEN_PLUS);
+                return addToken(token::TOKEN_PLUS);
             case '%':
-                return addToken(Token::TOKEN_MOD);
+                return addToken(token::TOKEN_MOD);
             case ';':
-                return addToken(Token::TOKEN_SEMICOLON);
+                return addToken(token::TOKEN_SEMICOLON);
             case '*':
-                return addToken(Token::TOKEN_STAR);
+                return addToken(token::TOKEN_STAR);
             case '#':
                 while (peek() != '\n' && !isAtEnd()) advance();
                 return;
             case '|':
-                if (match('|')) return addToken(Token::TOKEN_OR);
+                if (match('|')) return addToken(token::TOKEN_OR);
                 break;
             case '&':
-                if (match('&')) return addToken(Token::TOKEN_AND);
+                if (match('&')) return addToken(token::TOKEN_AND);
                 break;
             case '!':
-                return addToken(match('=') ? Token::TOKEN_NOT_EQUAL : Token::TOKEN_NOT);
+                return addToken(match('=') ? token::TOKEN_NOT_EQUAL : token::TOKEN_NOT);
             case '=':
-                return addToken(match('=') ? Token::TOKEN_EQUAL_EQUAL : Token::TOKEN_EQUAL);
+                return addToken(match('=') ? token::TOKEN_EQUAL_EQUAL : token::TOKEN_EQUAL);
             case '<':
-                return addToken(match('=') ? Token::TOKEN_LESS_EQUAL : Token::TOKEN_LESS);
+                return addToken(match('=') ? token::TOKEN_LESS_EQUAL : token::TOKEN_LESS);
             case '>':
-                return addToken(match('=') ? Token::TOKEN_GREATER_EQUAL : Token::TOKEN_GREATER);
+                return addToken(match('=') ? token::TOKEN_GREATER_EQUAL : token::TOKEN_GREATER);
             case '/':
                 return slash();
             case '\'':
@@ -106,9 +107,9 @@ namespace Lexer {
         while (isAlphaNumeric(peek())) advance();
 
         String text = source.substr(start, current - start);
-        auto tokentype = Token::Token::getKeywordTypeInMap(text);
-        if (tokentype == Token::TOKEN_EOF) {
-            addToken(Token::TOKEN_IDENTIFIER);
+        auto tokentype = token::Token::getKeywordTypeInMap(text);
+        if (tokentype == token::TOKEN_EOF) {
+            addToken(token::TOKEN_IDENTIFIER);
             return;
         }
         addToken(tokentype);
@@ -117,7 +118,7 @@ namespace Lexer {
     void Lexer::_real() {
         // 一直消费数字，直到待消费的字符不是数字
         while (isDigit(peek())) advance();
-        addToken(Token::TOKEN_REAL, std::stod(source.substr(start, current - start)));
+        addToken(token::TOKEN_REAL, std::stod(source.substr(start, current - start)));
     }
 
     void Lexer::_number() {
@@ -134,17 +135,17 @@ namespace Lexer {
             while (isDigit(peek())) advance();
 
             // 此时是小数
-            addToken(Token::TOKEN_REAL, std::stod(source.substr(start, current - start)));
+            addToken(token::TOKEN_REAL, std::stod(source.substr(start, current - start)));
             return;
         }
         if (match('.'))
         {
-            return addToken(Token::TOKEN_REAL,
+            return addToken(token::TOKEN_REAL,
                             (std::stod(source.substr(start, current - start))));
         }
 
         // 非小数，即整数
-        addToken(Token::TOKEN_INT,
+        addToken(token::TOKEN_INT,
                  static_cast<long>(std::stod(source.substr(start, current - start))));
     }
 
@@ -160,7 +161,7 @@ namespace Lexer {
         advance();
 
         // 截取子串时记得去掉开始和结尾的 " 或 '
-        addToken(Token::TOKEN_STRING, source.substr(start + 1, current - start - 2));
+        addToken(token::TOKEN_STRING, source.substr(start + 1, current - start - 2));
     }
 
     void Lexer::slash() {
@@ -188,7 +189,7 @@ namespace Lexer {
             }
             return;
         }
-        addToken(Token::TOKEN_SLASH);
+        addToken(token::TOKEN_SLASH);
     }
 
     bool Lexer::match(char expected) {
@@ -230,11 +231,11 @@ namespace Lexer {
         return source[current - 1];
     }
 
-    void Lexer::addToken(Token::TokenType type) {
+    void Lexer::addToken(token::TokenType type) {
         addToken(type, std::any{});
     }
 
-    void Lexer::addToken(Token::TokenType type, const Object &literal) {
+    void Lexer::addToken(token::TokenType type, const Object &literal) {
         String lexeme = source.substr(start, current - start);
         tokens.emplace_back(type, lexeme, literal, line);
     }

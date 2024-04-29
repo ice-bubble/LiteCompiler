@@ -12,7 +12,7 @@
 /**
  * @brief 命名空间，包含了token相关的类和函数。
  */
-namespace Token {
+namespace token {
     /**
      * @brief 用于区分不同token类型的枚举体，一种token对应一种成员。
      */
@@ -100,7 +100,7 @@ namespace Token {
          * @param lexeme Token的词法单元文本形式。
          * @param literal Token的字面量值。
          * @param line Token所在的行号。
-         * @return Token 返回构造的新对象
+         * @return token 返回构造的新对象
          */
         Token(TokenType type, String lexeme, Object literal, size_t line);
 
