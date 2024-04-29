@@ -35,6 +35,7 @@ std::map<std::string, TokenType> Lexer::keywords = {
     {"read", TokenType::KEYWORD_READ},
     {"repeat", TokenType::KEYWORD_REPEAT},
     {"return", TokenType::KEYWORD_RETURN},
+    {"string", TokenType::KEYWORD_STRING},
     //{"super", TokenType::KEYWORD_SUPER},
     //{"this", TokenType::KEYWORD_THIS},
     //{"true", TokenType::KEYWORD_TRUE},
