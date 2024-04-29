@@ -6,14 +6,14 @@
 
 #include "debug.h"
 
-void printTokenList(const List<token::Token> &tokenList) {
-    for (const auto &token: tokenList) {
+void printTokenList(const List<token::Token> &tokenlist) {
+    for (const auto &token: tokenlist) {
         std::cout << token.toString() << std::endl;
     }
 }
 
-void printRequestedTokenList(const List<token::Token> &tokenList) {
-    for (const auto &token: tokenList) {
+void printRequestedTokenList(const List<token::Token> &tokenlist) {
+    for (const auto &token: tokenlist) {
         const String &val = token.getLexeme();
         if (token.getType() == token::TOKEN_STRING) {
             std::cout << "<STRING, " << val << ">" << std::endl;
@@ -34,9 +34,9 @@ void printRequestedTokenList(const List<token::Token> &tokenList) {
     }
 }
 
-void printSymbolTable(const List<token::Token>& tokenList){
+void printSymbolTable(const List<token::Token>& tokenlist){
     std::vector<String> symbolTable;
-    for (const auto& t :tokenList) {
+    for (const auto& t :tokenlist) {
         if (t.getType() == token::TOKEN_IDENTIFIER){
             insertToSymbolTable(t,symbolTable);
         }
@@ -46,9 +46,9 @@ void printSymbolTable(const List<token::Token>& tokenList){
     }
 }
 
-void insertToSymbolTable(const token::Token& t, List<String>& symbolTable){
-    for (const auto& item:symbolTable) {
+void insertToSymbolTable(const token::Token& t, List<String>& symboltable){
+    for (const auto& item:symboltable) {
         if (t.getLiteralString()==item) return;
     }
-    symbolTable.push_back(t.getLexeme());
+    symboltable.push_back(t.getLexeme());
 }
