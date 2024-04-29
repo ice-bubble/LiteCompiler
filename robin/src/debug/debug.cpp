@@ -1,7 +1,6 @@
 /**
  * @file debug.cpp
  * @brief debug函数的实现。
- * @author lzy
  * @date 24-4-23
  */
 

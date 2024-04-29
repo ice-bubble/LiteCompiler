@@ -29,11 +29,11 @@ static void repl() {
             break;
         }
         lexer::Lexer lexer = lexer::Lexer(line);
-        List<token::Token> tokenList = lexer.scanTokens();
+        List<token::Token> tokenlist = lexer.scanTokens();
 #ifdef DEBUG_PRINT_TOKENLIST
-        printTokenList(tokenList);
+        printTokenList(tokenlist);
         token::Token::printKeywords();
-        printSymbolTable(tokenList);
+        printSymbolTable(tokenlist);
         //printRequestedTokenList(tokenList);
 #endif
     }
@@ -70,13 +70,13 @@ static void runFile(const String& path) {
 
         // 创建词法分析器并进行词法分析
         lexer::Lexer lexer(source);
-        List<token::Token> tokenList = lexer.scanTokens();
+        List<token::Token> tokenlist = lexer.scanTokens();
 
 #ifdef DEBUG_PRINT_TOKENLIST
         // 打印词法分析结果（仅在调试模式下有效）
-        printTokenList(tokenList);
+        printTokenList(tokenlist);
         token::Token::printKeywords();
-        printSymbolTable(tokenList);
+        printSymbolTable(tokenlist);
         //printRequestedTokenList(tokenList);
 #endif
     } catch (const std::exception& e) {

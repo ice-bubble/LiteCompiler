@@ -13,9 +13,7 @@
  */
 
 #include "lexer.h"
-
-#include <utility>
-
+#include "../token/token.h"
 #include "../error/error.h"
 
 namespace lexer {
@@ -98,8 +96,8 @@ namespace lexer {
             case '\t':
                 return;
         }
-        String UnexpectedChar(1, c);
-        error(line, "Unexpected character '" + UnexpectedChar + "'.");
+        String unexpected_char(1, c);
+        error(line, "Unexpected character '" + unexpected_char + "'.");
     }
 
     void Lexer::_identifier() {

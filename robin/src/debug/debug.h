@@ -1,7 +1,6 @@
 /**
  * @file debug.h
  * @brief debug函数的声明。
- * @author lzy
  * @date 24-4-23
  */
 #ifndef ROBIN_DEBUG_H
