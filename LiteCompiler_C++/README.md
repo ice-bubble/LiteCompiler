@@ -110,29 +110,29 @@ build文件夹内会生成目标：`LiteCompiler_C++`
 2. **符号（Symbols）**：
    - `ASSIGNMENT`: `=`赋值运算符。
    - `PLUS`: `+`，加号。
-   - `PLUS_FORWARD`: `+=`，加等于号。
+   - `PLUS_ASSIGNMENT`: `+=`，赋值加号。
    - `MINUS`: `-`，减号。
-   - `MINUS_FORWARD`: `-=`，减等于号。
+   - `MINUS_ASSIGNMENT`: `-=`，赋值减号。
    - `MULTIPLY`: `*`，乘号。
-   - `MULTIPLY_FORWARD`: `*=`，乘等于号。
+   - `MULTIPLY_ASSIGNMENT`: `*=`，赋值乘号。
    - `DIVIDE`: `/`，除号。
-   - `DIVIDE_FORWARD`: `/=`，除等于号。
+   - `DIVIDE_ASSIGNMENT`: `/=`，赋值除号。
    - `AND`: `&`，按位与运算符。
-   - `AND_FORWARD`: `&=`，按位与赋值运算符。
+   - `AND_ASSIGNMENT`: `&=`，按位与赋值运算符。
    - `LOGICAL_AND`: `&&`，逻辑与运算符。
    - `OR`: `|`，按位或运算符。
-   - `OR_FORWARD`: `|=`，按位或赋值运算符。
+   - `OR_ASSIGNMENT`: `|=`，按位或赋值运算符。
    - `LOGICAL_OR`: `||`，逻辑或运算符。
    - `XOR`: `^`，按位异或运算符。
-   - `XOR_FORWARD`: `^=`，按位异或赋值运算符。
+   - `XOR_ASSIGNMENT`: `^=`，按位异或赋值运算符。
    - `NOT`: `~`，按位取反运算符。
    - `LOGICAL_NOT`: `!`，逻辑非运算符。
    - `NOT_EQUAL`: `!=`，不等于运算符。
    - `EQUAL`: `==`，等于运算符。
    - `ABOVE`: `>`，大于运算符。
    - `BELOW`: `<`，小于运算符。
-   - `ABOVE_OR_EUQAL`: `>=`，大于等于运算符。
-   - `BELOW_OR_EUQAL`: `<=`，小于等于运算符。
+   - `ABOVE_OR_EUQAL`: `>=`，大于或等于运算符。
+   - `BELOW_OR_EUQAL`: `<=`，小于或等于运算符。
    - `LEFT_PAREN`: `(`，左括号。
    - `RIGHT_PAREN`: `)`，右括号。
    - `LEFT_BRACKET`: `[`，左方括号。
@@ -168,10 +168,8 @@ graph LR
     C -->|其他符号| G[Lexer::parseSymbol]
     E --> |有且仅有1个'.'|H[REAL]
     E --> |没有'.'|M[INT]
-    E --> |有2个及以上'.'|N[INVALID（ERROR）]
     H --> F[识别完成一个Token]
     M --> F[识别完成一个Token]
-    N --> F[识别完成一个Token]
     D --> |匹配关键字| J[Lexer::checkKeyword]
     J --> |匹配到关键字| K[对应关键字类型]
     J --> |未匹配到关键字| L[IDENTIFIER（id）]
@@ -180,7 +178,7 @@ graph LR
     G --> |根据符号分类| O[switch]
     O --> |单引号or双引号|X[匹配字符串]
     X --> |识别到相应的单引号or双引号闭合|Y[完成字符串匹配]
-    X --> |直接文件末尾仍然未识别到闭合|Z[ERROR]
+    X --> |直接换行仍然未识别到闭合|Z[ERROR：字符串换行]
     Y --> F
     Z --> F
     O --> P[各类运算符]
@@ -191,8 +189,6 @@ graph LR
     R --> |未检测到闭合 */| T[INVALID（ERROR）]
     O --> |无法识别的符号| U[INVALID（ERROR）]
     U --> V[INVALID（ERROR）]
-    E --> |出现字母（含下划线）| W[INVALID（ERROR）]
-    W --> F
     V --> F
     T --> F
     S --> F
