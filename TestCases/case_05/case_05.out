@@ -13,17 +13,17 @@ The code exists above Lexical Error!
 <(>
 <)>
 <{>
-<id, float>
+<double>
 <id, num1>
 <=>
 <REAL, 2.5>
 <;>
-<id, float>
+<double>
 <id, num2>
 <=>
 <REAL, 1.0>
 <;>
-<id, float>
+<double>
 <id, avg>
 <=>
 <(>
@@ -100,7 +100,6 @@ KEYWORD until
 KEYWORD while
 KEYWORD write
 IDENTIFIER case05
-IDENTIFIER float
 IDENTIFIER num1
 IDENTIFIER num2
 IDENTIFIER avg

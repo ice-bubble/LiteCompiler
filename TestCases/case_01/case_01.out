@@ -2,7 +2,7 @@
 [line: 6] Error:Unexpected character '$'.
 The code exists above Lexical Error!
 
-<id, case1>
+<id, case01>
 <=>
 <function>
 <(>
@@ -50,7 +50,6 @@ KEYWORD char
 KEYWORD do
 KEYWORD double
 KEYWORD else
-KEYWORD float
 KEYWORD for
 KEYWORD function
 KEYWORD if
@@ -62,7 +61,7 @@ KEYWORD string
 KEYWORD until
 KEYWORD while
 KEYWORD write
-IDENTIFIER case1
+IDENTIFIER case01
 IDENTIFIER x
 IDENTIFIER y
 IDENTIFIER z

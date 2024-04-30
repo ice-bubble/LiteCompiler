@@ -1,4 +1,4 @@
-case1=function() {
+case01=function() {
     integer x = 5;
     integer y = 10;
 

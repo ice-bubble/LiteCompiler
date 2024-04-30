@@ -1,8 +1,8 @@
 case05=function() {
     // 该程序计算小数点后一位的平均值
-    float num1 = 2.5;
-    float num2 = 1.;
-    float avg = (num1 + num2) / 2;
+    double num1 = 2.5;
+    double num2 = 1.;
+    double avg = (num1 + num2) / 2;
 
     // 字符串跨行
     char *str = "This is a 

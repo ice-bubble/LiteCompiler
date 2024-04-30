@@ -15,21 +15,39 @@ No Lexical Error in the code!
 <id, b>
 <=>
 <REAL, 0.5>
+<*>
+<REAL, 1.0>
 <;>
 <double>
 <id, c>
 <=>
 <REAL, 1.0>
+<REAL, 0.2>
+<*>
+<REAL, 1.2>
+<REAL, 0.3>
+<REAL, 0.4>
 <;>
 <double>
-<id, h>
+<id, x>
 <=>
-<REAL, 0.5>
-<*>
 <REAL, 1.0>
+<REAL, 0.0>
+<*>
+<REAL, 0.0>
+<REAL, 0.1>
+<;>
+<double>
+<id, y>
+<=>
+<REAL, 3.0>
+<REAL, 0.1>
+<.>
+<.>
+<REAL, 0.4>
 <;>
 <integer>
-<id, x>
+<id, z>
 <=>
 <INT, 109238>
 <;>
@@ -37,8 +55,11 @@ No Lexical Error in the code!
 <(>
 <STRING, %lf>
 <,>
-<id, h>
+<id, a>
+<*>
+<id, b>
 <)>
+<;>
 <return>
 <INT, 0>
 <;>
@@ -62,6 +83,7 @@ IDENTIFIER case02
 IDENTIFIER a
 IDENTIFIER b
 IDENTIFIER c
-IDENTIFIER h
 IDENTIFIER x
+IDENTIFIER y
+IDENTIFIER z
 IDENTIFIER printf
