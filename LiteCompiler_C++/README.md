@@ -100,6 +100,7 @@ build文件夹内会生成目标：`LiteCompiler_C++`
    - `KEYWORD_READ`:  `read`，读操作关键字。
    - `KEYWORD_REPEAT`:  `repeat`，循环关键字。
    - `KEYWORD_RETURN`: `return`，函数返回语句的关键字。
+   - `KEYWORD_STRING`: `string`，字符串类型关键字。
    - `KEYWORD_SUPER`: `super`，表示父类的关键字。
    - `KEYWORD_THIS`: `this`，表示当前对象或实例的关键字。
    - `KEYWORD_TRUE`: `true`，布尔类型的真值关键字。
@@ -157,7 +158,7 @@ build文件夹内会生成目标：`LiteCompiler_C++`
 
 
 
-词法分析器算法结构图如下：
+词法分析器大致结构图：
 
 ```mermaid
 graph LR
@@ -195,6 +196,75 @@ graph LR
     Q --> |跳过本行| F
     F --> |回到跳过空白符号函数，并循环执行此过程直至文件末尾| C
 ```
+
+词法分析器完整算法结构图：
+```mermaid
+graph LR
+    Lexer::LexicalAnalyze["Lexer::LexicalAnalyze"] --> |"调用"|Lexer::skipWhitespace["Lexer::skipWhitespace"]
+    Lexer::skipWhitespace --> |"跳过当前连续的空格、换行、制表符"|start["当前Token的第一个字符"]
+    
+    start --> |"英文字母或下划线"| Lexer::parseIdentifier["Lexer::parseIdentifier"]
+    start --> |"数字"| Lexer::parseNumber["Lexer::parseNumber"]
+    start --> |"其他符号"| Lexer::parseSymbol["Lexer::parseSymbol"]
+    
+    Lexer::parseIdentifier --> |"扫描直至出现非英文字母或下划线的字符出现时"|IdentifierEnd["End_of_ID_Token"]
+    IdentifierEnd --> |"true == Lexer::checkKeyword"|returnKeywordType["相应的关键字"]
+    IdentifierEnd --> |"false == Lexer::checkKeyword"|returnIdentifier["Identifier（id）"]
+    
+    Lexer::parseNumber --> |"扫描直至出现非数字或小数点的字符出现时；或第二次出现小数点时"|NumberEnd["End_of_NUM_Token"]
+    NumberEnd --> |"不存在小数点'.'"|NUM_INT["NUM_INT"]
+    NumberEnd --> |"存在1个小数点'.'"|NUM_REAL["NUM_REAL"]
+    
+    
+    Lexer::parseSymbol --> |"匹配到 点'.'"|MatchedPoint["MatchedPoint"]
+    MatchedPoint --> |"点'.'后面是数字"| NUM_REAL["NUM_REAL"]
+    MatchedPoint --> |"点'.'后面不是数字"| Point_Operators["成员访问运算符"]
+    
+    Lexer::parseSymbol --> |"匹配正常运算符"| Symbol_Operators["各类运算符"]
+    
+    Lexer::parseSymbol --> |"匹配到 单引号 OR 双引号 "| StringStart["字符串识别"]
+    StringStart --> |"匹配到 对应的 单引号 OR 双引号 闭合"| StringEnd["字符串"]
+    StringStart --> |"直至换行仍未匹配到 对应的 单引号 OR 双引号 闭合"| StringError["Error:字符串换行"]
+    
+    Lexer::parseSymbol --> |"匹配到 '/'"| MatchedSlash["MatchedSlash"]
+    MatchedSlash --> |"'*' != peekNext() && '/' != peekNext() && '=' != peekNext()"| Divide_Operators["除法运算符"]
+    MatchedSlash --> |"'=' == peekNext()"| Divide_Assignmnt_Operators["除法赋值运算符"]
+    MatchedSlash --> |"'*' == peekNext()"| CommentBlock["注释块"]
+    MatchedSlash --> |"'/' == peekNext()"| Comment["单行注释"]
+    CommentBlock --> |"直至文件末尾仍未匹配到 '*/' 闭合"| CompleteError["注释未闭合"]
+    CommentBlock --> |"匹配到 '*/' 闭合"| CompleteComment["完成注释过滤"]
+    
+    
+    Lexer::parseSymbol --> |"匹配到 '#'"| Comment["单行注释"]
+    Comment --> |"忽略本行"| CompleteComment["完成注释过滤"]
+    
+    
+    
+    
+    Lexer::parseSymbol --> |"其他无法识别的符号"| Unexpected_character["Unexpected character"]
+    
+    StringError --> LexicalError["LexicalError"]
+    Unexpected_character --> LexicalError["LexicalError"]
+    CompleteError --> LexicalError["LexicalError"]
+    
+    returnKeywordType --> CompleteToken["识别完成一个Token"]
+    returnIdentifier --> CompleteToken["识别完成一个Token"]
+    NUM_REAL --> CompleteToken["识别完成一个Token"]
+    NUM_INT --> CompleteToken["识别完成一个Token"]
+    Symbol_Operators --> CompleteToken["识别完成一个Token"]
+    StringEnd --> CompleteToken["识别完成一个Token"]
+    Point_Operators --> CompleteToken["识别完成一个Token"]
+    Divide_Operators --> CompleteToken["识别完成一个Token"]
+    Divide_Assignmnt_Operators --> CompleteToken["识别完成一个Token"]
+    
+    CompleteToken --> NextToken["准备下一个Token的识别"]
+    CompleteComment --> NextToken["准备下一个Token的识别"]
+    LexicalError --> NextToken["准备下一个Token的识别"]
+    
+    NextToken --> |"回到跳过空白符号函数，并循环执行此过程直至文件末尾"|Lexer::skipWhitespace["Lexer::skipWhitespace"]
+    
+```
+
 
 [^1]: 对于其他工具链，命令三和命令四会有所不同。可能可以使用默认的设置，直接运行`cmake ..`和`make`，也可能要更改命令，手动指定使用的编译器和make工具
 
