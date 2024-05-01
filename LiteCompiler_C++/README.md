@@ -7,22 +7,24 @@
 │   ├── .idea                       CLion配置文件
 │   ├── CMakeLists.txt              CMake配置文件
 │   ├── main.cpp                    主函数
-│   └── src                         存放所有头文件和源文件
-│       ├── debug                   调试文件
-│       │   ├── debug.cpp           debug类相关成员函数及变量定义
-│       │   └── debug.h             debug类声明文件
-|       ├── error                   错误处理
-|       │   ├── error.cpp           错误处理函数定义
-|       │   └── error.h             错误处理函数声明
-│       ├── FileHandler             文件处理【主要为对文件进行输入输出】
-│       │   ├── FileHandler.cpp     文件处理类相关成员函数及变量定义
-│       │   └── FileHandler.h       文件处理类声明
-│       ├── LexicalAnalysis         词法分析器
-│       │   ├── Lexer.cpp           词法分析器类相关成员函数及变量定义
-│       │   └── Lexer.h             词法分析器类声明
-│       └── Token                   Token相关文件
-│           ├── Token.cpp           KEYWORD定义、Token类相关成员函数及变量定义
-│           └── Token.h             TokenType枚举类型声明、Token类声明
+│   ├── src                         存放所有头文件和源文件
+│   │   ├── debug                   调试文件
+│   │   │   ├── debug.cpp           debug类相关成员函数及变量定义
+│   │   │   └── debug.h             debug类声明文件
+|   │   ├── error                   错误处理
+|   │   │   ├── error.cpp           错误处理函数定义
+|   │   │   └── error.h             错误处理函数声明
+│   │   ├── FileHandler             文件处理【主要为对文件进行输入输出】
+│   │   │   ├── FileHandler.cpp     文件处理类相关成员函数及变量定义
+│   │   │   └── FileHandler.h       文件处理类声明
+│   │   ├── LexicalAnalysis         词法分析器
+│   │   │   ├── Lexer.cpp           词法分析器类相关成员函数及变量定义
+│   │   │   └── Lexer.h             词法分析器类声明
+│   │   └── Token                   Token相关文件
+│   │       ├── Token.cpp           KEYWORD定义、Token类相关成员函数及变量定义
+│   │       └── Token.h             TokenType枚举类型声明、Token类声明
+|   ├── Pictures                    README.md文件中可能用到的图片文件
+│   └── VisioSourceDocuments        Visio绘图源文件
 └── README.md                       项目介绍【本文件】
 
 ```
