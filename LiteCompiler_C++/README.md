@@ -158,45 +158,6 @@ build文件夹内会生成目标：`LiteCompiler_C++`
 
 
 
-词法分析器大致结构图：
-
-```mermaid
-graph LR
-	A[main] --> |调用| B[Lexer::LexicalAnalyze]
-    B --> C[Lexer::skipWhitespace]
-    C -->|字母或者下划线| D[Lexer::parseIdentifier]
-    C -->|数字| E[Lexer::parseNumber]
-    C -->|其他符号| G[Lexer::parseSymbol]
-    E --> |有且仅有1个'.'|H[REAL]
-    E --> |没有'.'|M[INT]
-    H --> F[识别完成一个Token]
-    M --> F[识别完成一个Token]
-    D --> |匹配关键字| J[Lexer::checkKeyword]
-    J --> |匹配到关键字| K[对应关键字类型]
-    J --> |未匹配到关键字| L[IDENTIFIER（id）]
-    K --> F[识别完成一个Token]
-    L --> F[识别完成一个Token]
-    G --> |根据符号分类| O[switch]
-    O --> |单引号or双引号|X[匹配字符串]
-    X --> |识别到相应的单引号or双引号闭合|Y[完成字符串匹配]
-    X --> |直接换行仍然未识别到闭合|Z[ERROR：字符串换行]
-    Y --> F
-    Z --> F
-    O --> P[各类运算符]
-    P --> F
-    O --> |# or //| Q[单行注释]
-    O --> |/*| R[多行注释开头]
-    R --> |跳过至检测到 */| S[完成多行注释识别]
-    R --> |未检测到闭合 */| T[INVALID（ERROR）]
-    O --> |无法识别的符号| U[INVALID（ERROR）]
-    U --> V[INVALID（ERROR）]
-    V --> F
-    T --> F
-    S --> F
-    Q --> |跳过本行| F
-    F --> |回到跳过空白符号函数，并循环执行此过程直至文件末尾| C
-```
-
 词法分析器完整算法结构图：
 ```mermaid
 graph LR
@@ -220,9 +181,9 @@ graph LR
     MatchedPoint --> |"点'.'后面是数字"| NUM_REAL["NUM_REAL"]
     MatchedPoint --> |"点'.'后面不是数字"| Point_Operators["成员访问运算符"]
     
-    Lexer::parseSymbol --> |"匹配正常运算符"| Symbol_Operators["各类运算符"]
+    Lexer::parseSymbol --> |"匹配到正常运算符"| Symbol_Operators["各类运算符"]
     
-    Lexer::parseSymbol --> |"匹配到 单引号 OR 双引号 "| StringStart["字符串识别"]
+    Lexer::parseSymbol --> |"匹配到 单引号 OR 双引号"| StringStart["字符串识别"]
     StringStart --> |"匹配到 对应的 单引号 OR 双引号 闭合"| StringEnd["字符串"]
     StringStart --> |"直至换行仍未匹配到 对应的 单引号 OR 双引号 闭合"| StringError["Error:字符串换行"]
     
@@ -262,9 +223,10 @@ graph LR
     LexicalError --> NextToken["准备下一个Token的识别"]
     
     NextToken --> |"回到跳过空白符号函数，并循环执行此过程直至文件末尾"|Lexer::skipWhitespace["Lexer::skipWhitespace"]
-    
 ```
+词法分析器完整算法流程图彩色版：
 
+![编译系统设计实践_实验1_算法流程图](F:\Github\LiteCompiler\LiteCompiler_C++\Pictures\编译系统设计实践_实验1_算法流程图.jpg)
 
 [^1]: 对于其他工具链，命令三和命令四会有所不同。可能可以使用默认的设置，直接运行`cmake ..`和`make`，也可能要更改命令，手动指定使用的编译器和make工具
 
