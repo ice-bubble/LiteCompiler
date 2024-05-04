@@ -27,7 +27,10 @@ namespace lexer {
         size_t current = 0;                                ///< 当前用于词法分析的索引。
         size_t line = 1;                                   ///< 当前处理的行号。
         List<token::Token> tokens;                         ///< 从源代码生成的token列表。
+
     public:
+
+        bool hasError = false;                             ///< 表示当前lexer正在分析的源代码有无词法错误
 
         /**
          * @brief 使用给定的源代码字符串构造一个 lexer 对象。

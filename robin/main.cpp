@@ -32,6 +32,9 @@ static void repl() {
         List<token::Token> tokenlist = lexer.scanTokens();
 #ifdef DEBUG_PRINT_TOKENLIST
         printTokenList(tokenlist);
+        if (lexer.hasError)
+            std::cerr<<"There are lexical errors in the source code"<<std::endl;
+        lexer.hasError= false;
         token::Token::printKeywords();
         printSymbolTable(tokenlist);
         //printRequestedTokenList(tokenList);
@@ -75,6 +78,8 @@ static void runFile(const String& path) {
 #ifdef DEBUG_PRINT_TOKENLIST
         // 打印词法分析结果（仅在调试模式下有效）
         printTokenList(tokenlist);
+        if (lexer.hasError)
+            std::cerr<<"There are lexical errors in the source code"<<std::endl;
         token::Token::printKeywords();
         printSymbolTable(tokenlist);
         //printRequestedTokenList(tokenList);

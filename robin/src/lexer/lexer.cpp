@@ -97,7 +97,7 @@ namespace lexer {
                 return;
         }
         String unexpected_char(1, c);
-        error(line, "Unexpected character '" + unexpected_char + "'.");
+        error(this, line, "Unexpected character '" + unexpected_char + "'.");
     }
 
     void Lexer::_identifier() {
@@ -136,8 +136,7 @@ namespace lexer {
             addToken(token::TOKEN_REAL, std::stod(source.substr(start, current - start)));
             return;
         }
-        if (match('.'))
-        {
+        if (match('.')) {
             return addToken(token::TOKEN_REAL,
                             (std::stod(source.substr(start, current - start))));
         }
@@ -151,7 +150,7 @@ namespace lexer {
         while (peek() != front) {
             // 处理跨行字符串
             // 处理找不到闭合的 " 或 ' 的情况
-            if (peek() == '\n'||isAtEnd()) return error(line, "Unterminated string.");
+            if (peek() == '\n' || isAtEnd()) return error(this, line, "Unterminated string.");
             advance();
         }
 
@@ -164,7 +163,7 @@ namespace lexer {
 
     void Lexer::slash() {
         //为未闭合注释记录下开始的行号
-        size_t tmp_line=line;
+        size_t tmp_line = line;
         if (match('/')) {
             while (peek() != '\n' && !isAtEnd()) advance();
             return;
@@ -172,7 +171,7 @@ namespace lexer {
         if (match('*')) {
             while (true) {
                 // 多行注释未闭合
-                if (isAtEnd()) return error(tmp_line, "Unterminated comment.");
+                if (isAtEnd()) return error(this, tmp_line, "Unterminated comment.");
                 char ch = advance();
 
                 // 换行时记得把行号加一

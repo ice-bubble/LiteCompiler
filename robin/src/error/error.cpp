@@ -9,3 +9,9 @@
 void error(size_t line, const String &message) {
     std::cerr << "[line: " << line << "] Error:" << message << std::endl;
 }
+
+void error(lexer::Lexer* error_lexer ,size_t line, const String& message)
+{
+    error_lexer->hasError=true;
+    error(line,message);
+}
