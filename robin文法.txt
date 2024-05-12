@@ -32,4 +32,4 @@ var            → identifier | var "[" expression "]"
 
 
 
-tip:文法在funDecl和exprStmt有二义性，此时要向后看两个token;其他地方应该是不要向后看或者向后看一个token
+tip:文法在funDecl和exprStmt有二义性，此时要向后看两个token😨;其他地方应该是不要向后看或者向后看一个token🤨
