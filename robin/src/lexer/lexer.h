@@ -62,18 +62,18 @@ namespace lexer {
         /**
          * @brief 处理浮点数标记。
          */
-        void _real();
+        void real_();
 
         /**
          * @brief 处理数字标记。
          * @note 处理的对象可以是浮点数也可以是整数
          */
-        void _number();
+        void number_();
 
         /**
          * @brief 处理字符串标记。
          */
-        void _string(char front);
+        void string_(char front);
 
         /**
          * @brief 处理斜杠标记。

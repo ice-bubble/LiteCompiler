@@ -14,6 +14,7 @@ namespace token {
     Map<String, TokenType> Token::keywords = {
             {"and",      TOKEN_AND},        /**< "and" 关键字对应的标记类型。 */
             {"break",    TOKEN_BREAK},      /**< "break" 关键字对应的标记类型。 */
+            {"char",     TOKEN_CHAR},       /**< "char" 关键字对应的标记类型。 */
             {"class",    TOKEN_CLASS},      /**< "class" 关键字对应的标记类型。 */
             {"continue", TOKEN_CONTINUE},   /**< "continue" 关键字对应的标记类型。 */
             {"do",       TOKEN_DO},         /**< "do" 关键字对应的标记类型。 */
@@ -31,13 +32,14 @@ namespace token {
             {"read",     TOKEN_READ},       /**< "read" 关键字对应的标记类型。 */
             {"repeat",   TOKEN_REPEAT},     /**< "repeat" 关键字对应的标记类型。 */
             {"return",   TOKEN_RETURN},     /**< "return" 关键字对应的标记类型。 */
+            {"string",   TOKEN_STRING},     /**< "string" 关键字对应的标记类型。 */
             {"super",    TOKEN_SUPER},      /**< "super" 关键字对应的标记类型。 */
             {"this",     TOKEN_THIS},       /**< "this" 关键字对应的标记类型。 */
             {"true",     TOKEN_TRUE},       /**< "true" 关键字对应的标记类型。 */
             {"until",    TOKEN_UNTIL},      /**< "until" 关键字对应的标记类型。 */
             {"var",      TOKEN_VAR},        /**< "var" 关键字对应的标记类型。 */
             {"while",    TOKEN_WHILE},      /**< "while" 关键字对应的标记类型。 */
-            {"write",    TOKEN_WRITE}        /**< "return" 关键字对应的标记类型。 */
+            {"write",    TOKEN_WRITE}       /**< "return" 关键字对应的标记类型。 */
     };
 
     List<String> Token::tokenStrings = {
@@ -65,12 +67,13 @@ namespace token {
             "LESS_EQUAL",
 
             "IDENTIFIER",
-            "STRING",
-            "INT",
-            "REAL",
+            "STRING_",
+            "INT_",
+            "REAL_",
 
             "AND",
             "BREAK",
+            "CHAR",
             "CLASS",
             "CONTINUE",
             "DO",
@@ -88,6 +91,7 @@ namespace token {
             "READ",
             "REPEAT",
             "RETURN",
+            "STRING",
             "SUPER",
             "THIS",
             "TRUE",
@@ -111,11 +115,11 @@ namespace token {
 
     String Token::getLiteralString() const {
         switch (type) {
-            case (TOKEN_STRING):
+            case (TOKEN_STRING_):
                 return std::any_cast<String>(literal);
-            case (TOKEN_REAL):
+            case (TOKEN_REAL_):
                 return std::to_string(std::any_cast<double>(literal));
-            case (TOKEN_INT):
+            case (TOKEN_INT_):
                 return std::to_string(std::any_cast<long>(literal));
             case (TOKEN_TRUE):
                 return "true";

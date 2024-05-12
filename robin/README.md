@@ -150,12 +150,12 @@ graph LR
     TOKEN_SLASH --> matched_type
     char -->|换行符| line++
     char -->|字母或者下划线| maybeid["_identifier()"]
-    char -->|数字| num["_number()"]
-    char -->|'""'| str["_string()"]
+    char -->|数字| num["number_()"]
+    char -->|'""'| str["string_()"]
     char -->|'.'| dotOrReal[符号点或者浮点数]
     dotOrReal -->|'.'|TOKEN_DOT
     TOKEN_DOT --> matched_type
-    dotOrReal -->|浮点数|real["_real()"]
+    dotOrReal -->|浮点数|real["real_()"]
     real --> matched_type
     char -->|匹配到的运算符| matched_type["addToken()"]
     maybeid -->|查询vector匹配到关键字|keyword[TOKEN_KEYWORD]

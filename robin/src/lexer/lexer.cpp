@@ -36,7 +36,7 @@ namespace lexer {
 
     void Lexer::scanToken() {
         char c = advance();
-        if (isDigit(c)) return _number();
+        if (isDigit(c)) return number_();
         if (isAlpha(c))return _identifier();
         switch (c) {
             case '(':
@@ -54,7 +54,7 @@ namespace lexer {
             case ',':
                 return addToken(token::TOKEN_COMMA);
             case '.':
-                if (isDigit(peek())) return _real();
+                if (isDigit(peek())) return real_();
                 return addToken(token::TOKEN_DOT);
             case '-':
                 return addToken(token::TOKEN_MINUS);
@@ -86,9 +86,9 @@ namespace lexer {
             case '/':
                 return slash();
             case '\'':
-                return _string('\'');
+                return string_('\'');
             case '\"':
-                return _string('\"');
+                return string_('\"');
             case '\n':
                 line++;
             case ' ':
@@ -113,13 +113,13 @@ namespace lexer {
         addToken(tokentype);
     }
 
-    void Lexer::_real() {
+    void Lexer::real_() {
         // 一直消费数字，直到待消费的字符不是数字
         while (isDigit(peek())) advance();
-        addToken(token::TOKEN_REAL, std::stod(source.substr(start, current - start)));
+        addToken(token::TOKEN_REAL_, std::stod(source.substr(start, current - start)));
     }
 
-    void Lexer::_number() {
+    void Lexer::number_() {
         // 一直消费数字，直到待消费的字符不是数字
         while (isDigit(peek())) advance();
 
@@ -133,20 +133,20 @@ namespace lexer {
             while (isDigit(peek())) advance();
 
             // 此时是小数
-            addToken(token::TOKEN_REAL, std::stod(source.substr(start, current - start)));
+            addToken(token::TOKEN_REAL_, std::stod(source.substr(start, current - start)));
             return;
         }
         if (match('.')) {
-            return addToken(token::TOKEN_REAL,
+            return addToken(token::TOKEN_REAL_,
                             (std::stod(source.substr(start, current - start))));
         }
 
         // 非小数，即整数
-        addToken(token::TOKEN_INT,
+        addToken(token::TOKEN_INT_,
                  static_cast<long>(std::stod(source.substr(start, current - start))));
     }
 
-    void Lexer::_string(char front) {
+    void Lexer::string_(char front) {
         while (peek() != front) {
             // 处理跨行字符串
             // 处理找不到闭合的 " 或 ' 的情况
@@ -158,7 +158,7 @@ namespace lexer {
         advance();
 
         // 截取子串时记得去掉开始和结尾的 " 或 '
-        addToken(token::TOKEN_STRING, source.substr(start + 1, current - start - 2));
+        addToken(token::TOKEN_STRING_, source.substr(start + 1, current - start - 2));
     }
 
     void Lexer::slash() {

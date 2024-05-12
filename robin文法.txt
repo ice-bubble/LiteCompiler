@@ -1,0 +1,35 @@
+program        → declaration* EOF 
+declaration    → funDecl | varDecl | statement 
+statement      → breakStmt | continueStmt | returnStmt | exprStmt | ifStmt | whileStmt | forStmt | repeatStmt | block
+breakStmt      → "break" ";"
+continueStmt   → "continue" ";"
+returnStmt     → "return" expression? ";"
+funDecl        → identifier "=" "function" "(" parameters? ")" block
+varDecl        → type var  ( "=" expression )? ( "," var ( "=" expression )? )* ";"
+type           → "integer" | "float" |"string" | "bool" | "char" | "var"
+exprStmt       → expression? ";"
+ifStmt         → "if" "(" expression ")" statement ( "else" statement )?
+whileStmt      → "while" "(" expression ")" statement
+forStmt        → "for" "(" ( varDecl | exprStmt | ";" ) expression? ";" expression? ")" statement 
+block          → "{" declaration* "}"
+repeatStmt     → "repeat" statement "until" "(" expression ")" ";"
+parameters     → type var ( "," type var )*
+expression     → assignment
+assignment     → var "=" assignment | logic_or
+logic_or       → logic_and ( "or" logic_and )*
+logic_and      → equality ( "and" equality )*
+equality       → comparison ( ( "!=" | "==" ) comparison )*
+comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )*
+term           → factor ( ( "-" | "+" ) factor )*
+factor         → incr_exp ( ( "/" | "*" \ "%" ) incr_exp )*
+incr_exp       → unary ( "++" | "--" )*
+unary          → ( "!" | "-" )* call
+call           → primary ( "(" arguments? ")")*
+arguments      → expression ( "," expression )*
+primary        → const | "(" expression ")" | var
+const          → "true" | "false" | "nil" | int | real | string
+var            → identifier | var "[" expression "]"
+
+
+
+tip:文法在funDecl和exprStmt有二义性，此时要向后看两个token;其他地方应该是不要向后看或者向后看一个token

@@ -15,11 +15,11 @@ void printTokenList(const List<token::Token> &tokenlist) {
 void printRequestedTokenList(const List<token::Token> &tokenlist) {
     for (const auto &token: tokenlist) {
         const String &val = token.getLexeme();
-        if (token.getType() == token::TOKEN_STRING) {
+        if (token.getType() == token::TOKEN_STRING_) {
             std::cout << "<STRING, " << val << ">" << std::endl;
-        } else if (token.getType() == token::TOKEN_INT) {
+        } else if (token.getType() == token::TOKEN_INT_) {
             std::cout << "<INT, " << val << ">" << std::endl;
-        } else if (token.getType() == token::TOKEN_REAL) {
+        } else if (token.getType() == token::TOKEN_REAL_) {
             String stdval;
             if (val[0] == '.') stdval = "0" + val;
             else if (val[val.size()-1]=='.') stdval=val+'0';

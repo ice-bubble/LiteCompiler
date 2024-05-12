@@ -43,14 +43,16 @@ namespace token {
         TOKEN_LESS_EQUAL,       ///< 小于等于号 <=，用于小于等于比较操作。
 
         // Literals. 字面量
-        TOKEN_IDENTIFIER,       ///< 标识符，用于表示变量名、函数名等
-        TOKEN_STRING,           ///< 字符串字面量，表示一串文本。
-        TOKEN_INT,              ///< 数字字面量，表示整数。
-        TOKEN_REAL,             ///< 数字字面量，表示浮点数。
+        TOKEN_IDENTIFIER,        ///< 标识符，用于表示变量名、函数名等
+        TOKEN_STRING_,           ///< 字符串字面量，表示一串文本。
+        TOKEN_INT_,              ///< 数字字面量，表示整数。
+        TOKEN_REAL_,             ///< 数字字面量，表示浮点数。
+        //TOKEN_BOOL_,             ///< 布尔字面量，表示类型
 
         // Keywords. 关键字||三个逻辑运算也是符号
         TOKEN_AND,              ///< and &&
         TOKEN_BREAK,            ///< break
+        TOKEN_CHAR,             ///< char
         TOKEN_CLASS,            ///< class
         TOKEN_CONTINUE,         ///< continue
         TOKEN_DO,               ///< do
@@ -68,6 +70,7 @@ namespace token {
         TOKEN_READ,             ///< read
         TOKEN_REPEAT,           ///< repeat
         TOKEN_RETURN,           ///< return
+        TOKEN_STRING,           ///< string
         TOKEN_SUPER,            ///< super
         TOKEN_THIS,             ///< this
         TOKEN_TRUE,             ///< true
