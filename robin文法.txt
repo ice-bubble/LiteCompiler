@@ -3,14 +3,14 @@ declaration    → funDecl | varDecl | statement
 statement      → breakStmt | continueStmt | returnStmt | exprStmt | ifStmt | whileStmt | forStmt | repeatStmt | block
 breakStmt      → "break" ";"
 continueStmt   → "continue" ";"
-returnStmt     → "return" expression? ";"
+returnStmt     → "return" exprStmt
 funDecl        → identifier "=" "function" "(" parameters? ")" block
 varDecl        → type var  ( "=" expression )? ( "," var ( "=" expression )? )* ";"
 type           → "integer" | "float" |"string" | "bool" | "char" | "var"
 exprStmt       → expression? ";"
 ifStmt         → "if" "(" expression ")" statement ( "else" statement )?
 whileStmt      → "while" "(" expression ")" statement
-forStmt        → "for" "(" ( varDecl | exprStmt | ";" ) expression? ";" expression? ")" statement 
+forStmt        → "for" "(" ( varDecl | exprStmt | ";" ) exprStmt expression? ")" statement 
 block          → "{" declaration* "}"
 repeatStmt     → "repeat" statement "until" "(" expression ")" ";"
 parameters     → type var ( "," type var )*
@@ -21,7 +21,7 @@ logic_and      → equality ( "and" equality )*
 equality       → comparison ( ( "!=" | "==" ) comparison )*
 comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )*
 term           → factor ( ( "-" | "+" ) factor )*
-factor         → incr_exp ( ( "/" | "*" \ "%" ) incr_exp )*
+factor         → incr_exp ( ( "/" | "*" | "%" ) incr_exp )*
 incr_exp       → unary ( "++" | "--" )*
 unary          → ( "!" | "-" )* call
 call           → primary ( "(" arguments? ")")*
