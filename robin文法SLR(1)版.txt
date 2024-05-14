@@ -24,15 +24,15 @@ varInit              → "=" expression | ε
 
 type                 → "integer" | "float" |"string" | "bool" | "char" | "var"
 
-exprStmt             → expression ";"
+exprStmt             → expression ";" | ";"
 
-ifStmt               → "if" "(" expression ")" statement elseStmt
+ifStmt               → "if" "(" expression ")" statement elseBranch
 
-elseStmt             → "else" statement | ε
+elseBranch            → "else" statement | ε
 
 whileStmt            → "while" "(" expression ")" statement
 
-block                → "{" declaration* "}"
+block                → "{" declarations "}"
 
 repeatStmt           → "repeat" statement "until" "(" expression ")" ";"
 
@@ -42,7 +42,7 @@ parameters           → "," parameter parameters| ε
 
 parameter            → type var
 
-expression           → assignment | ε
+expression           → assignment
 
 assignment           → var "=" assignment | logic_or
 
@@ -74,7 +74,7 @@ incr_exp             → unary incr_op
 
 incr_op              → "++" incr_op | "--" incr_op | ε
 
-unary                → "!" unary| "-" unary | call
+unary                → "!" unary | "-" unary | call
 
 call                 → primary call_suffix
 
@@ -88,6 +88,8 @@ primary              → const | "(" expression ")" | var
 
 const                → "true" | "false" | "nil" | int | real | string
 
-var                  → identifier | var "[" expression "]"
+var                   → identifier varSuffix
+
+varSuffix          → "[" expression "]" varSuffix | ε
 
 
