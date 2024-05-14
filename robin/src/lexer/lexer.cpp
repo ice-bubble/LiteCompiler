@@ -57,8 +57,12 @@ namespace lexer {
                 if (isDigit(peek())) return real_();
                 return addToken(token::TOKEN_DOT);
             case '-':
+                if (match('-'))
+                    return addToken(token::TOKEN_DOUBLE_MINUS);
                 return addToken(token::TOKEN_MINUS);
             case '+':
+                if (match('+'))
+                    return addToken(token::TOKEN_DOUBLE_ADD);
                 return addToken(token::TOKEN_PLUS);
             case '%':
                 return addToken(token::TOKEN_MOD);
@@ -107,8 +111,11 @@ namespace lexer {
         String text = source.substr(start, current - start);
         auto tokentype = token::Token::getKeywordTypeInMap(text);
         if (tokentype == token::TOKEN_EOF) {
-            addToken(token::TOKEN_IDENTIFIER);
-            return;
+            return addToken(token::TOKEN_IDENTIFIER);
+        } else if (tokentype == token::TOKEN_TRUE) {
+            return addToken(token::TOKEN_BOOL_, String("true"));
+        } else if (tokentype == token::TOKEN_FALSE) {
+            return addToken(token::TOKEN_BOOL_, String("false"));
         }
         addToken(tokentype);
     }

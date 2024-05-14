@@ -31,7 +31,9 @@ namespace token {
         TOKEN_SEMICOLON,        ///< 分号 ;，用于表示语句的结束。
         TOKEN_SLASH,            ///< 斜杠 /，用于表示除法操作。
         TOKEN_STAR,             ///< 星号 *，用于表示乘法操作。
-        TOKEN_MOD,              ///< 百分号 %，用于表示取模操作
+        TOKEN_MOD,              ///< 百分号 %，用于表示取模操作。
+        TOKEN_DOUBLE_ADD,       ///< 双加号 ++，用于表示自增操作。
+        TOKEN_DOUBLE_MINUS,     ///< 双减号 --，用于表示自减操作。
 
         // One or two character tokens. 一或两字符词法
         TOKEN_NOT_EQUAL,       ///< 感叹号等号 !=，用于表示不等于比较操作。
@@ -47,10 +49,11 @@ namespace token {
         TOKEN_STRING_,           ///< 字符串字面量，表示一串文本。
         TOKEN_INT_,              ///< 数字字面量，表示整数。
         TOKEN_REAL_,             ///< 数字字面量，表示浮点数。
-        //TOKEN_BOOL_,             ///< 布尔字面量，表示类型
+        TOKEN_BOOL_,             ///< 布尔字面量，表示类型
 
         // Keywords. 关键字||三个逻辑运算也是符号
         TOKEN_AND,              ///< and &&
+        TOKEN_BOOL,             ///< bool
         TOKEN_BREAK,            ///< break
         TOKEN_CHAR,             ///< char
         TOKEN_CLASS,            ///< class

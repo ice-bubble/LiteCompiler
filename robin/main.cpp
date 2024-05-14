@@ -35,8 +35,8 @@ static void repl() {
         if (lexer.hasError)
             std::cerr<<"There are lexical errors in the source code"<<std::endl;
         lexer.hasError= false;
-        token::Token::printKeywords();
-        printSymbolTable(tokenlist);
+        //token::Token::printKeywords();
+        //printSymbolTable(tokenlist);
         //printRequestedTokenList(tokenList);
 #endif
     }
@@ -80,8 +80,8 @@ static void runFile(const String& path) {
         printTokenList(tokenlist);
         if (lexer.hasError)
             std::cerr<<"There are lexical errors in the source code"<<std::endl;
-        token::Token::printKeywords();
-        printSymbolTable(tokenlist);
+        //token::Token::printKeywords();
+        //printSymbolTable(tokenlist);
         //printRequestedTokenList(tokenList);
 #endif
     } catch (const std::exception& e) {

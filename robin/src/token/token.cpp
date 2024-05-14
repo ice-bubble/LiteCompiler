@@ -13,6 +13,7 @@ namespace token {
 
     Map<String, TokenType> Token::keywords = {
             {"and",      TOKEN_AND},        /**< "and" 关键字对应的标记类型。 */
+            {"bool",     TOKEN_BOOL},       /**< "bool" 关键字对应的标记类型。 */
             {"break",    TOKEN_BREAK},      /**< "break" 关键字对应的标记类型。 */
             {"char",     TOKEN_CHAR},       /**< "char" 关键字对应的标记类型。 */
             {"class",    TOKEN_CLASS},      /**< "class" 关键字对应的标记类型。 */
@@ -57,6 +58,8 @@ namespace token {
             "SLASH",
             "STAR",
             "MOD",
+            "DOUBLE_ADD",
+            "DOUBLE_MINUS",
 
             "NOT_EQUAL",
             "EQUAL",
@@ -70,8 +73,10 @@ namespace token {
             "STRING_",
             "INT_",
             "REAL_",
+            "BOOL_",
 
             "AND",
+            "BOOL",
             "BREAK",
             "CHAR",
             "CLASS",
@@ -116,16 +121,12 @@ namespace token {
     String Token::getLiteralString() const {
         switch (type) {
             case (TOKEN_STRING_):
+            case (TOKEN_BOOL_):
                 return std::any_cast<String>(literal);
             case (TOKEN_REAL_):
                 return std::to_string(std::any_cast<double>(literal));
             case (TOKEN_INT_):
                 return std::to_string(std::any_cast<long>(literal));
-            case (TOKEN_TRUE):
-                return "true";
-            case (TOKEN_FALSE):
-                return "false";
-
             default:
                 return "nil";
         }

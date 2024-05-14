@@ -76,13 +76,13 @@ build文件夹内会生成目标：`Crobin`
 1. **关键字（Keywords）**：
    - `TOKEN_AND`: `and`或者`&&`，逻辑与运算符，表示逻辑与操作，通常用于布尔表达式中。
    - `TOKEN_BREAK`: `break`，用于跳出循环或switch语句。
-   - `TOKEN_CLASS`: `class`，表示定义类的关键字。
+   - `TOKEN_CLASS`: `class`，表示定义类的关键字。**（保留字，未实现）**
    - `TOKEN_CONTINUE`: `continue`，继续下一次循环的关键字。
-   - `TOKEN_DO`:`do`，未定义的关键字
+   - `TOKEN_DO`:`do`，未定义的关键字**（保留字，未实现）**
    - `TOKEN_DOUBLE`: `double`，浮点数类型关键字。
    - `TOKEN_ELSE`: `else`，条件语句中的否定分支关键字。
    - `TOKEN_FALSE`: `false`，布尔类型的假值关键字。
-   - `TOKEN_FOR`: `for`，循环语句中的关键字。
+   - `TOKEN_FOR`: `for`，循环语句中的关键字。**（保留字，未实现）**
    - `TOKEN_FUNCTION`: `function`，定义函数的关键字。
    - `TOKEN_IF`: `if`，条件语句中的条件判断关键字。
    - `TOKEN_INTEGER`: `integer`，整数类型关键字。
@@ -93,8 +93,8 @@ build文件夹内会生成目标：`Crobin`
    - `TOKEN_READ`:`read`，未定义的关键字
    - `TOKEN_REPEAT`:`repeat`，未定义的关键字
    - `TOKEN_RETURN`: `return`，函数返回语句的关键字。
-   - `TOKEN_SUPER`: `super`，表示父类的关键字。
-   - `TOKEN_THIS`: `this`，表示当前对象或实例的关键字。
+   - `TOKEN_SUPER`: `super`，表示父类的关键字。**（保留字，未实现）**
+   - `TOKEN_THIS`: `this`，表示当前对象或实例的关键字。**（保留字，未实现）**
    - `TOKEN_TRUE`: `true`，布尔类型的真值关键字。
    - `TOKEN_UNTIL`:`until`，未定义的关键字
    - `TOKEN_VAR`: `var`，定义变量的关键字。
@@ -113,10 +113,13 @@ build文件夹内会生成目标：`Crobin`
    - `TOKEN_NOT_EQUAL`, `TOKEN_EQUAL_EQUAL`: 不等号`!=`、双等号`==`，用于比较操作。
    - `TOKEN_GREATER`, `TOKEN_GREATER_EQUAL`: 大于号`>`、大于等于号`>=`，用于比较操作。
    - `TOKEN_LESS`, `TOKEN_LESS_EQUAL`: 小于号`<`、小于等于号`<=`，用于比较操作。
+   - `TOKEN_DOUBLE_ADD`:自增运算符`++`，用于表示自增操作。
+   - `TOKEN_DOUBLE_MINUS`:自减运算符`--`，用于表示自减操作。
 3.  **其他（Else）**：
    - `TOKEN_IDENTIFIER`: 标识符字面量，用于表示变量名、函数名等。
    - `TOKEN_STRING`: 字符串字面量。
    - `TOKEN_INT`, `TOKEN_REAL`: 整数和浮点数字面量。
+   - `TOKEN_BOOL_`:布尔字面量，为`true`或`false`
    - `TOKEN_EOF`: 表示已经到达代码文件的末尾。
 
 这些关键字和符号是编程语言中常见的词法单元，通过它们可以构建出语法结构，并进行语法分析、编译和执行代码。
