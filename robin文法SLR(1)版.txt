@@ -93,3 +93,4 @@ var                   → identifier varSuffix
 varSuffix          → "[" expression "]" varSuffix | ε
 
 
+终结符：EOF、int、real、string、identifier以及其他双引号括起来的
