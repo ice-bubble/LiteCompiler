@@ -15,3 +15,8 @@ std::string Token::getValue() const
 {
     return value;
 }
+
+size_t Token::getLineNum() const
+{
+    return line_num;
+}
