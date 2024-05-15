@@ -12,4 +12,6 @@ add_executable(robin main.cpp
         src/error/error.cpp
         src/error/error.h
         src/debug/debug.h
-        src/debug/debug.cpp)
+        src/debug/debug.cpp
+        src/ast/expr.h
+        src/ast/type.h)

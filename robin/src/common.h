@@ -16,6 +16,7 @@
 #include <vector>
 #include <any>
 #include <utility>
+#include <memory>
 
 
 #define DEBUG_FLAG                  ///< 启用此宏定义使得主函数#include<debug.h>
@@ -28,6 +29,9 @@ using List = std::vector<T>;
 
 template<typename Key, typename Value>
 using Map = std::map<Key, Value>;
+
+template<typename TYPE>
+using SharedPtr = std::shared_ptr<TYPE>;
 
 using String = std::string;
 
