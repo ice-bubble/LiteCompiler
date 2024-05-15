@@ -1,9 +1,10 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <cctype>
+#include <algorithm>
 #include "./src/debug/debug.h"
 #include "./src/Token/Token.h"
+#include "./src/LexicalAnalysis/isInvalidToken.h"
 #include "./src/LexicalAnalysis/Lexer.h"
 #include "./src/FileHandler/FileHandler.h"
 
@@ -55,12 +56,17 @@ int main(int argc, char *argv[])
     else
         std::cout << "No Lexical Error in the code!\n" << std::endl;
 
+    tokens.erase(std::remove_if(tokens.begin(), tokens.end(), isInvalidToken),tokens.end());    // 删除词法分析后产生的无效标记
+    size_t eofLineNum = (tokens.empty() ? 1 : tokens.back().getLineNum() + 1);          // 文件结束符EOF的行号
+    tokens.push_back(Token(TokenType::KEYWORD_EOF, "$", eofLineNum));           // 在记号流的末尾增加一个EOF类型的Token，表示输入的结束
 
+    /* 本块注释是词法分析阶段的输出
     // 输出标记（Token）
     Debug::printTokens(tokens);
 
     // 输出符号表（KEYWORD和IDENTIFIER）
     Debug::printSymbolTokens(tokens);
+
 
     // 写入文件
     output = Debug::getAllTokens(tokens); // 获取需要写入的数据【标记（Token）】
@@ -75,4 +81,8 @@ int main(int argc, char *argv[])
         std::cerr << errorMessage << std::endl;
         return 1;
     }
+    */
+
+
+
 }

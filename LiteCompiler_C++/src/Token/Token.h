@@ -7,6 +7,7 @@
 
 #include <string>
 
+
 /**
  * @brief 标记类型枚举，包括关键字、标识符（id）、数据类型、运算符等。
  **/
@@ -125,6 +126,13 @@ public:
     * @return std::string 标记原始值（字符串类型存储）
     **/
     std::string getValue() const;
+
+    /**
+    * @brief 获取Token所在的行号
+    * @return size_t Token所在的行号
+    **/
+    size_t getLineNum() const;
+
 
 private:
     TokenType type; // Token类成员——标记类型
