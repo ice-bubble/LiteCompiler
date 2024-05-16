@@ -14,7 +14,7 @@
 #include "type.h"
 #include "expr.h"
 
-namespace ast{
+namespace ast {
     /**
  * @brief 所有语句的基类。
  */
@@ -45,9 +45,12 @@ namespace ast{
         token::Token name;
         List<token::Token> parmList;
         List<SharedPtr<Stmt>> body;
+        SharedPtr<Type> returnType;
 
-        Function(size_t line, token::Token name, List<token::Token> parmList, List<SharedPtr<Stmt>> body)
-                : line(line), name(std::move(name)), parmList(std::move(parmList)), body(std::move(body)) {}
+        Function(size_t line, token::Token name, List<token::Token> parmList, List<SharedPtr<Stmt>> body,
+                 SharedPtr<Type> returnType)
+                : line(line), name(std::move(name)), parmList(std::move(parmList)), body(std::move(body)),
+                  returnType(std::move(returnType)) {}
     };
 
     class If : Stmt {

@@ -23,7 +23,8 @@ namespace ast{
         CHAR_,           ///< 字符类型
         BOOL,            ///< 布尔类型
         ARRAY_,          ///< 数组类型
-        FUNC_            ///< 函数类型
+        FUNC_,           ///< 函数类型
+        VOID_            ///< 空类型
     };
 
 /**
@@ -95,6 +96,16 @@ namespace ast{
 
         ARRAY_Type(IdentifierType thisType, SharedPtr<Type> innerType, size_t length)
                 : thisType(thisType), innerType(std::move(innerType)), length(length) {}
+    };
+
+    /**
+     * @brief 空类型类。
+    */
+    class VOID_Type : Type {
+    public:
+        IdentifierType thisType;     ///< 具体的空类型
+
+        explicit VOID_Type(IdentifierType thisType) : thisType(thisType) {}
     };
 }
 
