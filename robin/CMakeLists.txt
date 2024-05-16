@@ -14,4 +14,7 @@ add_executable(robin main.cpp
         src/debug/debug.h
         src/debug/debug.cpp
         src/ast/expr.h
-        src/ast/type.h)
+        src/ast/type.h
+        src/ast/stmt.h
+        src/parser/parser.h
+        src/parser/parser.cpp)

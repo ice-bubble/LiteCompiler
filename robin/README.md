@@ -3,7 +3,7 @@
 ## 文件结构
 
 ```
-└── robin                          项目文件夹
+└── robin                           项目文件夹
     ├── CMakeLists.txt              cmake文件
     ├── main.cpp                    主函数
     ├── README.md                   本文件
@@ -15,6 +15,13 @@
         ├── error                   编译器错误处理模块
         │   ├── error.cpp           error函数定义
         │   └── error.h             error函数声明
+        ├── parser                  语法分析器
+        │   ├── parser.cpp          语法分析器parser函数实现
+        │   └── parser.h            语法分析器parser类声明
+        ├── ast                     语法树相关类的定义
+        │   ├── stmt.h              语法树中语句部分的类
+        │   ├── expr.h              语法树中表达式部分的类
+        │   └── type.h              区分标识符和字面值具体类型的类
         ├── lexer                   词法分析器
         │   ├── lexer.cpp           词法分析器lexer函数实现
         │   └── lexer.h             词法分析器lexer类声明
