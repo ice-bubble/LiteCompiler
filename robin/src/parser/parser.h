@@ -23,7 +23,7 @@ namespace parser {
         mod,
         number,
         left_paren,
-        right_parent,
+        right_paren,
         dollar,
         expression,
         term,
