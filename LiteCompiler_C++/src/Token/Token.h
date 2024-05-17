@@ -96,8 +96,23 @@ enum class TokenType
     MEMBER_PTR, // "->"
     COMMA, // ","
 
+    NONTERMINAL, // 语法分析阶段归约产生的非终结符
+
     EMPTY, // 空
     INVALID // 非法的标记【词法错误】
+};
+
+// 定义非终结符类型
+enum class NonTerminal
+{
+    S,
+    EXPRESSION,
+    TERM,
+    TERM_PRIME,
+    FACTOR,
+    FACTOR_PRIME,
+    UNARY,
+    PRIMARY
 };
 
 /**
@@ -114,6 +129,8 @@ public:
     * @param line_n 标记所在的行号
     **/
     Token(TokenType type, const std::string &value, size_t line_n);
+
+    Token(NonTerminal nonTerminal, const std::string &value, size_t line_n);
 
     /**
     * @brief 获取Token的类型
@@ -138,6 +155,7 @@ private:
     TokenType type; // Token类成员——标记类型
     std::string value; // Token类成员——标记原始值（字符串类型存储）
     size_t line_num; // 标记位置的行号
+    NonTerminal nonTerminal;
 };
 
 #endif // TOKEN_H

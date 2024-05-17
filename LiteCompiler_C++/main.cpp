@@ -6,6 +6,7 @@
 #include "./src/Token/Token.h"
 #include "./src/LexicalAnalysis/isInvalidToken.h"
 #include "./src/LexicalAnalysis/Lexer.h"
+#include "./src/Parser/Parser.h"
 #include "./src/FileHandler/FileHandler.h"
 
 int main(int argc, char *argv[])
@@ -84,5 +85,7 @@ int main(int argc, char *argv[])
     */
 
 
+    Parser parser;
+    parser.parse(tokens);
 
 }

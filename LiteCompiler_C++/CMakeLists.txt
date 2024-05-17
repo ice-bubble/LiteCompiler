@@ -16,4 +16,6 @@ add_executable(LiteCompiler_C++ main.cpp
         src/error/error.cpp
         src/LexicalAnalysis/isInvalidToken.h
         src/LexicalAnalysis/isInvalidToken.cpp
+        src/Parser/Parser.h
+        src/Parser/Parser.cpp
 )
