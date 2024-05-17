@@ -16,8 +16,8 @@
 
 namespace ast {
     /**
- * @brief 所有语句的基类。
- */
+     * @brief 所有语句的基类。
+     */
     class Stmt {
     public:
         virtual ~Stmt() = default;

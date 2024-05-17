@@ -17,6 +17,7 @@
 #include <any>
 #include <utility>
 #include <memory>
+#include <stack>
 
 
 #define DEBUG_FLAG                  ///< 启用此宏定义使得主函数#include<debug.h>
@@ -33,10 +34,15 @@ using Map = std::map<Key, Value>;
 template<typename TYPE>
 using SharedPtr = std::shared_ptr<TYPE>;
 
+template<typename T1, typename T2>
+using Pair = std::pair<T1, T2>;
+
+template<typename Type>
+using Stack = std::stack<Type>;
+
 using String = std::string;
 
 using Object = std::any;
-
 
 
 #endif //ROBIN_COMMON_H
