@@ -6,9 +6,12 @@
 #define DEBUG_H
 
 #include <iostream>
+#include <algorithm>
 #include <vector>
 #include "../Token/Token.h"
+#include "../LexicalAnalysis/isInvalidToken.h"
 #include "../LexicalAnalysis/Lexer.h"
+#include "../Parser/Parser.h"
 
 /*
 *    注意！！输出到文件和输出到终端的输出函数是不同的，如有修改输出格式请一并修改其对应的函数
