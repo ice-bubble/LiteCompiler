@@ -54,9 +54,12 @@ namespace parser {
     private:
         List<token::Token> tokens;                         ///< 从源代码生成的token列表。
         List<SharedPtr<production::Production>> productions;
+        Stack<State> stateStack;
         size_t currentToken = 0;
         size_t currentProduction = 0;
         static Map<Pair<State, Symbol>, Action> slrTable;
+        static Map<token::TokenType,Symbol> tokenToSym;
+
 
     public:
         Parser(List<token::Token> tokens);
@@ -70,6 +73,9 @@ namespace parser {
 
         token::Token advance();
 
+        void reduceByExpr();
+
+        void reduceByExpression1();
 
 
     };

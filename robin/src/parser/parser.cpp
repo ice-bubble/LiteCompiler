@@ -629,13 +629,37 @@ namespace parser {
             {{30, Symbol::number},       {Type::Error,  0}},
     };
 
+    Map<token::TokenType, Symbol> Parser::tokenToSym = {
+            {token::TOKEN_MINUS,       Symbol::minus},
+            {token::TOKEN_PLUS,        Symbol::plus},
+            {token::TOKEN_SLASH,       Symbol::div},
+            {token::TOKEN_STAR,        Symbol::star},
+            {token::TOKEN_MOD,         Symbol::mod},
+            {token::TOKEN_LEFT_PAREN,  Symbol::left_paren},
+            {token::TOKEN_RIGHT_PAREN, Symbol::right_paren},
+            {token::TOKEN_REAL_,       Symbol::real_},
+            {token::TOKEN_INT_,        Symbol::int_}
+    };
+
 
     Parser::Parser(List<token::Token> tokens) : tokens(std::move(tokens)) {}
 
     List<SharedPtr<production::Production>> Parser::parserAst() {
+        stateStack.push(0);
         while (true) {
             if (isAtTokenListEnd()) break;
             auto token = advance();
+            Symbol currentSymbol = tokenToSym[token.getType()];
+            State currentState = stateStack.top();
+
+            auto action = slrTable.find({currentState, currentSymbol});
+
+            if (action == slrTable.end()) {
+                std::cerr << "Syntax error at position " << currentToken << std::endl;
+                break;
+            }
+
+            ///然后开始正式处理
 
         }
         return productions;
@@ -653,5 +677,24 @@ namespace parser {
         currentToken++;
         return tokens[currentToken - 1];
     }
+
+    void Parser::reduceByExpr() {
+        SharedPtr<production::Expression> expression = std::dynamic_pointer_cast<production::Expression>(
+                productions.back());
+        productions.pop_back();
+        stateStack.pop();
+        SharedPtr<production::Production> expr =std::make_shared<production::Expr>(expression->line, expression);
+        productions.push_back(expr);
+    }
+
+    void Parser::reduceByExpression1() {
+        SharedPtr<production::Term> term = std::dynamic_pointer_cast<production::Term>(
+                productions.back());
+        productions.pop_back();
+        stateStack.pop();
+        SharedPtr<production::Production> expression1 =std::make_shared<production::Expression1>(term->line, term);
+        productions.push_back(expression1);
+    }
+
 
 }

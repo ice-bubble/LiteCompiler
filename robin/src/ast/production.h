@@ -28,25 +28,10 @@ namespace production {
 
     class Primary;
 
+    class Token;
+
     class Number;
 
-    class Minus;
-
-    class Plus;
-
-    class Div;
-
-    class Star;
-
-    class Mod;
-
-    class LeftParen;
-
-    class RightParen;
-
-    class Int;
-
-    class Float;
 
 
     class Production {
@@ -54,7 +39,7 @@ namespace production {
         virtual ~Production() = default;
     };
 
-    class Expr : Production {
+    class Expr : public Production {
     public:
         size_t line;
         SharedPtr<Expression> expression;
@@ -64,25 +49,30 @@ namespace production {
         static String toString() { return String{"Expr"}; }
     };
 
-    class Expression : Production {
+    class Expression : public Production {
     public:
+        size_t line;
+
         virtual ~Expression() = default;
+
+        explicit Expression(size_t line) : line(line) {}
 
         static String toString() { return String{"expression"}; }
     };
 
-    class Expression1 : Expression {
+    class Expression1 : public Expression {
     public:
-        size_t line;
         SharedPtr<Term> term;
 
-        Expression1(size_t line, SharedPtr<Term> term) : line(line), term(std::move(term)) {}
+        Expression1(size_t line, SharedPtr<Term> term) : Expression(line), term(std::move(term)) {}
     };
 
-    class Expression2 : Expression {
+    class Expression2 : public Expression {
+    public:
+        explicit Expression2(size_t line) : Expression(line) {}
     };
 
-    class Term : Production {
+    class Term : public Production {
     public:
         size_t line;
         SharedPtr<Factor> factor;
@@ -94,39 +84,45 @@ namespace production {
         static String toString() { return String{"term"}; }
     };
 
-    class Term_prime : Production {
+    class Term_prime : public Production {
     public:
+        size_t line;
+
+        explicit Term_prime(size_t line) : line(line) {}
+
         virtual ~Term_prime() = default;
 
         static String toString() { return String{"term_prime"}; }
     };
 
-    class Term_prime1 : Term_prime {
+    class Term_prime1 : public Term_prime {
     public:
-        size_t line;
-        SharedPtr<Minus> minus;
+        SharedPtr<Token> minus;
         SharedPtr<Factor> factor;
         SharedPtr<Term_prime> term_Prime;
 
-        Term_prime1(size_t line, SharedPtr<Minus> plus, SharedPtr<Factor> factor, SharedPtr<Term_prime> termPrime)
-                : line(line), minus(std::move(plus)), factor(std::move(factor)), term_Prime(std::move(termPrime)) {}
+        Term_prime1(size_t line, SharedPtr<Token> plus, SharedPtr<Factor> factor, SharedPtr<Term_prime> termPrime)
+                : Term_prime(line), minus(std::move(plus)), factor(std::move(factor)),
+                  term_Prime(std::move(termPrime)) {}
     };
 
-    class Term_prime2 : Term_prime {
+    class Term_prime2 : public Term_prime {
     public:
-        size_t line;
-        SharedPtr<Plus> plus;
+        SharedPtr<Token> plus;
         SharedPtr<Factor> factor;
         SharedPtr<Term_prime> term_Prime;
 
-        Term_prime2(size_t line, SharedPtr<Plus> plus, SharedPtr<Factor> factor, SharedPtr<Term_prime> termPrime)
-                : line(line), plus(std::move(plus)), factor(std::move(factor)), term_Prime(std::move(termPrime)) {}
+        Term_prime2(size_t line, SharedPtr<Token> plus, SharedPtr<Factor> factor, SharedPtr<Term_prime> termPrime)
+                : Term_prime(line), plus(std::move(plus)), factor(std::move(factor)),
+                  term_Prime(std::move(termPrime)) {}
     };
 
-    class Term_prime3 : Term_prime {
+    class Term_prime3 : public Term_prime {
+    public:
+        explicit Term_prime3(size_t line) : Term_prime(line) {}
     };
 
-    class Factor : Production {
+    class Factor : public Production {
     public:
         size_t line;
         SharedPtr<Unary> unary;
@@ -138,216 +134,154 @@ namespace production {
         static String toString() { return String{"factor"}; }
     };
 
-    class Factor_prime : Production {
+    class Factor_prime : public Production {
     public:
+        size_t line;
+
+        explicit Factor_prime(size_t line) : line(line) {}
+
         virtual ~Factor_prime() = default;
 
         static String toString() { return String{"factor_prime"}; }
     };
 
-    class Factor_prime1 : Factor_prime {
+    class Factor_prime1 : public Factor_prime {
     public:
-        size_t line;
-        SharedPtr<Div> div;
+        SharedPtr<Token> div;
         SharedPtr<Unary> unary;
         SharedPtr<Factor_prime> factor_prime;
 
-        Factor_prime1(size_t line, SharedPtr<Div> div, SharedPtr<Unary> unary, SharedPtr<Factor_prime> factorPrime)
-                : line(line), div(std::move(div)), unary(std::move(unary)), factor_prime(std::move(factorPrime)) {}
+        Factor_prime1(size_t line, SharedPtr<Token> div, SharedPtr<Unary> unary, SharedPtr<Factor_prime> factorPrime)
+                : Factor_prime(line), div(std::move(div)), unary(std::move(unary)),
+                  factor_prime(std::move(factorPrime)) {}
     };
 
-    class Factor_prime2 : Factor_prime {
+    class Factor_prime2 : public Factor_prime {
     public:
-        size_t line;
-        SharedPtr<Star> star;
+        SharedPtr<Token> star;
         SharedPtr<Unary> unary;
         SharedPtr<Factor_prime> factor_prime;
 
-        Factor_prime2(size_t line, SharedPtr<Star> star, SharedPtr<Unary> unary, SharedPtr<Factor_prime> factorPrime)
-                : line(line), star(std::move(star)), unary(std::move(unary)), factor_prime(std::move(factorPrime)) {}
+        Factor_prime2(size_t line, SharedPtr<Token> star, SharedPtr<Unary> unary, SharedPtr<Factor_prime> factorPrime)
+                : Factor_prime(line), star(std::move(star)), unary(std::move(unary)),
+                  factor_prime(std::move(factorPrime)) {}
     };
 
-    class Factor_prime3 : Factor_prime {
+    class Factor_prime3 : public Factor_prime {
     public:
-        size_t line;
-        SharedPtr<Mod> mod;
+        SharedPtr<Token> mod;
         SharedPtr<Unary> unary;
         SharedPtr<Factor_prime> factor_prime;
 
-        Factor_prime3(size_t line, SharedPtr<Mod> mod, SharedPtr<Unary> unary, SharedPtr<Factor_prime> factorPrime)
-                : line(line), mod(std::move(mod)), unary(std::move(unary)), factor_prime(std::move(factorPrime)) {}
+        Factor_prime3(size_t line, SharedPtr<Token> mod, SharedPtr<Unary> unary, SharedPtr<Factor_prime> factorPrime)
+                : Factor_prime(line), mod(std::move(mod)), unary(std::move(unary)),
+                  factor_prime(std::move(factorPrime)) {}
     };
 
-    class Factor_prime4 : Factor_prime {
-    };
-
-    class Unary : Production {
+    class Factor_prime4 : public Factor_prime {
     public:
+        explicit Factor_prime4(size_t line) : Factor_prime(line) {}
+    };
+
+    class Unary : public Production {
+    public:
+        size_t line;
+
+        explicit Unary(size_t line) : line(line) {}
+
         virtual ~Unary() = default;
 
         static String toString() { return String{"unary"}; }
     };
 
-    class Unary1 : Unary {
+    class Unary1 : public Unary {
     public:
         size_t line;
-        SharedPtr<Minus> minus;
+        SharedPtr<Token> minus;
         SharedPtr<Unary> unary;
 
-        Unary1(size_t line, SharedPtr<Minus> minus, SharedPtr<Unary> unary)
-                : line(line), minus(std::move(minus)), unary(std::move(unary)) {}
+        Unary1(size_t line, SharedPtr<Token> minus, SharedPtr<Unary> unary)
+                : Unary(line), minus(std::move(minus)), unary(std::move(unary)) {}
     };
 
-    class Unary2 : Unary {
+    class Unary2 : public Unary {
     public:
-        size_t line;
         SharedPtr<Primary> primary;
 
-        Unary2(size_t line, SharedPtr<Primary> primary) : line(line), primary(std::move(primary)) {}
+        Unary2(size_t line, SharedPtr<Primary> primary) : Unary(line), primary(std::move(primary)) {}
     };
 
-    class Primary : Production {
+    class Primary : public Production {
     public:
+        size_t line;
+
+        explicit Primary(size_t line) : line(line) {}
+
         virtual ~Primary() = default;
 
         static String toString() { return String{"primary"}; }
     };
 
-    class Primary1 : Primary {
+    class Primary1 : public Primary {
     public:
-        size_t line;
         SharedPtr<Number> number;
 
-        Primary1(size_t line, SharedPtr<Number> number) : line(line), number(std::move(number)) {}
+        Primary1(size_t line, SharedPtr<Number> number) : Primary(line), number(std::move(number)) {}
     };
 
-    class Primary2 : Primary {
+    class Primary2 : public Primary {
     public:
-        size_t line;
-        SharedPtr<LeftParen> left_paren;
+        SharedPtr<Token> left_paren;
         SharedPtr<Expression> expression;
-        SharedPtr<RightParen> right_paren;
+        SharedPtr<Token> right_paren;
 
-        Primary2(size_t line, SharedPtr<LeftParen> leftParen, SharedPtr<Expression> expression,
-                 SharedPtr<RightParen> rightParen)
-                : line(line), left_paren(std::move(leftParen)), expression(std::move(expression)),
+        Primary2(size_t line, SharedPtr<Token> leftParen, SharedPtr<Expression> expression,
+                 SharedPtr<Token> rightParen)
+                : Primary(line), left_paren(std::move(leftParen)), expression(std::move(expression)),
                   right_paren(std::move(rightParen)) {}
     };
 
-    class Number : Production {
+    class Number : public Production {
     public:
+        size_t line;
+
+        explicit Number(size_t line) : line(line) {}
+
         virtual ~Number() = default;
 
         static String toString() { return String{"number"}; }
     };
 
-    class Number1 : Production {
+    class Number1 : public Number {
     public:
-        size_t line;
-        SharedPtr<Int> int_;
+        SharedPtr<Token> int_;
 
-        Number1(size_t line, SharedPtr<Int> int_) : line(line), int_(std::move(int_)) {}
+        Number1(size_t line, SharedPtr<Token> int_) : Number(line), int_(std::move(int_)) {}
     };
 
-    class Number2 : Production {
+    class Number2 : public Number {
     public:
-        size_t line;
-        SharedPtr<Float> float_;
+        SharedPtr<Token> float_;
 
-        Number2(size_t line, SharedPtr<Float> float_) : line(line), float_(std::move(float_)) {}
+        Number2(size_t line, SharedPtr<Token> float_) : Number(line), float_(std::move(float_)) {}
     };
 
 
     //////接下来是token对应的production类
-
-    class Minus : Production {
+    class Token : public Production {
     public:
         size_t line;
-        token::Token minus;
+        token::Token thisToken;
 
-        Minus(size_t line, token::Token minus) : line(line), minus(std::move(minus)) {}
 
-        static String toString() { return String{"-"}; }
-    };
+        Token(size_t line, token::Token thisToken) : line(line), thisToken(std::move(thisToken)) {}
 
-    class Plus : Production {
-    public:
-        size_t line;
-        token::Token plus;
-
-        Plus(size_t line, token::Token plus) : line(line), plus(std::move(plus)) {}
-
-        static String toString() { return String{"+"}; }
-    };
-
-    class Div : Production {
-    public:
-        size_t line;
-        token::Token div;
-
-        Div(size_t line, token::Token div) : line(line), div(std::move(div)) {}
-
-        static String toString() { return String{"/"}; }
-    };
-
-    class Star : Production {
-    public:
-        size_t line;
-        token::Token star;
-
-        Star(size_t line, token::Token star) : line(line), star(std::move(star)) {}
-
-        static String toString() { return String{"*"}; }
-    };
-
-    class Mod : Production {
-    public:
-        size_t line;
-        token::Token mod;
-
-        Mod(size_t line, token::Token mod) : line(line), mod(std::move(mod)) {}
-
-        static String toString() { return String{"%"}; }
-    };
-
-    class LeftParen : Production {
-    public:
-        size_t line;
-        token::Token left_paren;
-
-        LeftParen(size_t line, token::Token left_paren) : line(line), left_paren(std::move(left_paren)) {}
-
-        static String toString() { return String{"("}; }
-    };
-
-    class RightParen : Production {
-    public:
-        size_t line;
-        token::Token right_paren;
-
-        RightParen(size_t line, token::Token right_paren) : line(line), right_paren(std::move(right_paren)) {}
-
-        static String toString() { return String{")"}; }
-    };
-
-    class Int : Production {
-    public:
-        size_t line;
-        token::Token int_;
-
-        Int(size_t line, token::Token int_) : line(line), int_(std::move(int_)) {}
-
-        String toString() { return int_.getLiteralString(); }
-    };
-
-    class Float : Production {
-    public:
-        size_t line;
-        token::Token float_;
-
-        Float(size_t line, token::Token float_) : line(line), float_(std::move(float_)) {}
-
-        String toString() { return float_.getLiteralString(); }
+        String toString() {
+            if (thisToken.getType() == token::TokenType::TOKEN_INT_ ||
+                thisToken.getType() == token::TokenType::TOKEN_REAL_)
+                return thisToken.getLiteralString();
+            return thisToken.getLexeme();
+        }
     };
 
 }
