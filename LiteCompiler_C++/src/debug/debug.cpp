@@ -32,12 +32,12 @@ void Debug::repl()
         // 词法分析
         lexer.LexicalAnalyze(tokens);
 
-        // 输出本行代码含有的标记（Token）
-        Debug::printTokens(tokens);
-
         tokens.erase(std::remove_if(tokens.begin(), tokens.end(), isInvalidToken),tokens.end());    // 删除词法分析后产生的无效标记
         size_t eofLineNum = (tokens.empty() ? 1 : tokens.back().getLineNum() + 1);          // 文件结束符EOF的行号
         tokens.push_back(Token(TokenType::KEYWORD_EOF, "$", eofLineNum));           // 在记号流的末尾增加一个EOF类型的Token，表示输入的结束
+
+        // 输出本行代码含有的标记（Token）
+        Debug::printTokens(tokens);
 
 
         printf("\n");

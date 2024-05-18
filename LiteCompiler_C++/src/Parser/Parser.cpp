@@ -649,18 +649,25 @@ void Parser::shift(std::stack<int> &stateStack, std::stack<Token> &symbolStack, 
     stateStack.push(newState);
     symbolStack.push(token);
     printSymbolStack(symbolStack); // 打印符号栈
+    std::cout << "\t Shift: Pushed state " << newState << " and token " << token.getValue() << " to the stack." << std::endl;
 }
 
 void Parser::reduce(std::stack<int> &stateStack, std::stack<Token> &symbolStack, int productionNumber)
 {
     const Production &production = productions[productionNumber];
-    // std::cout << "Reducing using production: " << productionNumber << " (" << getNonTerminalName(production.left) << " -> " << production.rightLength << " symbols)" << std::endl;
 
     // 根据产生式右部长度进行pop操作
     for (int i = 0; i < production.rightLength; ++i)
     {
         stateStack.pop();
         symbolStack.pop();
+    }
+
+    // 栈不为空时，获取当前状态
+    if (stateStack.empty())
+    {
+        std::cerr << "Error: State stack is empty after pop operations." << std::endl;
+        return;
     }
 
     // 获取当前状态
@@ -677,11 +684,22 @@ void Parser::reduce(std::stack<int> &stateStack, std::stack<Token> &symbolStack,
     int newState = gotoTable[currentState][nonTerminal];
     stateStack.push(newState);
 
-    // 将产生式左部非终结符推入符号栈
-    symbolStack.push(Token(nonTerminal, this->getNonTerminalName(nonTerminal),symbolStack.top().getLineNum()));
+    if (symbolStack.empty())
+    {
+        size_t curLine = 1; // 暂时设置为 1
+        symbolStack.push(Token(nonTerminal, this->getNonTerminalName(nonTerminal),curLine));
+    }
+    else
+    {
+        // 将产生式左部非终结符推入符号栈
+        size_t curLine = symbolStack.top().getLineNum();
+        symbolStack.push(Token(nonTerminal, this->getNonTerminalName(nonTerminal),curLine));
+    }
 
     // 打印符号栈
     printSymbolStack(symbolStack);
+
+    std::cout << "\t Reducing using production: " << productionNumber << " (" << getNonTerminalName(production.left) << " -> " << production.rightLength << " symbols)" << std::endl;
 }
 
 
@@ -712,7 +730,7 @@ void Parser::printSymbolStack(const std::stack<Token> &symbolStack)
     {
         std::cout << it->getValue() << " ";
     }
-    std::cout << std::endl;
+    // std::cout << std::endl;
 }
 
 // 实现语法分析函数
@@ -725,6 +743,12 @@ void Parser::parse(const std::vector<Token> &tokens)
     size_t index = 0;
     while (index < tokens.size())
     {
+        if (stateStack.empty())
+        {
+            std::cerr << "Error: State stack is empty." << std::endl;
+            return;
+        }
+
         int currentState = stateStack.top();
         Token currentToken = tokens[index];
         TokenType tokenType = currentToken.getType();
