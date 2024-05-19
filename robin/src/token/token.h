@@ -152,10 +152,13 @@ namespace token {
          */
         const String &getLexeme() const;
 
+        size_t getLine() const;
+
         /**
          * @brief 打印所有关键字
          */
         static void printKeywords();
+
 
     };
 

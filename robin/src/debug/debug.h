@@ -8,6 +8,8 @@
 
 #include "../common.h"
 #include "../token/token.h"
+#include "../parser/parser.h"
+#include "../ast/production.h"
 
 /**
  * @brief 打印详细的标记（token）列表。
@@ -33,6 +35,7 @@ void printSymbolTable(const List<token::Token>& tokenlist);
  * @param symboltable 要插入令牌词素的符号表。
  */
 void insertToSymbolTable(const token::Token& t, List<String>& symboltable);
+
 
 
 

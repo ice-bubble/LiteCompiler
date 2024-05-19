@@ -154,9 +154,13 @@ namespace token {
         return lexeme;
     }
 
-    void Token::printKeywords(){
-        for (const auto& it: keywords) {
-            std::cout<<"KEYWORD "<<it.first<<std::endl;
+    size_t Token::getLine() const {
+        return line;
+    }
+
+    void Token::printKeywords() {
+        for (const auto &it: keywords) {
+            std::cout << "KEYWORD " << it.first << std::endl;
         }
     }
 
