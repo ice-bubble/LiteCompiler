@@ -12,9 +12,9 @@
         ├── debug                   debug文件
         │   ├── debug.cpp           debug函数实现
         │   └── debug.h             debug函数声明
-        ├── reportParserError                   编译器错误处理模块
-        │   ├── reportParserError.cpp           error函数定义
-        │   └── reportParserError.h             error函数声明
+        ├── error                   编译器错误处理模块
+        │   ├── error.cpp           error函数定义
+        │   └── error.h             error函数声明
         ├── parser                  语法分析器
         │   ├── parser.cpp          语法分析器parser函数实现
         │   └── parser.h            语法分析器parser类声明
