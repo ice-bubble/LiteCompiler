@@ -501,8 +501,22 @@ void Parser::parse(const std::vector<Token> &tokens)
         }
 
         std::string action = parseTable[currentState][tokenType];
-
-        if (action[0] == 'S')
+        if(action == "S56(r97)") // "=" 移入/归约 冲突处理
+        {
+            Token nextToken = tokens[index+1];
+            if(nextToken.getType()==TokenType::KEYWORD_FUNCTION) // 函数定义
+            {
+                int newState = 56;
+                shift(stateStack, symbolStack, newState, currentToken);
+                ++index;
+            }
+            else
+            {
+                int productionNumber = 97;
+                reduce(stateStack, symbolStack, productionNumber);
+            }
+        }
+        else if (action[0] == 'S')
         {
             int newState = std::stoi(action.substr(1));
             shift(stateStack, symbolStack, newState, currentToken);
