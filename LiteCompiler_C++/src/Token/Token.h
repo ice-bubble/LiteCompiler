@@ -15,6 +15,7 @@ enum class TokenType
 {
     // KEYWORDS [字符串升序排列]
     KEYWORD_AND,
+    KEYWORD_BOOL,
     KEYWORD_BREAK,
     KEYWORD_CHAR,
     KEYWORD_CLASS,
@@ -60,8 +61,10 @@ enum class TokenType
     ASSIGNMENT, // "="赋值运算符
     PLUS, // "+"
     PLUS_ASSIGNMENT, // "+="
+    PLUS_SELF, // "++"
     MINUS, // "-"
     MINUS_ASSIGNMENT, // "-="
+    MINUS_SELF, // "--"
     MULTIPLY, // "*"
     MULTIPLY_ASSIGNMENT, // "*="
     DIVIDE, // "/"
@@ -98,6 +101,7 @@ enum class TokenType
 
     NONTERMINAL, // 语法分析阶段归约产生的非终结符
 
+    EOF_EOF,    // 占位文件结束符，读取输入文件后程序自动加上
     EMPTY, // 空
     INVALID // 非法的标记【词法错误】
 };
@@ -106,14 +110,55 @@ enum class TokenType
 enum class NonTerminal
 {
     S,
+    PROGRAM,
+    DECLARATIONS,
+    DECLARATION,
+    STATEMENT,
+    BREAKSTMT,
+    CONTINUESTMT,
+    RETURNSTMT,
+    FUNDECL,
+    VARDECL,
+    VARDEF,
+    VARDEFS,
+    VARINIT,
+    TYPE,
+    EXPRSTMT,
+    IFSTMT,
+    ELSEBRANCH,
+    WHILESTMT,
+    BLOCK,
+    REPEATSTMT,
+    PARAMLIST,
+    PARAMETERS,
+    PARAMETER,
     EXPRESSION,
+    ASSIGNMENT,
+    LOGIC_OR,
+    LOGIC_OR_PRIME,
+    LOGIC_AND,
+    LOGIC_AND_PRIME,
+    EQUALITY,
+    EQUALITY_PRIME,
+    COMPARISON,
+    COMPARISON_PRIME,
     TERM,
     TERM_PRIME,
     FACTOR,
     FACTOR_PRIME,
+    INCR_EXP,
+    INCR_OP,
     UNARY,
-    PRIMARY
+    CALL,
+    CALL_SUFFIX,
+    ARGLIST,
+    ARGUMENTS,
+    PRIMARY,
+    CONST,
+    VAR,
+    VARSUFFIX
 };
+
 
 /**
  * @brief Token类，表示词法分析过程中的标记。

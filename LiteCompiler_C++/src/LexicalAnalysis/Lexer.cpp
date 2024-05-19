@@ -15,32 +15,32 @@ Lexer::Lexer(const std::string &input) : input(input), currentPos(0), line_num(1
 // 初始化静态成员变量 keywords
 std::map<std::string, TokenType> Lexer::keywords = {
     //{"and", TokenType::KEYWORD_AND},
-    //{"break", TokenType::KEYWORD_BREAK},
+    {"break", TokenType::KEYWORD_BREAK},
     {"char", TokenType::KEYWORD_CHAR},
-    //{"class", TokenType::KEYWORD_CLASS},
-    //{"continue", TokenType::KEYWORD_CONTINUE},
+    {"class", TokenType::KEYWORD_CLASS},
+    {"continue", TokenType::KEYWORD_CONTINUE},
     {"do", TokenType::KEYWORD_DO},
     {"double", TokenType::KEYWORD_DOUBLE},
     {"else", TokenType::KEYWORD_ELSE},
-    //{"false", TokenType::KEYWORD_FALSE},
+    {"false", TokenType::KEYWORD_FALSE},
     {"for", TokenType::KEYWORD_FOR},
     {"function", TokenType::KEYWORD_FUNCTION},
     {"if", TokenType::KEYWORD_IF},
     {"integer", TokenType::KEYWORD_INTEGER},
-    //{"nil", TokenType::KEYWORD_NIL},
-    //{"null", TokenType::KEYWORD_NULL},
-    //{"not", TokenType::KEYWORD_NOT},
+    {"nil", TokenType::KEYWORD_NIL},
+    {"null", TokenType::KEYWORD_NULL},
+    {"not", TokenType::KEYWORD_NOT},
     //{"or", TokenType::KEYWORD_OR},
-    //{"print", TokenType::KEYWORD_PRINT},
+    {"print", TokenType::KEYWORD_PRINT},
     {"read", TokenType::KEYWORD_READ},
     {"repeat", TokenType::KEYWORD_REPEAT},
     {"return", TokenType::KEYWORD_RETURN},
     {"string", TokenType::KEYWORD_STRING},
     //{"super", TokenType::KEYWORD_SUPER},
     //{"this", TokenType::KEYWORD_THIS},
-    //{"true", TokenType::KEYWORD_TRUE},
+    {"true", TokenType::KEYWORD_TRUE},
     {"until", TokenType::KEYWORD_UNTIL},
-    //{"var", TokenType::KEYWORD_VAR},
+    {"var", TokenType::KEYWORD_VAR},
     {"while", TokenType::KEYWORD_WHILE},
     {"write", TokenType::KEYWORD_WRITE}
 };
@@ -295,12 +295,22 @@ Token Lexer::parseSymbol()
                 advance();
                 return Token(TokenType::PLUS_ASSIGNMENT, "+=", line_num);
             }
+            if (peek() == '+')
+            {
+                advance();
+                return Token(TokenType::PLUS_SELF, "++", line_num);
+            }
             return Token(TokenType::PLUS, "+", line_num);
         case '-':
             if (peek() == '=')
             {
                 advance();
                 return Token(TokenType::MINUS_ASSIGNMENT, "-=", line_num);
+            }
+            if (peek() == '-')
+            {
+                advance();
+                return Token(TokenType::MINUS_SELF, "--", line_num);
             }
             return Token(TokenType::MINUS, "-", line_num);
         case '*':

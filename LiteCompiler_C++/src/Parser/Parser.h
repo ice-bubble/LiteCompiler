@@ -37,6 +37,8 @@ private:
 
     void printSymbolStack(const std::stack<Token> &symbolStack);
 
+    void printStateStack(const std::stack<int> &stateStack);
+
     std::string getNonTerminalName(NonTerminal nonTerminal);
 };
 

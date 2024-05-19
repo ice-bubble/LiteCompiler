@@ -18,4 +18,6 @@ add_executable(LiteCompiler_C++ main.cpp
         src/LexicalAnalysis/isInvalidToken.cpp
         src/Parser/Parser.h
         src/Parser/Parser.cpp
+        src/Parser/AST.h
+        src/Parser/AST.cpp
 )
