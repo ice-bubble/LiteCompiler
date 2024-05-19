@@ -9,6 +9,7 @@
 
 #include "../common.h"
 #include "../token/token.h"
+#include "../ast/symbol.h"
 
 namespace production {
 
@@ -33,20 +34,27 @@ namespace production {
     class Number;
 
 
-
     class Production {
     public:
+        static Map<token::TokenType,symbol::Symbol> tokenToSym;
+
+        symbol::Symbol thisSymbol = symbol::Symbol::base;
+
+        virtual String toString() = 0;
+
         virtual ~Production() = default;
     };
+
 
     class Expr : public Production {
     public:
         size_t line;
         SharedPtr<Expression> expression;
 
-        Expr(size_t line, SharedPtr<Expression> expression) : line(line), expression(std::move(expression)) {}
+        Expr(size_t line, SharedPtr<Expression> expression)
+                : line(line), expression(std::move(expression)) { thisSymbol = symbol::Symbol::Expr; }
 
-        static String toString() { return String{"Expr"}; }
+        String toString() override { return String{"Expr"}; }
     };
 
     class Expression : public Production {
@@ -55,9 +63,9 @@ namespace production {
 
         virtual ~Expression() = default;
 
-        explicit Expression(size_t line) : line(line) {}
+        explicit Expression(size_t line) : line(line) { thisSymbol = symbol::Symbol::expression; }
 
-        static String toString() { return String{"expression"}; }
+        String toString() override { return String{"expression"}; }
     };
 
     class Expression1 : public Expression {
@@ -79,20 +87,21 @@ namespace production {
         SharedPtr<Term_prime> term_Prime;
 
         Term(size_t line, SharedPtr<Factor> factor, SharedPtr<Term_prime> termPrime)
-                : line(line), factor(std::move(factor)), term_Prime(std::move(termPrime)) {}
+                : line(line), factor(std::move(factor)),
+                  term_Prime(std::move(termPrime)) { thisSymbol = symbol::Symbol::term; }
 
-        static String toString() { return String{"term"}; }
+        String toString() override { return String{"term"}; }
     };
 
     class Term_prime : public Production {
     public:
         size_t line;
 
-        explicit Term_prime(size_t line) : line(line) {}
+        explicit Term_prime(size_t line) : line(line) { thisSymbol = symbol::Symbol::term_prime; }
 
         virtual ~Term_prime() = default;
 
-        static String toString() { return String{"term_prime"}; }
+        String toString() override { return String{"term_prime"}; }
     };
 
     class Term_prime1 : public Term_prime {
@@ -129,20 +138,21 @@ namespace production {
         SharedPtr<Factor_prime> factor_prime;
 
         Factor(size_t line, SharedPtr<Unary> unary, SharedPtr<Factor_prime> factorPrime)
-                : line(line), unary(std::move(unary)), factor_prime(std::move(factorPrime)) {}
+                : line(line), unary(std::move(unary)),
+                  factor_prime(std::move(factorPrime)) { thisSymbol = symbol::Symbol::factor; }
 
-        static String toString() { return String{"factor"}; }
+        String toString() override { return String{"factor"}; }
     };
 
     class Factor_prime : public Production {
     public:
         size_t line;
 
-        explicit Factor_prime(size_t line) : line(line) {}
+        explicit Factor_prime(size_t line) : line(line) { thisSymbol = symbol::Symbol::factor_prime; }
 
         virtual ~Factor_prime() = default;
 
-        static String toString() { return String{"factor_prime"}; }
+        String toString() override { return String{"factor_prime"}; }
     };
 
     class Factor_prime1 : public Factor_prime {
@@ -187,11 +197,11 @@ namespace production {
     public:
         size_t line;
 
-        explicit Unary(size_t line) : line(line) {}
+        explicit Unary(size_t line) : line(line) { thisSymbol = symbol::Symbol::unary; }
 
         virtual ~Unary() = default;
 
-        static String toString() { return String{"unary"}; }
+        String toString() override { return String{"unary"}; }
     };
 
     class Unary1 : public Unary {
@@ -215,11 +225,11 @@ namespace production {
     public:
         size_t line;
 
-        explicit Primary(size_t line) : line(line) {}
+        explicit Primary(size_t line) : line(line) {thisSymbol = symbol::Symbol::primary; }
 
         virtual ~Primary() = default;
 
-        static String toString() { return String{"primary"}; }
+        String toString() override { return String{"primary"}; }
     };
 
     class Primary1 : public Primary {
@@ -245,11 +255,11 @@ namespace production {
     public:
         size_t line;
 
-        explicit Number(size_t line) : line(line) {}
+        explicit Number(size_t line) : line(line) {thisSymbol = symbol::Symbol::number; }
 
         virtual ~Number() = default;
 
-        static String toString() { return String{"number"}; }
+        String toString() override { return String{"number"}; }
     };
 
     class Number1 : public Number {
@@ -274,9 +284,10 @@ namespace production {
         token::Token thisToken;
 
 
-        Token(size_t line, token::Token thisToken) : line(line), thisToken(std::move(thisToken)) {}
+        Token(size_t line, token::Token thisToken) : line(line), thisToken(std::move(thisToken))
+        {thisSymbol = tokenToSym[thisToken.getType()]; }
 
-        String toString() {
+        String toString() override {
             if (thisToken.getType() == token::TokenType::TOKEN_INT_ ||
                 thisToken.getType() == token::TokenType::TOKEN_REAL_)
                 return thisToken.getLiteralString();

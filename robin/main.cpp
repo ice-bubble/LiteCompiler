@@ -8,8 +8,13 @@
 
 #include "src/token/token.h"
 #include "src/lexer/lexer.h"
+#include "src/parser/parser.h"
+#include "src/ast/production.h"
+
 #ifdef DEBUG_FLAG
+
 #include "src/debug/debug.h"
+
 #endif
 
 /**
@@ -33,12 +38,14 @@ static void repl() {
 #ifdef DEBUG_PRINT_TOKENLIST
         printTokenList(tokenlist);
         if (lexer.hasError)
-            std::cerr<<"There are lexical errors in the source code"<<std::endl;
-        lexer.hasError= false;
+            std::cerr << "There are lexical errors in the source code" << std::endl;
+        lexer.hasError = false;
         //token::Token::printKeywords();
         //printSymbolTable(tokenlist);
         //printRequestedTokenList(tokenList);
 #endif
+        parser::Parser parser = parser::Parser(tokenlist);
+        List<SharedPtr<production::Production>> ast = parser.parserAst();
     }
 }
 
@@ -47,7 +54,7 @@ static void repl() {
  * @param path 要读取的文件路径。
  * @return std::string 文件内容的字符串形式。
  */
-String readFile(const String& path) {
+String readFile(const String &path) {
     std::ifstream file(path, std::ios::binary);
     if (!file) {
         throw std::runtime_error("Failed to open file: " + path);
@@ -66,7 +73,7 @@ String readFile(const String& path) {
  *
  * @param path 要运行的文件路径。
  */
-static void runFile(const String& path) {
+static void runFile(const String &path) {
     try {
         // 读取文件内容
         String source = readFile(path);
@@ -79,12 +86,12 @@ static void runFile(const String& path) {
         // 打印词法分析结果（仅在调试模式下有效）
         printTokenList(tokenlist);
         if (lexer.hasError)
-            std::cerr<<"There are lexical errors in the source code"<<std::endl;
+            std::cerr << "There are lexical errors in the source code" << std::endl;
         //token::Token::printKeywords();
         //printSymbolTable(tokenlist);
         //printRequestedTokenList(tokenList);
 #endif
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         // 捕获异常并输出错误信息
         std::cerr << e.what() << std::endl;
 
@@ -107,7 +114,7 @@ int main(int argc, const char *argv[]) {
     } else if (argc == 2) {
         runFile(argv[1]);
     } else {
-        std::cerr<<"Usage: robin [path]"<<std::endl;
+        std::cerr << "Usage: robin [path]" << std::endl;
         exit(64);
     }
 

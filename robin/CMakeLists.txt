@@ -13,9 +13,12 @@ add_executable(robin main.cpp
         src/error/error.h
         src/debug/debug.h
         src/debug/debug.cpp
-        src/ast/expr.h
         src/ast/type.h
-        src/ast/stmt.h
+        src/ast/production.h
         src/parser/parser.h
         src/parser/parser.cpp
-        src/ast/production.h)
+        src/parser/slrtable.cpp
+        src/parser/reduce.cpp
+        src/ast/symbol.h
+        src/ast/initAst.cpp
+)

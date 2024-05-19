@@ -25,4 +25,6 @@ void error(size_t line, const String& message);
  */
 void error(lexer::Lexer* error_lexer ,size_t line, const String& message);
 
+void error(const token::Token& error_token , const String& message);
+
 #endif //ROBIN_ERROR_H
