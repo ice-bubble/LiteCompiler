@@ -101,7 +101,7 @@ namespace lexer {
                 return;
         }
         String unexpected_char(1, c);
-        error(this, line, "Unexpected character '" + unexpected_char + "'.");
+        reportLexerError(this, line, "Unexpected character '" + unexpected_char + "'.");
     }
 
     void Lexer::_identifier() {
@@ -157,7 +157,7 @@ namespace lexer {
         while (peek() != front) {
             // 处理跨行字符串
             // 处理找不到闭合的 " 或 ' 的情况
-            if (peek() == '\n' || isAtEnd()) return error(this, line, "Unterminated string.");
+            if (peek() == '\n' || isAtEnd()) return reportLexerError(this, line, "Unterminated string.");
             advance();
         }
 
@@ -178,7 +178,7 @@ namespace lexer {
         if (match('*')) {
             while (true) {
                 // 多行注释未闭合
-                if (isAtEnd()) return error(this, tmp_line, "Unterminated comment.");
+                if (isAtEnd()) return reportLexerError(this, tmp_line, "Unterminated comment.");
                 char ch = advance();
 
                 // 换行时记得把行号加一

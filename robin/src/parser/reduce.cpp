@@ -1,7 +1,7 @@
 //
 // Created by icelake on 24-5-19.
 //
-#define REDUCE(P, index)           SharedPtr<production::P> P##Instance##_##index =           \
+#define REDUCE(P, index)           SharedPtr<production::P> P##Instance##_##index =          \
                                         std::dynamic_pointer_cast<production::P>(            \
                                   productions.back());                                       \
                                   productions.pop_back();                                    \
@@ -13,6 +13,7 @@
 namespace parser {
 
     void Parser::reduceByExpr() {
+        //std::cout<<"reduceByExpr";
         REDUCE(Expression, 0)
 
         SharedPtr<production::Production> ExprInstance = std::make_shared<production::Expr>(
@@ -21,6 +22,7 @@ namespace parser {
     }
 
     void Parser::reduceByExpression1() {
+        //std::cout<<"reduceByExpression1";
         REDUCE(Term, 0)
 
         SharedPtr<production::Production> Expression1Instance = std::make_shared<production::Expression1>(
@@ -29,11 +31,13 @@ namespace parser {
     }
 
     void Parser::reduceByExpression2() {
+        //std::cout<<"reduceByExpression2";
         SharedPtr<production::Production> Expression2Instance = std::make_shared<production::Expression2>(-1);
         productions.push_back(Expression2Instance);
     }
 
     void Parser::reduceByTerm() {
+        //std::cout<<"reduceByTerm";
         REDUCE(Term_prime, 0)
 
         REDUCE(Factor, 0)
@@ -196,5 +200,6 @@ namespace parser {
             &Parser::reduceByNumber2
     };
 
-
 }
+
+#undef REDUCE//(P, index)

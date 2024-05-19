@@ -8,14 +8,12 @@
 #include "../common.h"
 #include "../ast/production.h"
 #include "../ast/symbol.h"
-#include "../error/error.h"
 
 namespace parser {
 
 
     // 定义状态和符号
     typedef int State;
-
 
 
     // SLR分析表：state, symbol -> action
@@ -27,6 +25,7 @@ namespace parser {
 
     class Parser {
         typedef void (Parser::*VoidFuncPtr)();
+
     private:
         List<token::Token> tokens;                         ///< 从源代码生成的token列表。
         List<SharedPtr<production::Production>> productions;
@@ -37,6 +36,7 @@ namespace parser {
 
 
     public:
+        bool hasError = false;
 
         Parser(List<token::Token> tokens);
 
@@ -47,6 +47,8 @@ namespace parser {
         void printProductionStack();
 
         void printStateStack();
+
+        void printInfo(const String &message);
 
         bool isAtTokenListEnd();
 

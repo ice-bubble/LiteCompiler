@@ -35,15 +35,12 @@ static void repl() {
         }
         lexer::Lexer lexer = lexer::Lexer(line);
         List<token::Token> tokenlist = lexer.scanTokens();
-#ifdef DEBUG_PRINT_TOKENLIST
+
         printTokenList(tokenlist);
         if (lexer.hasError)
             std::cerr << "There are lexical errors in the source code" << std::endl;
         lexer.hasError = false;
-        //token::Token::printKeywords();
-        //printSymbolTable(tokenlist);
-        //printRequestedTokenList(tokenList);
-#endif
+
         parser::Parser parser = parser::Parser(tokenlist);
         List<SharedPtr<production::Production>> ast = parser.parserAst();
     }
@@ -74,23 +71,11 @@ String readFile(const String &path) {
  * @param path 要运行的文件路径。
  */
 static void runFile(const String &path) {
+    String source;
     try {
         // 读取文件内容
-        String source = readFile(path);
+        source = readFile(path);
 
-        // 创建词法分析器并进行词法分析
-        lexer::Lexer lexer(source);
-        List<token::Token> tokenlist = lexer.scanTokens();
-
-#ifdef DEBUG_PRINT_TOKENLIST
-        // 打印词法分析结果（仅在调试模式下有效）
-        printTokenList(tokenlist);
-        if (lexer.hasError)
-            std::cerr << "There are lexical errors in the source code" << std::endl;
-        //token::Token::printKeywords();
-        //printSymbolTable(tokenlist);
-        //printRequestedTokenList(tokenList);
-#endif
     } catch (const std::exception &e) {
         // 捕获异常并输出错误信息
         std::cerr << e.what() << std::endl;
@@ -98,6 +83,17 @@ static void runFile(const String &path) {
         // 退出程序，返回错误状态码 74
         exit(74);
     }
+    // 创建词法分析器并进行词法分析
+    lexer::Lexer lexer(source);
+    List<token::Token> tokenlist = lexer.scanTokens();
+
+    //打印词法分析结果
+    printTokenList(tokenlist);
+    if (lexer.hasError)
+        std::cerr << "There are lexical errors in the source code" << std::endl;
+
+    parser::Parser parser = parser::Parser(tokenlist);
+    List<SharedPtr<production::Production>> ast = parser.parserAst();
 }
 
 

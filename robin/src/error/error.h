@@ -1,5 +1,5 @@
 /**
- * @file error.h
+ * @file reportParserError.h
  * @brief error函数的声明。
  * @date 24-4-22
  */
@@ -9,6 +9,7 @@
 
 #include "../common.h"
 #include "../lexer/lexer.h"
+#include "../parser/parser.h"
 
 /**
  * @brief 使用给定的源代码行号和错误消息的描述打印错误消息
@@ -23,8 +24,10 @@ void error(size_t line, const String& message);
  * @param line 发生错误的行号。
  * @param message 描述问题的错误消息。
  */
-void error(lexer::Lexer* error_lexer ,size_t line, const String& message);
+void reportLexerError(lexer::Lexer *error_lexer , size_t line, const String& message);
 
 void error(const token::Token& error_token , const String& message);
+
+void reportParserError(parser::Parser *error_parser,const token::Token& error_token , const String& message);
 
 #endif //ROBIN_ERROR_H

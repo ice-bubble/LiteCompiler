@@ -126,7 +126,7 @@ namespace parser {
             {{5,  symbol::Symbol::factor_prime}, {symbol::Type::Error,  0}},
             {{5,  symbol::Symbol::unary},        {symbol::Type::Goto,   18}},
             {{5,  symbol::Symbol::primary},      {symbol::Type::Goto,   6}},
-            {{5,  symbol::Symbol::number},       {symbol::Type::Error,  7}},
+            {{5,  symbol::Symbol::number},       {symbol::Type::Goto,   7}},
 
             {{6,  symbol::Symbol::minus},        {symbol::Type::Reduce, 13}},
             {{6,  symbol::Symbol::plus},         {symbol::Type::Reduce, 13}},

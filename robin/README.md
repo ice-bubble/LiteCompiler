@@ -12,9 +12,9 @@
         ├── debug                   debug文件
         │   ├── debug.cpp           debug函数实现
         │   └── debug.h             debug函数声明
-        ├── error                   编译器错误处理模块
-        │   ├── error.cpp           error函数定义
-        │   └── error.h             error函数声明
+        ├── reportParserError                   编译器错误处理模块
+        │   ├── reportParserError.cpp           error函数定义
+        │   └── reportParserError.h             error函数声明
         ├── parser                  语法分析器
         │   ├── parser.cpp          语法分析器parser函数实现
         │   └── parser.h            语法分析器parser类声明
@@ -175,7 +175,7 @@ graph LR
     str --> matched_type
     keyword --> matched_type
     id --> matched_type
-    char -->|未匹配到的符号| unmatched_type["error()"]
+    char -->|未匹配到的符号| unmatched_type["reportParserError()"]
 ```
 
 [^1]: 对于其他工具链，命令三和命令四会有所不同。可能可以使用默认的设置，直接运行`cmake ..`和`make`，也可能要更改命令，手动指定使用的编译器和make工具
