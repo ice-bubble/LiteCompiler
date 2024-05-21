@@ -59,7 +59,6 @@ int main(int argc, char *argv[])
 
     tokens.erase(std::remove_if(tokens.begin(), tokens.end(), isInvalidToken),tokens.end());    // 删除词法分析后产生的无效标记
     size_t eofLineNum = (tokens.empty() ? 1 : tokens.back().getLineNum() + 1);          // 文件结束符EOF的行号
-    tokens.push_back(Token(TokenType::EOF_EOF, "EOF", eofLineNum));           // 在记号流的末尾增加一个EOF类型的Token，表示输入的结束
     tokens.push_back(Token(TokenType::KEYWORD_EOF, "$", eofLineNum));           // 在记号流的末尾增加一个EOF类型的Token，表示输入的结束
 
     /* 本块注释是词法分析阶段的输出

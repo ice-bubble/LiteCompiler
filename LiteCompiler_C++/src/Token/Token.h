@@ -127,6 +127,7 @@ enum class NonTerminal
     IFSTMT,
     ELSEBRANCH,
     WHILESTMT,
+    FORSTMT,
     BLOCK,
     REPEATSTMT,
     PARAMLIST,
