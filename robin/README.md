@@ -166,7 +166,7 @@ graph LR
     char -->|'.'| dotOrReal[符号点或者浮点数]
     dotOrReal -->|'.'|TOKEN_DOT
     TOKEN_DOT --> matched_type
-    dotOrReal -->|浮点数|real["real_()"]
+    dotOrReal -->|浮点数|real["REAL_()"]
     real --> matched_type
     char -->|匹配到的运算符| matched_type["addToken()"]
     maybeid -->|查询vector匹配到关键字|keyword[TOKEN_KEYWORD]

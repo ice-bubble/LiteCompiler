@@ -59,6 +59,7 @@ namespace parser {
     List<SharedPtr<production::Production>> Parser::parserAst() {
         stateStack.push(0);
         while (true) {
+            printInfo("enter loop");
             //preAction,先处理goto操作;
             if (!productions.empty()) {
                 symbol::Symbol preSymbol = productions.back()->thisSymbol;
@@ -71,29 +72,38 @@ namespace parser {
             }
 
             //action,处理shift,reduce,accept,error操作;
+            symbol::Symbol currentSymbol;
             if (isAtTokenListEnd()) {
-                std::cerr << "reach the end of tokenList! Input is parsed! But there are some problems." << std::endl;
+                currentSymbol = symbol::Symbol::DOLLAR;
+            } else { currentSymbol = production::Production::tokenToSym[peek().getType()]; }
+            State currentState = stateStack.top();
+            if (currentState == 7 && currentSymbol == symbol::Symbol::EQUAL) {
+                token::Token nextToken = peekNext();
+                if (nextToken.getType() == token::TokenType::TOKEN_FUNCTION) {
+                    slrTable[{7, symbol::Symbol::EQUAL}] = {symbol::Type::Shift, 56};
+                } else {
+                    slrTable[{7, symbol::Symbol::EQUAL}] = {symbol::Type::Reduce, 97};
+                }
+            }
+            auto action = slrTable.find({currentState, currentSymbol});
+
+            if (action == slrTable.end()) {
+                reportParserError(this, tokens[currentToken], "this token is not in the SLR Table");
                 hasError = true;
                 return productions;
             }
-            token::Token token = peek();
-            symbol::Symbol currentSymbol = production::Production::tokenToSym[token.getType()];
-            State currentState = stateStack.top();
-            auto action = slrTable.find({currentState, currentSymbol});
+
 
             switch (action->second.type) {
                 case symbol::Type::Shift: {
                     printInfo("before shift");
                     if (isAtTokenListEnd()) {
-                        std::cerr << "reach the end of tokenList! Input is parsed! But there are some problems." << std::endl;
+                        std::cerr << "reach the end of tokenList! Input is parsed!"
+                                  << std::endl;
                         hasError = true;
                         return productions;
                     }
-                    if (action == slrTable.end()) {
-                        reportParserError(this, tokens[currentToken], "this token is not in the SLR Table");
-                        hasError = true;
-                        break;
-                    }
+
                     token::Token thisToken = advance();
                     stateStack.push(action->second.state);
                     productions.push_back(std::make_shared<production::Token>(thisToken.getLine(), thisToken));
@@ -106,18 +116,18 @@ namespace parser {
                 case symbol::Type::Accept:
                     printInfo("before accept");
                     if (hasError) {
-                        std::cerr << "Input is parsed! But there are some problems." << std::endl;
-                    } else
-                        std::cout << "Input is successfully parsed!" << std::endl;
+                        std::cerr << "Input is parsed!" << std::endl;
+                    } else { std::cout << "Input is successfully parsed!" << std::endl; }
                     return productions;
                 case symbol::Type::Error:
                     printInfo("before reportParserError");
                     if (isAtTokenListEnd()) {
-                        std::cerr << "reach the end of tokenList! Input is parsed! But there are some problems." << std::endl;
+                        std::cerr << "reach the end of tokenList! Input is parsed!"
+                                  << std::endl;
                         hasError = true;
                         return productions;
                     }
-                    reportParserError(this, tokens[currentToken], "Syntax Error at this token");
+                    reportParserError(this, tokens[currentToken-1], "Syntax Error at this token");
                     advance();
                     break;
                 default:
@@ -140,6 +150,12 @@ namespace parser {
 
     token::Token Parser::peek() {
         return tokens[currentToken];
+    }
+
+    token::Token Parser::peekNext() {
+        if (currentToken + 1 >= tokens.size())
+            return {token::TOKEN_EOF, "", std::any{}, 0};
+        return tokens[currentToken + 1];
     }
 
 
