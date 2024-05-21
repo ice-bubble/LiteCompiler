@@ -43,6 +43,8 @@ static void repl() {
 
         parser::Parser parser = parser::Parser(tokenlist);
         List<SharedPtr<production::Production>> ast = parser.parserAst();
+        if (parser.hasError)
+            std::cerr << "There are syntax errors in the source code" << std::endl;
     }
 }
 
@@ -78,7 +80,7 @@ static void runFile(const String &path) {
 
     } catch (const std::exception &e) {
         // 捕获异常并输出错误信息
-        std::cerr << e.what() << std::endl;
+        std::cerr << e.what() << std::endl<<1<<std::endl;
 
         // 退出程序，返回错误状态码 74
         exit(74);
@@ -94,6 +96,8 @@ static void runFile(const String &path) {
 
     parser::Parser parser = parser::Parser(tokenlist);
     List<SharedPtr<production::Production>> ast = parser.parserAst();
+    if (parser.hasError)
+        std::cerr << "There are syntax errors in the source code" << std::endl;
 }
 
 

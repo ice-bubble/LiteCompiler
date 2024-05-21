@@ -18,13 +18,13 @@ void printRequestedTokenList(const List<token::Token> &tokenlist) {
         if (token.getType() == token::TOKEN_STRING_) {
             std::cout << "<STRING, " << val << ">" << std::endl;
         } else if (token.getType() == token::TOKEN_INT_) {
-            std::cout << "<INT, " << val << ">" << std::endl;
+            std::cout << "<INT_, " << val << ">" << std::endl;
         } else if (token.getType() == token::TOKEN_REAL_) {
             String stdval;
             if (val[0] == '.') stdval = "0" + val;
             else if (val[val.size() - 1] == '.') stdval = val + '0';
             else stdval = val;
-            std::cout << "<REAL, " << stdval << ">" << std::endl;
+            std::cout << "<REAL_, " << stdval << ">" << std::endl;
         } else if (token.getType() == token::TOKEN_BOOL_) {
             std::cout << "<BOOL, " << val << ">" << std::endl;
         } else if (token.getType() == token::TOKEN_IDENTIFIER) {
