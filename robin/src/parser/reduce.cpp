@@ -21,11 +21,9 @@ namespace parser {
     }
 
     void Parser::reduceByProgram() {
-        REDUCE(Token, 0)
         REDUCE(Declarations, 0)
         SharedPtr<production::Production> ProgramInstance =
-                std::make_shared<production::Program>
-                        (DeclarationsInstance_0->line, DeclarationsInstance_0, TokenInstance_0);
+                std::make_shared<production::Program>(DeclarationsInstance_0->line, DeclarationsInstance_0);
         productions.push_back(ProgramInstance);
     }
 
@@ -118,6 +116,13 @@ namespace parser {
         SharedPtr<production::Production> Statement8Instance
                 = std::make_shared<production::Statement8>(BlockInstance_0->line, BlockInstance_0);
         productions.push_back(Statement8Instance);
+    }
+
+    void Parser::reduceByStatement9() {
+        REDUCE(ForStmt, 0)
+        SharedPtr<production::Production> Statement9Instance
+                = std::make_shared<production::Statement9>(ForStmtInstance_0->line, ForStmtInstance_0);
+        productions.push_back(Statement9Instance);
     }
 
     void Parser::reduceByBreakStmt() {
@@ -301,6 +306,64 @@ namespace parser {
         productions.push_back(WhileStmtInstance);
     }
 
+    void Parser::reduceByForStmt1() {
+        REDUCE(Statement, 0)  ///< statement
+        REDUCE(Token, 2)      ///< ")"
+        REDUCE(ExprStmt, 0)   ///< exprStmt
+        REDUCE(VarDecl, 0)    ///< varDecl
+        REDUCE(Token, 1)      ///< "("
+        REDUCE(Token, 0)      ///< "for"
+        SharedPtr<production::Production> ForStmt1Instance = std::make_shared<production::ForStmt1>
+                (TokenInstance_0->line, TokenInstance_0, TokenInstance_1,
+                 VarDeclInstance_0, ExprStmtInstance_0, TokenInstance_2,
+                 StatementInstance_0);
+        productions.push_back(ForStmt1Instance);
+    }
+
+    void Parser::reduceByForStmt2() {
+        REDUCE(Statement, 0)  ///< statement
+        REDUCE(Token, 2)      ///< ")"
+        REDUCE(Expression, 0) ///< expression
+        REDUCE(ExprStmt, 0)   ///< exprStmt
+        REDUCE(VarDecl, 0)    ///< varDecl
+        REDUCE(Token, 1)      ///< "("
+        REDUCE(Token, 0)      ///< "for"
+        SharedPtr<production::Production> ForStmt2Instance = std::make_shared<production::ForStmt2>
+                (TokenInstance_0->line, TokenInstance_0, TokenInstance_1,
+                 VarDeclInstance_0, ExprStmtInstance_0, ExpressionInstance_0,
+                 TokenInstance_2, StatementInstance_0);
+        productions.push_back(ForStmt2Instance);
+    }
+
+    void Parser::reduceByForStmt3() {
+        REDUCE(Statement, 0)  ///< statement
+        REDUCE(Token, 2)      ///< ")"
+        REDUCE(ExprStmt, 1)   ///< exprStmt
+        REDUCE(ExprStmt, 0)   ///< exprStmt
+        REDUCE(Token, 1)      ///< "("
+        REDUCE(Token, 0)      ///< "for"
+        SharedPtr<production::Production> ForStmt3Instance = std::make_shared<production::ForStmt3>
+                (TokenInstance_0->line, TokenInstance_0, TokenInstance_1,
+                 ExprStmtInstance_0, ExprStmtInstance_1, TokenInstance_2,
+                 StatementInstance_0);
+        productions.push_back(ForStmt3Instance);
+    }
+
+    void Parser::reduceByForStmt4() {
+        REDUCE(Statement, 0)  ///< statement
+        REDUCE(Token, 2)      ///< ")"
+        REDUCE(Expression, 0) ///< expression
+        REDUCE(ExprStmt, 1)   ///< exprStmt
+        REDUCE(ExprStmt, 0)   ///< exprStmt
+        REDUCE(Token, 1)      ///< "("
+        REDUCE(Token, 0)      ///< "for"
+        SharedPtr<production::Production> ForStmt4Instance = std::make_shared<production::ForStmt4>
+                (TokenInstance_0->line, TokenInstance_0, TokenInstance_1,
+                 ExprStmtInstance_0, ExprStmtInstance_1, ExpressionInstance_0,
+                 TokenInstance_2, StatementInstance_0);
+        productions.push_back(ForStmt4Instance);
+    }
+
     void Parser::reduceByBlock() {
         REDUCE(Token, 1)
         REDUCE(Declarations, 0)
@@ -394,12 +457,10 @@ namespace parser {
     }
 
     void Parser::reduceByLogic_or_prime1() {
-        REDUCE(Logic_or_prime, 0)
-        REDUCE(Logic_and, 0)
+        REDUCE(Logic_or, 0)
         REDUCE(Token, 0)
         SharedPtr<production::Production> Logic_or_prime1Instance = std::make_shared<production::Logic_or_prime1>
-                (TokenInstance_0->line, TokenInstance_0, Logic_andInstance_0,
-                 Logic_or_primeInstance_0);
+                (TokenInstance_0->line, TokenInstance_0, Logic_orInstance_0);
         productions.push_back(Logic_or_prime1Instance);
     }
 
@@ -417,12 +478,10 @@ namespace parser {
     }
 
     void Parser::reduceByLogic_and_prime1() {
-        REDUCE(Logic_and_prime, 0)
-        REDUCE(Equality, 0)
+        REDUCE(Logic_and, 0)
         REDUCE(Token, 0)
         SharedPtr<production::Production> Logic_and_prime1Instance = std::make_shared<production::Logic_and_prime1>
-                (TokenInstance_0->line, TokenInstance_0, EqualityInstance_0,
-                 Logic_and_primeInstance_0);
+                (TokenInstance_0->line, TokenInstance_0, Logic_andInstance_0);
         productions.push_back(Logic_and_prime1Instance);
     }
 
@@ -440,22 +499,18 @@ namespace parser {
     }
 
     void Parser::reduceByEquality_prime1() {
-        REDUCE(Equality_prime, 0)
-        REDUCE(Comparison, 0)
+        REDUCE(Equality, 0)
         REDUCE(Token, 0)
         SharedPtr<production::Production> Equality_prime1Instance = std::make_shared<production::Equality_prime1>
-                (TokenInstance_0->line, TokenInstance_0, ComparisonInstance_0,
-                 Equality_primeInstance_0);
+                (TokenInstance_0->line, TokenInstance_0, EqualityInstance_0);
         productions.push_back(Equality_prime1Instance);
     }
 
     void Parser::reduceByEquality_prime2() {
-        REDUCE(Equality_prime, 0)
-        REDUCE(Comparison, 0)
+        REDUCE(Equality, 0)
         REDUCE(Token, 0)
         SharedPtr<production::Production> Equality_prime2Instance = std::make_shared<production::Equality_prime2>
-                (TokenInstance_0->line, TokenInstance_0, ComparisonInstance_0,
-                 Equality_primeInstance_0);
+                (TokenInstance_0->line, TokenInstance_0, EqualityInstance_0);
         productions.push_back(Equality_prime2Instance);
     }
 
@@ -473,41 +528,34 @@ namespace parser {
     }
 
     void Parser::reduceByComparison_prime1() {
-        REDUCE(Comparison_prime, 0)
-        REDUCE(Term, 0)
+        REDUCE(Comparison, 0)
         REDUCE(Token, 0)
         SharedPtr<production::Production> Comparison_prime1Instance = std::make_shared<production::Comparison_prime1>
-                (TokenInstance_0->line, TokenInstance_0, TermInstance_0, Comparison_primeInstance_0);
+                (TokenInstance_0->line, TokenInstance_0, ComparisonInstance_0);
         productions.push_back(Comparison_prime1Instance);
     }
 
     void Parser::reduceByComparison_prime2() {
-        REDUCE(Comparison_prime, 0)
-        REDUCE(Term, 0)
+        REDUCE(Comparison, 0)
         REDUCE(Token, 0)
         SharedPtr<production::Production> Comparison_prime2Instance = std::make_shared<production::Comparison_prime2>
-                (TokenInstance_0->line, TokenInstance_0, TermInstance_0,
-                 Comparison_primeInstance_0);
+                (TokenInstance_0->line, TokenInstance_0, ComparisonInstance_0);
         productions.push_back(Comparison_prime2Instance);
     }
 
     void Parser::reduceByComparison_prime3() {
-        REDUCE(Comparison_prime, 0)
-        REDUCE(Term, 0)
+        REDUCE(Comparison, 0)
         REDUCE(Token, 0)
         SharedPtr<production::Production> Comparison_prime3Instance = std::make_shared<production::Comparison_prime3>
-                (TokenInstance_0->line, TokenInstance_0, TermInstance_0,
-                 Comparison_primeInstance_0);
+                (TokenInstance_0->line, TokenInstance_0, ComparisonInstance_0);
         productions.push_back(Comparison_prime3Instance);
     }
 
     void Parser::reduceByComparison_prime4() {
-        REDUCE(Comparison_prime, 0)
-        REDUCE(Term, 0)
+        REDUCE(Comparison, 0)
         REDUCE(Token, 0)
         SharedPtr<production::Production> Comparison_prime4Instance = std::make_shared<production::Comparison_prime4>
-                (TokenInstance_0->line, TokenInstance_0, TermInstance_0,
-                 Comparison_primeInstance_0);
+                (TokenInstance_0->line, TokenInstance_0, ComparisonInstance_0);
         productions.push_back(Comparison_prime4Instance);
     }
 
@@ -526,20 +574,18 @@ namespace parser {
     }
 
     void Parser::reduceByTerm_prime1() {
-        REDUCE(Term_prime, 0)
-        REDUCE(Factor, 0)
+        REDUCE(Term, 0)
         REDUCE(Token, 0)
         SharedPtr<production::Production> Term_prime1Instance = std::make_shared<production::Term_prime1>
-                (TokenInstance_0->line, TokenInstance_0, FactorInstance_0, Term_primeInstance_0);
+                (TokenInstance_0->line, TokenInstance_0, TermInstance_0);
         productions.push_back(Term_prime1Instance);
     }
 
     void Parser::reduceByTerm_prime2() {
-        REDUCE(Term_prime, 0)
-        REDUCE(Factor, 0)
+        REDUCE(Term, 0)
         REDUCE(Token, 0)
         SharedPtr<production::Production> Term_prime2Instance = std::make_shared<production::Term_prime2>
-                (TokenInstance_0->line, TokenInstance_0, FactorInstance_0, Term_primeInstance_0);
+                (TokenInstance_0->line, TokenInstance_0,TermInstance_0);
         productions.push_back(Term_prime2Instance);
     }
 
@@ -557,32 +603,26 @@ namespace parser {
     }
 
     void Parser::reduceByFactor_prime1() {
-        REDUCE(Factor_prime, 0)
-        REDUCE(Incr_exp, 0)
+        REDUCE(Factor, 0)
         REDUCE(Token, 0)
         SharedPtr<production::Production> Factor_prime1Instance = std::make_shared<production::Factor_prime1>
-                (TokenInstance_0->line, TokenInstance_0, Incr_expInstance_0,
-                 Factor_primeInstance_0);
+                (TokenInstance_0->line, TokenInstance_0,FactorInstance_0);
         productions.push_back(Factor_prime1Instance);
     }
 
     void Parser::reduceByFactor_prime2() {
-        REDUCE(Factor_prime, 0)
-        REDUCE(Incr_exp, 0)
+        REDUCE(Factor, 0)
         REDUCE(Token, 0)
         SharedPtr<production::Production> Factor_prime2Instance = std::make_shared<production::Factor_prime2>
-                (TokenInstance_0->line, TokenInstance_0, Incr_expInstance_0,
-                 Factor_primeInstance_0);
+                (TokenInstance_0->line, TokenInstance_0,FactorInstance_0);
         productions.push_back(Factor_prime2Instance);
     }
 
     void Parser::reduceByFactor_prime3() {
-        REDUCE(Factor_prime, 0)
-        REDUCE(Incr_exp, 0)
+        REDUCE(Factor, 0)
         REDUCE(Token, 0)
         SharedPtr<production::Production> Factor_prime3Instance = std::make_shared<production::Factor_prime3>
-                (TokenInstance_0->line, TokenInstance_0, Incr_expInstance_0,
-                 Factor_primeInstance_0);
+                (TokenInstance_0->line, TokenInstance_0,FactorInstance_0);
         productions.push_back(Factor_prime3Instance);
     }
 
@@ -802,6 +842,7 @@ namespace parser {
             &Parser::reduceByStatement6,
             &Parser::reduceByStatement7,
             &Parser::reduceByStatement8,
+            &Parser::reduceByStatement9,
             &Parser::reduceByBreakStmt,
             &Parser::reduceByContinueStmt,
             &Parser::reduceByReturnStmt,
@@ -824,6 +865,10 @@ namespace parser {
             &Parser::reduceByElseBranch1,
             &Parser::reduceByElseBranch2,
             &Parser::reduceByWhileStmt,
+            &Parser::reduceByForStmt1,
+            &Parser::reduceByForStmt2,
+            &Parser::reduceByForStmt3,
+            &Parser::reduceByForStmt4,
             &Parser::reduceByBlock,
             &Parser::reduceByRepeatStmt,
             &Parser::reduceByParamList1,
@@ -885,7 +930,6 @@ namespace parser {
             &Parser::reduceByVar,
             &Parser::reduceByVarSuffix1,
             &Parser::reduceByVarSuffix2
-
     };
 
 }

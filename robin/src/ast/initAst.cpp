@@ -8,7 +8,7 @@
 
 namespace production {
     Map<token::TokenType, symbol::Symbol> Production::tokenToSym = {
-            {token::TOKEN_EOF,           symbol::Symbol::EOF_FLAG},
+            {token::TOKEN_EOF,           symbol::Symbol::DOLLAR},
             {token::TOKEN_INT_,          symbol::Symbol::INT_},
             {token::TOKEN_REAL_,         symbol::Symbol::REAL_},
             {token::TOKEN_STRING_,       symbol::Symbol::STRING_},
@@ -55,6 +55,7 @@ namespace production {
             {token::TOKEN_UNTIL,         symbol::Symbol::UNTIL},
             {token::TOKEN_RIGHT_BRACE,   symbol::Symbol::RIGHT_BRACE},
             {token::TOKEN_RIGHT_PAREN,   symbol::Symbol::RIGHT_PAREN},
-            {token::TOKEN_RIGHT_BRACKET, symbol::Symbol::RIGHT_BRACKET}
+            {token::TOKEN_RIGHT_BRACKET, symbol::Symbol::RIGHT_BRACKET},
+            {token::TOKEN_FOR,           symbol::Symbol::FOR}
     };
 }

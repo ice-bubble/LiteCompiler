@@ -39,7 +39,7 @@ namespace parser {
     public:
         bool hasError = false;
 
-        Parser(List<token::Token> tokens);
+        explicit Parser(List<token::Token> tokens);
 
         List<SharedPtr<production::Production>> parserAst();
 
@@ -94,6 +94,8 @@ namespace parser {
 
         void reduceByStatement8();
 
+        void reduceByStatement9();
+
         void reduceByBreakStmt();
 
         void reduceByContinueStmt();
@@ -137,6 +139,14 @@ namespace parser {
         void reduceByElseBranch2();
 
         void reduceByWhileStmt();
+
+        void reduceByForStmt1();
+
+        void reduceByForStmt2();
+
+        void reduceByForStmt3();
+
+        void reduceByForStmt4();
 
         void reduceByBlock();
 
@@ -259,6 +269,8 @@ namespace parser {
         void reduceByVarSuffix1();
 
         void reduceByVarSuffix2();
+
+
 
 
 

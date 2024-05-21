@@ -40,13 +40,15 @@ namespace production {
 
     class Type;
 
-    class ExprStmt;
-
     class IfStmt;
 
     class ElseBranch;
 
+    class ExprStmt;
+
     class WhileStmt;
+
+    class ForStmt;
 
     class Block;
 
@@ -139,11 +141,9 @@ namespace production {
     public:
         size_t line;
         SharedPtr<Declarations> declarations;
-        SharedPtr<Token> token_EOF_FLAG;
 
-        Program(size_t line, SharedPtr<Declarations> declarations, SharedPtr<Token> token_EOF_FLAG)
-                : line(line), declarations(std::move(declarations)),
-                  token_EOF_FLAG(std::move(token_EOF_FLAG)) { thisSymbol = symbol::Symbol::program; }
+        Program(size_t line, SharedPtr<Declarations> declarations)
+                : line(line), declarations(std::move(declarations)){ thisSymbol = symbol::Symbol::program; }
 
         String toString() override { return String{"Program"}; }
     };
@@ -289,6 +289,13 @@ namespace production {
         SharedPtr<Block> block;
 
         Statement8(size_t line, SharedPtr<Block> block) : Statement(line), block(std::move(block)) {}
+    };
+
+    class Statement9 : public Statement {
+    public:
+        SharedPtr<ForStmt> forStmt;
+
+        Statement9(size_t line, SharedPtr<ForStmt> forStmt) : Statement(line), forStmt(std::move(forStmt)) {}
     };
 
 
@@ -625,6 +632,104 @@ namespace production {
     };
 
 
+    class ForStmt : public Production {
+    public:
+        size_t line;
+
+        explicit ForStmt(size_t line) : line(line) { thisSymbol = symbol::Symbol::forStmt; }
+
+        ~ForStmt() override = default;
+
+        String toString() override { return String{"ForStmt"}; }
+    };
+
+    class ForStmt1 : public ForStmt {
+    public:
+        SharedPtr<Token> token_FOR;
+        SharedPtr<Token> token_LEFT_PAREN;
+        SharedPtr<VarDecl> varDecl;
+        SharedPtr<ExprStmt> exprStmt;
+        SharedPtr<Token> token_RIGHT_PAREN;
+        SharedPtr<Statement> statement;
+
+        ForStmt1(size_t line, SharedPtr<Token> token_FOR, SharedPtr<Token> token_LEFT_PAREN, SharedPtr<VarDecl> varDecl,
+                 SharedPtr<ExprStmt> exprStmt, SharedPtr<Token> token_RIGHT_PAREN, SharedPtr<Statement> statement)
+                : ForStmt(line), token_FOR(std::move(token_FOR)), token_LEFT_PAREN(std::move(token_LEFT_PAREN)),
+                  varDecl(std::move(varDecl)), exprStmt(std::move(exprStmt)),
+                  token_RIGHT_PAREN(std::move(token_RIGHT_PAREN)), statement(std::move(statement)) {}
+    };
+
+
+    class ForStmt2 : public ForStmt {
+    public:
+        SharedPtr<Token> token_FOR;
+        SharedPtr<Token> token_LEFT_PAREN;
+        SharedPtr<VarDecl> varDecl;
+        SharedPtr<ExprStmt> exprStmt;
+        SharedPtr<Expression> expression;
+        SharedPtr<Token> token_RIGHT_PAREN;
+        SharedPtr<Statement> statement;
+
+        ForStmt2(size_t line, SharedPtr<Token> token_FOR, SharedPtr<Token> token_LEFT_PAREN, SharedPtr<VarDecl> varDecl,
+                 SharedPtr<ExprStmt> exprStmt, SharedPtr<Expression> expression, SharedPtr<Token> token_RIGHT_PAREN,
+                 SharedPtr<Statement> statement)
+                : ForStmt(line),
+                  token_FOR(std::move(token_FOR)),
+                  token_LEFT_PAREN(std::move(token_LEFT_PAREN)),
+                  varDecl(std::move(varDecl)),
+                  exprStmt(std::move(exprStmt)),
+                  expression(std::move(expression)),
+                  token_RIGHT_PAREN(std::move(token_RIGHT_PAREN)),
+                  statement(std::move(statement)) {}
+    };
+
+
+    class ForStmt3 : public ForStmt {
+    public:
+        SharedPtr<Token> token_FOR;
+        SharedPtr<Token> token_LEFT_PAREN;
+        SharedPtr<ExprStmt> exprStmt1;
+        SharedPtr<ExprStmt> exprStmt2;
+        SharedPtr<Token> token_RIGHT_PAREN;
+        SharedPtr<Statement> statement;
+
+        ForStmt3(size_t line, SharedPtr<Token> token_FOR, SharedPtr<Token> token_LEFT_PAREN,
+                 SharedPtr<ExprStmt> exprStmt1, SharedPtr<ExprStmt> exprStmt2, SharedPtr<Token> token_RIGHT_PAREN,
+                 SharedPtr<Statement> statement)
+                : ForStmt(line),
+                  token_FOR(std::move(token_FOR)),
+                  token_LEFT_PAREN(std::move(token_LEFT_PAREN)),
+                  exprStmt1(std::move(exprStmt1)),
+                  exprStmt2(std::move(exprStmt2)),
+                  token_RIGHT_PAREN(std::move(token_RIGHT_PAREN)),
+                  statement(std::move(statement)) {}
+    };
+
+
+    class ForStmt4 : public ForStmt {
+    public:
+        SharedPtr<Token> token_FOR;
+        SharedPtr<Token> token_LEFT_PAREN;
+        SharedPtr<ExprStmt> exprStmt1;
+        SharedPtr<ExprStmt> exprStmt2;
+        SharedPtr<Expression> expression;
+        SharedPtr<Token> token_RIGHT_PAREN;
+        SharedPtr<Statement> statement;
+
+        ForStmt4(size_t line, SharedPtr<Token> token_FOR, SharedPtr<Token> token_LEFT_PAREN,
+                 SharedPtr<ExprStmt> exprStmt1, SharedPtr<ExprStmt> exprStmt2, SharedPtr<Expression> expression,
+                 SharedPtr<Token> token_RIGHT_PAREN, SharedPtr<Statement> statement)
+                : ForStmt(line),
+                  token_FOR(std::move(token_FOR)),
+                  token_LEFT_PAREN(std::move(token_LEFT_PAREN)),
+                  exprStmt1(std::move(exprStmt1)),
+                  exprStmt2(std::move(exprStmt2)),
+                  expression(std::move(expression)),
+                  token_RIGHT_PAREN(std::move(token_RIGHT_PAREN)),
+                  statement(std::move(statement)) {}
+    };
+
+
     class Block : public Production {
     public:
         size_t line;
@@ -819,15 +924,10 @@ namespace production {
     class Logic_or_prime1 : public Logic_or_prime {
     public:
         SharedPtr<Token> token_OR;
-        SharedPtr<Logic_and> logic_and;
-        SharedPtr<Logic_or_prime> logic_or_prime;
+        SharedPtr<Logic_or> logic_or;
 
-        Logic_or_prime1(size_t line, SharedPtr<Token> token_OR, SharedPtr<Logic_and> logic_and,
-                        SharedPtr<Logic_or_prime> logic_or_prime)
-                : Logic_or_prime(line),
-                  token_OR(std::move(token_OR)),
-                  logic_and(std::move(logic_and)),
-                  logic_or_prime(std::move(logic_or_prime)) {}
+        Logic_or_prime1(size_t line, SharedPtr<Token> token_OR, SharedPtr<Logic_or> logic_or)
+                : Logic_or_prime(line), token_OR(std::move(token_OR)), logic_or(std::move(logic_or)) {}
     };
 
 
@@ -866,15 +966,10 @@ namespace production {
     class Logic_and_prime1 : public Logic_and_prime {
     public:
         SharedPtr<Token> token_AND;
-        SharedPtr<Equality> equality;
-        SharedPtr<Logic_and_prime> logic_and_prime;
+        SharedPtr<Logic_and> logic_and;
 
-        Logic_and_prime1(size_t line, SharedPtr<Token> token_AND, SharedPtr<Equality> equality,
-                         SharedPtr<Logic_and_prime> logic_and_prime)
-                : Logic_and_prime(line),
-                  token_AND(std::move(token_AND)),
-                  equality(std::move(equality)),
-                  logic_and_prime(std::move(logic_and_prime)) {}
+        Logic_and_prime1(size_t line, SharedPtr<Token> token_AND, SharedPtr<Logic_and> logic_and)
+                : Logic_and_prime(line), token_AND(std::move(token_AND)), logic_and(std::move(logic_and)) {}
     };
 
 
@@ -913,34 +1008,30 @@ namespace production {
     class Equality_prime1 : public Equality_prime {
     public:
         SharedPtr<Token> token_NOT_EQUAL;
-        SharedPtr<Comparison> comparison;
-        SharedPtr<Equality_prime> equality_prime;
+        SharedPtr<Equality> equality;
 
-        Equality_prime1(size_t line, SharedPtr<Token> token_NOT_EQUAL, SharedPtr<Comparison> comparison,
-                        SharedPtr<Equality_prime> equality_prime) : Equality_prime(line),
-                                                                    token_NOT_EQUAL(std::move(token_NOT_EQUAL)),
-                                                                    comparison(std::move(comparison)),
-                                                                    equality_prime(std::move(equality_prime)) {}
+        Equality_prime1(size_t line, SharedPtr<Token> token_NOT_EQUAL, SharedPtr<Equality> equality)
+                : Equality_prime(line),
+                  token_NOT_EQUAL(std::move(token_NOT_EQUAL)),
+                  equality(std::move(equality)) {}
     };
 
 
     class Equality_prime2 : public Equality_prime {
     public:
         SharedPtr<Token> token_EQUAL_EQUAL;
-        SharedPtr<Comparison> comparison;
-        SharedPtr<Equality_prime> equality_prime;
+        SharedPtr<Equality> equality;
 
-        Equality_prime2(size_t line, SharedPtr<Token> token_EQUAL_EQUAL, SharedPtr<Comparison> comparison,
-                        SharedPtr<Equality_prime> equality_prime) : Equality_prime(line),
-                                                                    token_EQUAL_EQUAL(std::move(token_EQUAL_EQUAL)),
-                                                                    comparison(std::move(comparison)),
-                                                                    equality_prime(std::move(equality_prime)) {}
+        Equality_prime2(size_t line, SharedPtr<Token> token_EQUAL_EQUAL, SharedPtr<Equality> equality)
+                : Equality_prime(line),
+                  token_EQUAL_EQUAL(std::move(token_EQUAL_EQUAL)),
+                  equality(std::move(equality)) {}
     };
 
 
     class Equality_prime3 : public Equality_prime {
     public:
-        Equality_prime3(size_t line) : Equality_prime(line) {}
+        explicit Equality_prime3(size_t line) : Equality_prime(line) {}
     };
 
 
@@ -973,64 +1064,52 @@ namespace production {
     class Comparison_prime1 : public Comparison_prime {
     public:
         SharedPtr<Token> token_GREATER;
-        SharedPtr<Term> term;
-        SharedPtr<Comparison_prime> comparison_prime;
+        SharedPtr<Comparison> comparison;
 
-        Comparison_prime1(size_t line, SharedPtr<Token> token_GREATER, SharedPtr<Term> term,
-                          SharedPtr<Comparison_prime> comparison_prime)
-                : Comparison_prime(line),
-                  token_GREATER(std::move(token_GREATER)),
-                  term(std::move(term)), comparison_prime(std::move(comparison_prime)) {}
+        Comparison_prime1(size_t line, SharedPtr<Token> token_GREATER, SharedPtr<Comparison> comparison)
+                : Comparison_prime(line), token_GREATER(std::move(token_GREATER)), comparison(std::move(comparison)) {}
     };
 
 
     class Comparison_prime2 : public Comparison_prime {
     public:
         SharedPtr<Token> token_GREATER_EQUAL;
-        SharedPtr<Term> term;
-        SharedPtr<Comparison_prime> comparison_prime;
+        SharedPtr<Comparison> comparison;
 
-        Comparison_prime2(size_t line, SharedPtr<Token> token_GREATER_EQUAL, SharedPtr<Term> term,
-                          SharedPtr<Comparison_prime> comparison_prime)
+        Comparison_prime2(size_t line, SharedPtr<Token> token_GREATER_EQUAL, SharedPtr<Comparison> comparison)
                 : Comparison_prime(line),
                   token_GREATER_EQUAL(std::move(token_GREATER_EQUAL)),
-                  term(std::move(term)),
-                  comparison_prime(std::move(comparison_prime)) {}
+                  comparison(std::move(comparison)) {}
     };
 
 
     class Comparison_prime3 : public Comparison_prime {
     public:
         SharedPtr<Token> token_LESS;
-        SharedPtr<Term> term;
-        SharedPtr<Comparison_prime> comparison_prime;
+        SharedPtr<Comparison> comparison;
 
-        Comparison_prime3(size_t line, SharedPtr<Token> token_LESS, SharedPtr<Term> term,
-                          SharedPtr<Comparison_prime> comparison_prime)
+        Comparison_prime3(size_t line, SharedPtr<Token> token_LESS, SharedPtr<Comparison> comparison)
                 : Comparison_prime(line),
                   token_LESS(std::move(token_LESS)),
-                  term(std::move(term)),
-                  comparison_prime(std::move(comparison_prime)) {}
+                  comparison(std::move(comparison)) {}
     };
 
 
     class Comparison_prime4 : public Comparison_prime {
     public:
         SharedPtr<Token> token_LESS_EQUAL;
-        SharedPtr<Term> term;
-        SharedPtr<Comparison_prime> comparison_prime;
+        SharedPtr<Comparison> comparison;
 
-        Comparison_prime4(size_t line, SharedPtr<Token> token_LESS_EQUAL, SharedPtr<Term> term,
-                          SharedPtr<Comparison_prime> comparison_prime)
+        Comparison_prime4(size_t line, SharedPtr<Token> token_LESS_EQUAL, SharedPtr<Comparison> comparison)
                 : Comparison_prime(line),
                   token_LESS_EQUAL(std::move(token_LESS_EQUAL)),
-                  term(std::move(term)), comparison_prime(std::move(comparison_prime)) {}
+                  comparison(std::move(comparison)) {}
     };
 
 
     class Comparison_prime5 : public Comparison_prime {
     public:
-        Comparison_prime5(size_t line) : Comparison_prime(line) {}
+        explicit Comparison_prime5(size_t line) : Comparison_prime(line) {}
     };
 
 
@@ -1063,34 +1142,26 @@ namespace production {
     class Term_prime1 : public Term_prime {
     public:
         SharedPtr<Token> token_MINUS;
-        SharedPtr<Factor> factor;
-        SharedPtr<Term_prime> term_prime;
+        SharedPtr<Term> term;
 
-        Term_prime1(size_t line, SharedPtr<Token> token_MINUS, SharedPtr<Factor> factor,
-                    SharedPtr<Term_prime> term_prime) : Term_prime(line),
-                                                        token_MINUS(std::move(token_MINUS)),
-                                                        factor(std::move(factor)),
-                                                        term_prime(std::move(term_prime)) {}
+        Term_prime1(size_t line, SharedPtr<Token> token_MINUS, SharedPtr<Term> term)
+                : Term_prime(line), token_MINUS(std::move(token_MINUS)), term(std::move(term)) {}
     };
 
 
     class Term_prime2 : public Term_prime {
     public:
         SharedPtr<Token> token_PLUS;
-        SharedPtr<Factor> factor;
-        SharedPtr<Term_prime> term_prime;
+        SharedPtr<Term> term;
 
-        Term_prime2(size_t line, SharedPtr<Token> token_PLUS, SharedPtr<Factor> factor,
-                    SharedPtr<Term_prime> term_prime) : Term_prime(line),
-                                                        token_PLUS(std::move(token_PLUS)),
-                                                        factor(std::move(factor)),
-                                                        term_prime(std::move(term_prime)) {}
+        Term_prime2(size_t line, SharedPtr<Token> token_PLUS, SharedPtr<Term> term)
+                : Term_prime(line), token_PLUS(std::move(token_PLUS)), term(std::move(term)) {}
     };
 
 
     class Term_prime3 : public Term_prime {
     public:
-        Term_prime3(size_t line) : Term_prime(line) {}
+        explicit Term_prime3(size_t line) : Term_prime(line) {}
     };
 
 
@@ -1123,46 +1194,36 @@ namespace production {
     class Factor_prime1 : public Factor_prime {
     public:
         SharedPtr<Token> token_DIV;
-        SharedPtr<Incr_exp> incr_exp;
-        SharedPtr<Factor_prime> factor_prime;
+        SharedPtr<Factor> factor;
 
-        Factor_prime1(size_t line, SharedPtr<Token> token_DIV, SharedPtr<Incr_exp> incr_exp,
-                      SharedPtr<Factor_prime> factor_prime) : Factor_prime(line), token_DIV(std::move(token_DIV)),
-                                                              incr_exp(std::move(incr_exp)),
-                                                              factor_prime(std::move(factor_prime)) {}
+        Factor_prime1(size_t line, SharedPtr<Token> token_DIV, SharedPtr<Factor> factor)
+                : Factor_prime(line), token_DIV(std::move(token_DIV)), factor(std::move(factor)) {}
     };
 
 
     class Factor_prime2 : public Factor_prime {
     public:
         SharedPtr<Token> token_STAR;
-        SharedPtr<Incr_exp> incr_exp;
-        SharedPtr<Factor_prime> factor_prime;
+        SharedPtr<Factor> factor;
 
-        Factor_prime2(size_t line, SharedPtr<Token> token_STAR, SharedPtr<Incr_exp> incr_exp,
-                      SharedPtr<Factor_prime> factor_prime) : Factor_prime(line),
-                                                              token_STAR(std::move(token_STAR)),
-                                                              incr_exp(std::move(incr_exp)),
-                                                              factor_prime(std::move(factor_prime)) {}
+        Factor_prime2(size_t line, SharedPtr<Token> token_STAR, SharedPtr<Factor> factor)
+                : Factor_prime(line), token_STAR(std::move(token_STAR)), factor(std::move(factor)) {}
     };
 
 
     class Factor_prime3 : public Factor_prime {
     public:
         SharedPtr<Token> token_MOD;
-        SharedPtr<Incr_exp> incr_exp;
-        SharedPtr<Factor_prime> factor_prime;
+        SharedPtr<Factor> factor;
 
-        Factor_prime3(size_t line, SharedPtr<Token> token_MOD, SharedPtr<Incr_exp> incr_exp,
-                      SharedPtr<Factor_prime> factor_prime) : Factor_prime(line), token_MOD(std::move(token_MOD)),
-                                                              incr_exp(std::move(incr_exp)),
-                                                              factor_prime(std::move(factor_prime)) {}
+        Factor_prime3(size_t line, SharedPtr<Token> token_MOD, SharedPtr<Factor> factor)
+                : Factor_prime(line), token_MOD(std::move(token_MOD)), factor(std::move(factor)) {}
     };
 
 
     class Factor_prime4 : public Factor_prime {
     public:
-        Factor_prime4(size_t line) : Factor_prime(line) {}
+        explicit Factor_prime4(size_t line) : Factor_prime(line) {}
     };
 
 
@@ -1218,7 +1279,7 @@ namespace production {
 
     class Incr_op3 : public Incr_op {
     public:
-        Incr_op3(size_t line) : Incr_op(line) {}
+        explicit Incr_op3(size_t line) : Incr_op(line) {}
     };
 
 
@@ -1310,7 +1371,7 @@ namespace production {
 
     class Call_suffix2 : public Call_suffix {
     public:
-        Call_suffix2(size_t line) : Call_suffix(line) {}
+        explicit Call_suffix2(size_t line) : Call_suffix(line) {}
     };
 
 
@@ -1339,7 +1400,7 @@ namespace production {
 
     class ArgList2 : public ArgList {
     public:
-        ArgList2(size_t line) : ArgList(line) {}
+        explicit ArgList2(size_t line) : ArgList(line) {}
     };
 
 
@@ -1371,7 +1432,7 @@ namespace production {
 
     class Arguments2 : public Arguments {
     public:
-        Arguments2(size_t line) : Arguments(line) {}
+        explicit Arguments2(size_t line) : Arguments(line) {}
     };
 
 
@@ -1530,7 +1591,7 @@ namespace production {
 
     class VarSuffix2 : public VarSuffix {
     public:
-        VarSuffix2(size_t line) : VarSuffix(line) {}
+        explicit VarSuffix2(size_t line) : VarSuffix(line) {}
     };
 
 

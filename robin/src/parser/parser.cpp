@@ -77,18 +77,21 @@ namespace parser {
                 currentSymbol = symbol::Symbol::DOLLAR;
             } else { currentSymbol = production::Production::tokenToSym[peek().getType()]; }
             State currentState = stateStack.top();
+
+            // 消除冲突
             if (currentState == 7 && currentSymbol == symbol::Symbol::EQUAL) {
                 token::Token nextToken = peekNext();
                 if (nextToken.getType() == token::TokenType::TOKEN_FUNCTION) {
-                    slrTable[{7, symbol::Symbol::EQUAL}] = {symbol::Type::Shift, 56};
+                    slrTable[{7, symbol::Symbol::EQUAL}] = {symbol::Type::Shift, 57};
                 } else {
-                    slrTable[{7, symbol::Symbol::EQUAL}] = {symbol::Type::Reduce, 97};
+                    slrTable[{7, symbol::Symbol::EQUAL}] = {symbol::Type::Reduce, 102};
                 }
             }
             auto action = slrTable.find({currentState, currentSymbol});
 
             if (action == slrTable.end()) {
-                reportParserError(this, tokens[currentToken], "this token is not in the SLR Table");
+                reportParserError(this, tokens[currentToken],
+                                  "this token is not in the SLR Table");
                 hasError = true;
                 return productions;
             }
@@ -127,7 +130,8 @@ namespace parser {
                         hasError = true;
                         return productions;
                     }
-                    reportParserError(this, tokens[currentToken-1], "Syntax Error at this token");
+                    reportParserError(this, tokens[currentToken - 1],
+                                      "Syntax Error at this token");
                     advance();
                     break;
                 default:
@@ -135,8 +139,6 @@ namespace parser {
                     hasError = true;
             }
         }
-        std::cerr << "enter the reportParserError branch" << std::endl;
-        return productions;
     }
 
     bool Parser::isAtTokenListEnd() {
