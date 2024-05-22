@@ -16,7 +16,7 @@
  * @param line 源代码行号
  * @param message 错误消息的描述
  */
-void error(size_t line, const String& message);
+void error(size_t line, std::string_view message);
 
 /**
  * @brief 处理词法分析器的错误，通过设置错误标志来指示发生错误。
@@ -24,10 +24,10 @@ void error(size_t line, const String& message);
  * @param line 发生错误的行号。
  * @param message 描述问题的错误消息。
  */
-void reportLexerError(lexer::Lexer *error_lexer , size_t line, const String& message);
+void reportLexerError(lexer::Lexer *error_lexer, size_t line, StringView message);
 
-void error(const token::Token& error_token , const String& message);
+void error(const token::Token &error_token, StringView message);
 
-void reportParserError(parser::Parser *error_parser,const token::Token& error_token , const String& message);
+void reportParserError(parser::Parser *error_parser, const token::Token &error_token, StringView message);
 
 #endif //ROBIN_ERROR_H

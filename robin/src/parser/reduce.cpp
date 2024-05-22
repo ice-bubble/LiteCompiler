@@ -1,14 +1,13 @@
-//
-// Created by icelake on 24-5-19.
-//
+
+
+#include "parser.h"
+
 #define REDUCE(P, index)           SharedPtr<production::P> P##Instance##_##index =          \
                                         std::dynamic_pointer_cast<production::P>(            \
                                   productions.back());                                       \
                                   productions.pop_back();                                    \
                                   stateStack.pop();                                          \
 
-
-#include "parser.h"
 
 namespace parser {
 

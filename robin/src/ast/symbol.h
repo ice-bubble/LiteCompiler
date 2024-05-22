@@ -1,6 +1,4 @@
-//
-// Created by icelake on 24-5-19.
-//
+
 
 #ifndef ROBIN_SYMBOL_H
 #define ROBIN_SYMBOL_H

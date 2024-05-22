@@ -11,10 +11,8 @@
 #include "src/parser/parser.h"
 #include "src/ast/production.h"
 
-#ifdef DEBUG_FLAG
-
+#ifdef DEBUG
 #include "src/debug/debug.h"
-
 #endif
 
 /**

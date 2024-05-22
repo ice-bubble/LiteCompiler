@@ -6,20 +6,20 @@
 
 #include "error.h"
 
-void error(size_t line, const String &message) {
+void error(size_t line, StringView message) {
     std::cerr << "[line: " << line << "] Error:" << message << std::endl;
 }
 
-void reportLexerError(lexer::Lexer *error_lexer, size_t line, const String &message) {
+void reportLexerError(lexer::Lexer *error_lexer, size_t line, StringView message) {
     error_lexer->hasError = true;
     error(line, message);
 }
 
-void error(const token::Token& error_token, const String &message) {
+void error(const token::Token &error_token, StringView message) {
     std::cerr << "[token: " << error_token.toString() << "] Error:" << message << std::endl;
 }
 
-void reportParserError(parser::Parser *error_parser,const token::Token& error_token , const String& message){
-    error_parser->hasError=true;
-    error(error_token,message);
+void reportParserError(parser::Parser *error_parser, const token::Token &error_token, StringView message) {
+    error_parser->hasError = true;
+    error(error_token, message);
 }

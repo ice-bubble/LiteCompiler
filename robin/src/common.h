@@ -20,8 +20,7 @@
 #include <stack>
 
 
-#define DEBUG_FLAG                  ///< 启用此宏定义使得主函数#include<debug.h>
-#define DEBUG_PRINT_TOKENLIST       ///< 启用此宏定义使得主函数打印tokenList
+#define DEBUG                       ///< 启用此宏定义使得主函数#include<debug.h>
 
 #define toVarString(var) #var       ///< 将变量名转为字符串
 
@@ -41,6 +40,8 @@ template<typename Type>
 using Stack = std::stack<Type>;
 
 using String = std::string;
+
+using StringView = std::string_view;
 
 using Object = std::any;
 

@@ -1,6 +1,4 @@
-//
-// Created by icelake on 24-5-16.
-//
+
 
 #include "../error/error.h"
 #include "parser.h"
@@ -35,7 +33,7 @@ namespace parser {
         std::cout << std::endl;
     }
 
-    void Parser::printInfo(const String &message) {
+    void Parser::printInfo(StringView message) {
         std::cout << std::endl << message << std::endl;
         printStateStack();
         printProductionStack();
@@ -114,7 +112,10 @@ namespace parser {
                 }
                 case symbol::Type::Reduce:
                     printInfo("before reduce");
-                    callReduceFunctionByIndex(action->second.state);
+
+                    //规约，出错直接结束语法分析
+                    if (!callReduceFunctionByIndex(action->second.state))
+                        return productions;
                     break;
                 case symbol::Type::Accept:
                     printInfo("before accept");

@@ -25,32 +25,35 @@ namespace parser {
     };
 
     class Parser {
+
+        // reduce函数类型
         typedef void (Parser::*VoidFuncPtr)();
 
     private:
-        List<token::Token> tokens;                         ///< 从源代码生成的token列表。
-        List<SharedPtr<production::Production>> productions;
-        Stack<State> stateStack;
-        size_t currentToken = 0;
-        static Map<Pair<State, symbol::Symbol>, Action> slrTable;
-        static List<VoidFuncPtr> ReduceFunctions;
+        List<token::Token> tokens;                                ///< 从源代码生成的token列表。
+        List<SharedPtr<production::Production>> productions;      ///< 语法分析后生成的产生式列表，通常只含有一个元素 program
+        Stack<State> stateStack;                                  ///< 语法分析时使用的符号栈
+        size_t currentToken = 0;                                  ///< 语法分析时输入token序列的待输入token
+        static Map<Pair<State, symbol::Symbol>, Action> slrTable; ///< SLR分析表
+        static List<VoidFuncPtr> ReduceFunctions;                 ///< reduce函数列表
 
 
     public:
-        bool hasError = false;
+        bool hasError = false;                                    ///< 词法分析器错误标志
 
         explicit Parser(List<token::Token> tokens);
 
         List<SharedPtr<production::Production>> parserAst();
 
     private:
-
+        //打印相关信息的函数
         void printProductionStack();
 
         void printStateStack();
 
-        void printInfo(const String &message);
+        void printInfo(StringView message);
 
+        //辅助词法分析的函数
         bool isAtTokenListEnd();
 
         token::Token advance();
