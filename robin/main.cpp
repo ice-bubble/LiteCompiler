@@ -24,6 +24,7 @@
 static void repl() {
 
     char line[1024];
+    parser::Parser::slrTableInit();
     for (;;) {
         printf("> ");
 
@@ -84,6 +85,7 @@ static void runFile(const String &path) {
         exit(74);
     }
     // 创建词法分析器并进行词法分析
+    parser::Parser::slrTableInit();
     lexer::Lexer lexer(source);
     List<token::Token> tokenlist = lexer.scanTokens();
 

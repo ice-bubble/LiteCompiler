@@ -21,6 +21,7 @@ namespace parser {
         symbol::Type type;
         State state;  ///< 对于Shift操作，表示下一个状态；对于Reduce操作，表示规约的产生式编号;对于Goto操作，表示Goto的状态
         Action(symbol::Type type, State state) : type(type), state(state) {}
+
         Action() : type(symbol::Type::Error), state(0) {}
     };
 
@@ -273,9 +274,27 @@ namespace parser {
 
         void reduceByVarSuffix2();
 
+///slr分析表初始化
+    public:
+        static void slrTableInit();
+    private:
+        static void slrTableInit1();
 
+        static void slrTableInit2();
 
+        static void slrTableInit3();
 
+        static void slrTableInit4();
+
+        static void slrTableInit5();
+
+        static void slrTableInit6();
+
+        static void slrTableInit7();
+
+        static void slrTableInit8();
+
+        static void slrTableInit9();
 
     };
 

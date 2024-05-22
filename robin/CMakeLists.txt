@@ -17,8 +17,16 @@ add_executable(robin main.cpp
         src/ast/production.h
         src/parser/parser.h
         src/parser/parser.cpp
-        src/parser/slrtable.cpp
         src/parser/reduce.cpp
         src/ast/symbol.h
         src/ast/initAst.cpp
+        src/parser/slrtableInit1.cpp
+        src/parser/slrtableInit2.cpp
+        src/parser/slrtableInit3.cpp
+        src/parser/slrtableInit4.cpp
+        src/parser/slrtableInit5.cpp
+        src/parser/slrtableInit6.cpp
+        src/parser/slrtableInit7.cpp
+        src/parser/slrtableInit8.cpp
+        src/parser/slrtableInit9.cpp
 )

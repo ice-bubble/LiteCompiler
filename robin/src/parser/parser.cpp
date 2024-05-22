@@ -161,5 +161,19 @@ namespace parser {
         return tokens[currentToken + 1];
     }
 
+    Map<Pair<State, symbol::Symbol>, Action> Parser::slrTable = {};
+    void Parser::slrTableInit()
+    {
+        slrTableInit1();
+        slrTableInit2();
+        slrTableInit3();
+        slrTableInit4();
+        slrTableInit5();
+        slrTableInit6();
+        slrTableInit7();
+        slrTableInit8();
+        slrTableInit9();
+    }
+
 
 }
