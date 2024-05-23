@@ -178,6 +178,8 @@ public:
 
     Token(NonTerminal nonTerminal, const std::string &value, size_t line_n);
 
+    Token();
+
     /**
     * @brief 获取Token的类型
     * @return TokenType 标记类型

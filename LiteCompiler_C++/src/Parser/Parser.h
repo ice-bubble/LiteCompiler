@@ -7,7 +7,10 @@
 #include <map>
 #include <string>
 
+#include "../error/error.h"
 #include "../Token/Token.h"
+
+
 
 // 定义产生式结构
 struct Production
@@ -22,7 +25,7 @@ class Parser
 public:
     Parser();
 
-    void parse(const std::vector<Token> &tokens);
+    bool parse(const std::vector<Token> &tokens);
 
 private:
     static std::map<int, std::map<TokenType, std::string> > parseTable;

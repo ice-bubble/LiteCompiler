@@ -87,6 +87,9 @@ int main(int argc, char *argv[])
 
     // 语法分析
     Parser parser;
-    parser.parse(tokens);
+    if(!parser.parse(tokens)) // 存在语法错误
+        std::cerr << "The code exists above Syntax Error!\n" << std::endl;
+    else
+        std::cout << "No Syntax Error in the code!\n" << std::endl;
 
 }

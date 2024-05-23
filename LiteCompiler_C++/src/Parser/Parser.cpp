@@ -371,7 +371,7 @@ void Parser::shift(std::stack<int> &stateStack, std::stack<Token> &symbolStack, 
 {
     stateStack.push(newState);
     symbolStack.push(token);
-    printStateStack(stateStack); // 打印状态栈内容
+    // printStateStack(stateStack); // 打印状态栈内容
     printSymbolStack(symbolStack); // 打印符号栈
     std::cout << "[Shift] Shift: Pushed state " << newState << " and token " << token.getValue() << " to the stack." << std::endl;
 }
@@ -420,7 +420,7 @@ void Parser::reduce(std::stack<int> &stateStack, std::stack<Token> &symbolStack,
         symbolStack.push(Token(nonTerminal, this->getNonTerminalName(nonTerminal),curLine));
     }
     // 打印状态栈内容
-    printStateStack(stateStack);
+    // printStateStack(stateStack);
     // 打印符号栈
     printSymbolStack(symbolStack);
 
@@ -450,7 +450,7 @@ void Parser::printSymbolStack(const std::stack<Token> &symbolStack)
         tempStack.pop();
     }
 
-    std::cout << "Symbol Stack: ";
+    std::cout << "\nSymbol Stack: ";
     for (auto it = symbols.rbegin(); it != symbols.rend(); ++it)
     {
         std::cout << it->getValue() << " ";
@@ -470,7 +470,7 @@ void Parser::printStateStack(const std::stack<int> &stateStack)
         tempStack.pop();
     }
 
-    std::cout << "\nState Stack: ";
+    std::cout << "\n\nState Stack: ";
     for (auto it = states.rbegin(); it != states.rend(); ++it)
     {
         std::cout << *it << " ";
@@ -479,29 +479,45 @@ void Parser::printStateStack(const std::stack<int> &stateStack)
 }
 
 // 实现语法分析函数
-void Parser::parse(const std::vector<Token> &tokens)
+bool Parser::parse(const std::vector<Token> &tokens)
 {
     std::stack<int> stateStack;
     std::stack<Token> symbolStack;
+    std::string error_output;
     stateStack.push(0);
 
     size_t index = 0;
+    bool has_error = false; // 是否存在语法错误
+    bool err_flag = false; // 当前是否处于错误处理过程
     while (index < tokens.size())
     {
         if (stateStack.empty())
         {
             std::cerr << "Error: State stack is empty." << std::endl;
-            exit(EXIT_FAILURE); // 终止程序执行
+            std::cerr << error_output << std::endl;
+            return false; // 语法分析失败
         }
-
-        int currentState = stateStack.top();
-        Token currentToken = tokens[index];
-        TokenType tokenType = currentToken.getType();
-
-        if (parseTable[currentState].find(tokenType) == parseTable[currentState].end())
+        int currentState;
+        Token currentToken;
+        TokenType tokenType;
+        if(!err_flag) // 当前不是错误处理过程
+        {
+            currentState = stateStack.top();
+            currentToken = tokens[index];
+            tokenType = currentToken.getType();
+        }
+        else // 当前处于错误处理过程
+        {
+            currentState = stateStack.top();
+            currentToken = symbolStack.top(); // 取出错误处理时指定情况下加入的辅助Token
+            symbolStack.pop(); // 弹出错误处理时指定情况下加入的辅助Token，以便程序能够按照流程继续分析
+            tokenType = currentToken.getType();
+        }
+        if (parseTable[currentState].find(tokenType) == parseTable[currentState].end()) // 未能识别的Token类型，不能分析，直接报错
         {
             std::cerr << "[Line: " << currentToken.getLineNum() << "] Syntax Error!  Token: " << currentToken.getValue() << std::endl;
-            exit(EXIT_FAILURE); // 终止程序执行
+            std::cerr << error_output << std::endl;
+            return false; // 存在语法错误
         }
 
         std::string action = parseTable[currentState][tokenType];
@@ -512,7 +528,10 @@ void Parser::parse(const std::vector<Token> &tokens)
             {
                 int newState = 57;
                 shift(stateStack, symbolStack, newState, currentToken);
-                ++index;
+                if(!err_flag)
+                    ++index;
+                else
+                    err_flag = false; // 上一个Token存在语法错误时，index不能+1，处理完错误应当继续分析当前Token
             }
             else
             {
@@ -524,7 +543,10 @@ void Parser::parse(const std::vector<Token> &tokens)
         {
             int newState = std::stoi(action.substr(1));
             shift(stateStack, symbolStack, newState, currentToken);
-            ++index;
+            if(!err_flag)
+                ++index;
+            else
+                err_flag = false; // 上一个Token存在语法错误时，index不能+1，处理完错误应当继续分析当前Token
         }
         else if (action[0] == 'r')
         {
@@ -533,15 +555,34 @@ void Parser::parse(const std::vector<Token> &tokens)
         }
         else if (action == "acc")
         {
-            std::cout << "\nParsing succeeded!" << std::endl;
-            return;
+            if(!has_error)
+            {
+                std::cout << "\nParsing succeeded!" << std::endl;
+                return true;
+            }
+            else
+            {
+                std::cerr << "\n\nError summary: " << std::endl;
+                std::cerr << error_output << std::endl;
+                std::cout << "\nParsing terminated!" << std::endl;
+                return false;
+            }
         }
-        else if (action == "")
+        else if (action == "") // 错误处理
         {
-            std::cerr << "[Line: " << currentToken.getLineNum() << "] Syntax Error!  Token: " << currentToken.getValue() << std::endl;
-            exit(EXIT_FAILURE); // 终止程序执行
+            has_error = true;
+            if(!error(currentState, currentToken, symbolStack, error_output))
+            {
+                std::cerr << "\n\nError summary: " << std::endl;
+                std::cerr << error_output << std::endl;
+                std::cout << "\nParsing terminated!" << std::endl;
+                return false; // 存在语法错误，且需要终止分析
+            }
+            err_flag = true;
+            // ++index; // 准备进行下一个Token分析
         }
     }
+    return true;
 }
 
 // 获取非终结符名称

@@ -13,6 +13,8 @@ Token::Token(NonTerminal nonTerminal, const std::string &value, size_t line_n): 
     this->nonTerminal = nonTerminal;
 }
 
+Token::Token(){}
+
 TokenType Token::getType() const
 {
     return type;
