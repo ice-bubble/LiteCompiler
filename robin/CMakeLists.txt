@@ -29,4 +29,5 @@ add_executable(robin main.cpp
         src/parser/slrtableInit7.cpp
         src/parser/slrtableInit8.cpp
         src/parser/slrtableInit9.cpp
+        src/parser/errorprocess.cpp
 )

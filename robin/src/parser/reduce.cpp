@@ -584,7 +584,7 @@ namespace parser {
         REDUCE(Term, 0)
         REDUCE(Token, 0)
         SharedPtr<production::Production> Term_prime2Instance = std::make_shared<production::Term_prime2>
-                (TokenInstance_0->line, TokenInstance_0,TermInstance_0);
+                (TokenInstance_0->line, TokenInstance_0, TermInstance_0);
         productions.push_back(Term_prime2Instance);
     }
 
@@ -605,7 +605,7 @@ namespace parser {
         REDUCE(Factor, 0)
         REDUCE(Token, 0)
         SharedPtr<production::Production> Factor_prime1Instance = std::make_shared<production::Factor_prime1>
-                (TokenInstance_0->line, TokenInstance_0,FactorInstance_0);
+                (TokenInstance_0->line, TokenInstance_0, FactorInstance_0);
         productions.push_back(Factor_prime1Instance);
     }
 
@@ -613,7 +613,7 @@ namespace parser {
         REDUCE(Factor, 0)
         REDUCE(Token, 0)
         SharedPtr<production::Production> Factor_prime2Instance = std::make_shared<production::Factor_prime2>
-                (TokenInstance_0->line, TokenInstance_0,FactorInstance_0);
+                (TokenInstance_0->line, TokenInstance_0, FactorInstance_0);
         productions.push_back(Factor_prime2Instance);
     }
 
@@ -621,7 +621,7 @@ namespace parser {
         REDUCE(Factor, 0)
         REDUCE(Token, 0)
         SharedPtr<production::Production> Factor_prime3Instance = std::make_shared<production::Factor_prime3>
-                (TokenInstance_0->line, TokenInstance_0,FactorInstance_0);
+                (TokenInstance_0->line, TokenInstance_0, FactorInstance_0);
         productions.push_back(Factor_prime3Instance);
     }
 

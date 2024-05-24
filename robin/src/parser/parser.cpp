@@ -3,6 +3,10 @@
 #include "../error/error.h"
 #include "parser.h"
 
+#define ERRORRETURN(msg)        std::cerr << msg << std::endl;       \
+                                hasError = true;                     \
+                                return productions;                  \
+
 namespace parser {
 
     void Parser::printProductionStack() {
@@ -70,10 +74,8 @@ namespace parser {
             }
 
             //action,处理shift,reduce,accept,error操作;
-            symbol::Symbol currentSymbol;
-            if (isAtTokenListEnd()) {
-                currentSymbol = symbol::Symbol::DOLLAR;
-            } else { currentSymbol = production::Production::tokenToSym[peek().getType()]; }
+            if (isAtTokenListEnd()) { ERRORRETURN("reach the end of tokenList! Input is parsed!") }
+            symbol::Symbol currentSymbol = production::Production::tokenToSym[peek().getType()];
             State currentState = stateStack.top();
 
             // 消除冲突
@@ -98,12 +100,7 @@ namespace parser {
             switch (action->second.type) {
                 case symbol::Type::Shift: {
                     printInfo("before shift");
-                    if (isAtTokenListEnd()) {
-                        std::cerr << "reach the end of tokenList! Input is parsed!"
-                                  << std::endl;
-                        hasError = true;
-                        return productions;
-                    }
+                    if (isAtTokenListEnd()) { ERRORRETURN("reach the end of tokenList! Input is parsed!") }
 
                     token::Token thisToken = advance();
                     stateStack.push(action->second.state);
@@ -119,25 +116,17 @@ namespace parser {
                     break;
                 case symbol::Type::Accept:
                     printInfo("before accept");
-                    if (hasError) {
-                        std::cerr << "Input is parsed!" << std::endl;
-                    } else { std::cout << "Input is successfully parsed!" << std::endl; }
+                    std::cout << "Input is parsed!" << std::endl;
                     return productions;
                 case symbol::Type::Error:
                     printInfo("before reportParserError");
-                    if (isAtTokenListEnd()) {
-                        std::cerr << "reach the end of tokenList! Input is parsed!"
-                                  << std::endl;
-                        hasError = true;
-                        return productions;
+                    if (isAtTokenListEnd()) { ERRORRETURN("reach the end of tokenList! Input is parsed!") }
+                    if (!errorProcess(action->second.state)) {
+                        ERRORRETURN("reach the end of tokenList or ended due to unexpected error")
                     }
-                    reportParserError(this, tokens[currentToken - 1],
-                                      "Syntax Error at this token");
-                    advance();
                     break;
                 default:
-                    std::cerr << "enter the reportParserError goto branch in action" << std::endl;
-                    hasError = true;
+                ERRORRETURN("enter the reportParserError goto branch in action")
             }
         }
     }
@@ -161,9 +150,10 @@ namespace parser {
         return tokens[currentToken + 1];
     }
 
+
     Map<Pair<State, symbol::Symbol>, Action> Parser::slrTable = {};
-    void Parser::slrTableInit()
-    {
+
+    void Parser::slrTableInit() {
         slrTableInit1();
         slrTableInit2();
         slrTableInit3();
@@ -175,5 +165,6 @@ namespace parser {
         slrTableInit9();
     }
 
-
 }
+
+#undef ERRORRETURN//(msg)
