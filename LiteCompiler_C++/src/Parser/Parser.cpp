@@ -579,7 +579,6 @@ bool Parser::parse(const std::vector<Token> &tokens)
                 return false; // 存在语法错误，且需要终止分析
             }
             err_flag = true;
-            // ++index; // 准备进行下一个Token分析
         }
     }
     return true;
