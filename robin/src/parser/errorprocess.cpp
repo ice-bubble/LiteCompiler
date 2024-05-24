@@ -81,7 +81,7 @@ namespace parser {
             {103, 134},
             {165, 174},
             {57,  101},
-            {29,  76},
+            {29,  67},
             {30,  68},
             {33,  71},
             {101, 132},
@@ -108,7 +108,8 @@ namespace parser {
     }
 
     bool Parser::errorProcess(State errorState) {
-        reportParserError(this, tokens[currentToken - 1], errorMessage[errorState]);
+        reportParserError(this, tokens[currentToken], errorMessage[errorState]);
+        printInfo("error here");
         switch (errorState) {
             case -1:
             case 8:
