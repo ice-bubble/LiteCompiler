@@ -75,29 +75,70 @@ namespace parser {
     };
 
     Map<State, State>Parser::errorStateToExpectState = {
+            {8,   62},
             {24,  63},
             {25,  64},
+            {26,  28},
             {27,  66},
-            {103, 134},
-            {165, 174},
-            {57,  101},
             {29,  67},
             {30,  68},
+            {31,  28},
             {33,  71},
-            {101, 132},
-            {109, 139},
+            {44,  52},
+            {45,  52},
+            {49,  52},
+            {57,  101},
+            {59,  52},
+            {67,  52},
+            {68,  52},
             {69,  109},
-            {159, 32},
             {70,  110},
+            {71,  28},
+            {72,  52},
+            {74,  52},
+            {76,  52},
+            {78,  52},
+            {79,  52},
+            {81,  52},
+            {82,  52},
+            {83,  52},
+            {84,  52},
+            {86,  52},
+            {87,  52},
+            {89,  52},
+            {90,  52},
+            {91,  52},
             {100, 131},
+            {101, 132},
+            {102, 133},
+            {103, 134},
+            {104, 62},
+            {106, 52},
             {107, 137},
             {108, 138},
-            {152, 165},
-            {154, 167},
-            {156, 169},
+            {109, 139},
+            {111, 28},
+            {112, 28},
             {129, 142},
+            {137, 28},
+            {138, 28},
+            {139, 52},
+            {140, 155},
+            {141, 155},
+            {144, 52},
             {145, 159},
-            {102, 133}
+            {147, 62},
+            {152, 165},
+            {153, 28},
+            {154, 167},
+            {155, 28},
+            {156, 169},
+            {159, 32},
+            {161, 23},
+            {164, 28},
+            {165, 174},
+            {167, 28},
+            {169, 28},
     };
 
     void Parser::addTokenToProductionsAndStack(token::TokenType type, const std::string &lexeme, int errorState) {
@@ -112,66 +153,71 @@ namespace parser {
         printInfo("error here");
         switch (errorState) {
             case -1:
-            case 8:
-            case 26:
-            case 31:
-            case 44:
-            case 45:
-            case 49:
-            case 59:
-            case 67:
-            case 68:
-            case 71:
-            case 72:
-            case 74:
-            case 76:
-            case 78:
-            case 79:
-            case 81:
-            case 82:
-            case 83:
-            case 84:
-            case 86:
-            case 87:
-            case 89:
-            case 90:
-            case 91:
-            case 104:
-            case 106:
-            case 137:
-            case 138:
-            case 139:
-            case 140:
-            case 141:
-            case 111:
-            case 112:
-            case 144:
-            case 147:
-            case 153:
-            case 155:
-            case 161:
-            case 164:
-            case 167:
-            case 169:
                 while (true) {
                     if (isAtTokenListEnd()) return false;
                     advance();
                     printInfo("in error process");
                     symbol::Symbol currentSymbol = production::Production::tokenToSym[peek().getType()];
-                    std::cout<<peek().toString()<<std::endl;
+                    std::cout << peek().toString() << std::endl;
                     State currentState = stateStack.top();
                     auto action = slrTable.find({currentState, currentSymbol});
                     if (action->second.type != symbol::Error) { return true; }
                 }
+            case 44:///
+            case 45:///
+            case 49:///
+            case 59:///
+            case 67:///
+            case 68:///
+            case 72:///
+            case 74:///
+            case 76:///
+            case 78:///
+            case 79:///
+            case 81:///
+            case 82:///
+            case 83:///
+            case 84:///
+            case 86:///
+            case 87:///
+            case 89:///
+            case 90:///
+            case 91:///
+            case 106:///
+            case 139:///
+            case 144:///
+                addTokenToProductionsAndStack(token::TOKEN_NIL, "nil", errorState);
+                return true;
             case 24:
             case 25:
+            case 26:///
             case 27:
+            case 31:///
+            case 71:///
             case 103:
+            case 111:///
+            case 112:///
+            case 137:///
+            case 138:///
+            case 153:///
+            case 155:///
+            case 164:///
             case 165:
+            case 167:///
+            case 169:///
                 addTokenToProductionsAndStack(token::TOKEN_SEMICOLON, ";", errorState);
                 return true;
-            case 57:
-                addTokenToProductionsAndStack(token::TOKEN_FUNCTION, "function", errorState);
+            case 100:
+            case 107:
+            case 108:
+            case 152:
+            case 154:
+            case 156:
+            case 129:
+            case 140:///
+            case 141:///
+            case 145:
+                addTokenToProductionsAndStack(token::TOKEN_RIGHT_PAREN, ")", errorState);
                 return true;
             case 29:
             case 30:
@@ -179,6 +225,14 @@ namespace parser {
             case 101:
             case 109:
                 addTokenToProductionsAndStack(token::TOKEN_LEFT_PAREN, "(", errorState);
+                return true;
+            case 8:////
+            case 104:///
+            case 147:///
+                addTokenToProductionsAndStack(token::TOKEN_IDENTIFIER, "temp", errorState);
+                return true;
+            case 57:
+                addTokenToProductionsAndStack(token::TOKEN_FUNCTION, "function", errorState);
                 return true;
             case 69:
                 addTokenToProductionsAndStack(token::TOKEN_UNTIL, "until", errorState);
@@ -189,18 +243,14 @@ namespace parser {
             case 70:
                 addTokenToProductionsAndStack(token::TOKEN_RIGHT_BRACE, "}", errorState);
                 return true;
-            case 100:
-            case 107:
-            case 108:
-            case 152:
-            case 154:
-            case 156:
-            case 129:
-            case 145:
-                addTokenToProductionsAndStack(token::TOKEN_RIGHT_PAREN, ")", errorState);
-                return true;
             case 102:
                 addTokenToProductionsAndStack(token::TOKEN_RIGHT_BRACKET, "]", errorState);
+                return true;
+            case 161:///
+                addTokenToProductionsAndStack(token::TOKEN_VAR, "var", errorState);
+                callReduceFunctionByIndex(31);
+                stateStack.push(147);
+                addTokenToProductionsAndStack(token::TOKEN_IDENTIFIER, "temp", 147);
                 return true;
             default:
                 return false;
