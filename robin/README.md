@@ -16,11 +16,22 @@
         │   ├── error.cpp           error函数定义
         │   └── error.h             error函数声明
         ├── parser                  语法分析器
+        │   ├── errorprocess.cpp    词法分析中的错误处理部分
         │   ├── parser.cpp          语法分析器parser函数实现
-        │   └── parser.h            语法分析器parser类声明
+        │   ├── parser.h            语法分析器parser类声明
+        │   ├── reduce.cpp          reduce函数相关定义
+        │   ├── slrtableInit1.cpp   初始化SLR分析表函数1
+        │   ├── slrtableInit2.cpp   初始化SLR分析表函数2
+        │   ├── slrtableInit3.cpp   初始化SLR分析表函数3
+        │   ├── slrtableInit4.cpp   初始化SLR分析表函数4
+        │   ├── slrtableInit5.cpp   初始化SLR分析表函数5
+        │   ├── slrtableInit6.cpp   初始化SLR分析表函数6
+        │   ├── slrtableInit7.cpp   初始化SLR分析表函数7
+        │   ├── slrtableInit8.cpp   初始化SLR分析表函数8
+        │   └── slrtableInit9.cpp   初始化SLR分析表函数9
         ├── ast                     语法树相关类的定义
-        │   ├── production.h        语法树中产生式的类
         │   ├── initAst.h           初始化ast目录下面的一些类的静态成员
+        │   ├── production.h        语法树中产生式的类
         │   ├── symbol.h            存放符号相关定义（用于符号栈）
         │   └── type.h              区分标识符和字面值具体类型的类（弃用）
         ├── lexer                   词法分析器
