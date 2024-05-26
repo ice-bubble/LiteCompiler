@@ -18,6 +18,7 @@
 #include <utility>
 #include <memory>
 #include <stack>
+#include "fmt/core.h"
 
 
 #define DEBUG                       ///< 启用此宏定义使得主函数#include<debug.h>

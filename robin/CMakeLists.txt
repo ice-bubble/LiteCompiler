@@ -3,6 +3,12 @@ project(robin)
 
 set(CMAKE_CXX_STANDARD 17)
 
+# 添加fmt库的子目录
+add_subdirectory(fmt-10.2.1)
+
+# 包含fmt库的头文件
+include_directories(fmt-10.2.1/include)
+
 add_executable(robin main.cpp
         src/token/token.cpp
         src/token/token.h
@@ -31,3 +37,7 @@ add_executable(robin main.cpp
         src/parser/slrtableInit9.cpp
         src/parser/errorprocess.cpp
 )
+
+
+# 链接fmt库
+target_link_libraries(robin PRIVATE fmt::fmt)

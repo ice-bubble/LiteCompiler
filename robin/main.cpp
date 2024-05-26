@@ -12,7 +12,9 @@
 #include "src/ast/production.h"
 
 #ifdef DEBUG
+
 #include "src/debug/debug.h"
+
 #endif
 
 /**
@@ -79,7 +81,7 @@ static void runFile(const String &path) {
 
     } catch (const std::exception &e) {
         // 捕获异常并输出错误信息
-        std::cerr << e.what() << std::endl<<1<<std::endl;
+        std::cerr << e.what() << std::endl << 1 << std::endl;
 
         // 退出程序，返回错误状态码 74
         exit(74);

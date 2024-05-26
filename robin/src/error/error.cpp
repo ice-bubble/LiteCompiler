@@ -8,6 +8,7 @@
 
 void error(size_t line, StringView message) {
     std::cerr << "[line: " << line << "] Error:" << message << std::endl;
+    fmt::print(stderr, "[line: {}] Error: {}\n", line, message);
 }
 
 void reportLexerError(lexer::Lexer *error_lexer, size_t line, StringView message) {
@@ -16,12 +17,11 @@ void reportLexerError(lexer::Lexer *error_lexer, size_t line, StringView message
 }
 
 void error(const token::Token &error_token, StringView message) {
-    std::cerr << "[line: " << error_token.getLine() << " token: '" << error_token.getLexeme() << "'] Error:" << message
-              << std::endl;
+    fmt::print(stderr, "[line: {} at '{}'] Error: {}\n", error_token.getLine(), error_token.getLexeme(), message);
 }
 
 void reportParserError(parser::Parser *error_parser, const token::Token &error_token, StringView message) {
     error_parser->hasError = true;
-    if (error_token.getType() == token::TOKEN_EOF) return error(error_token.getLine()-1, message);
+    if (error_token.getType() == token::TOKEN_EOF) return error(error_token.getLine() - 1, message);
     error(error_token, message);
 }

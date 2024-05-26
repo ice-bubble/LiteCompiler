@@ -49,7 +49,7 @@ namespace parser {
             (this->*ReduceFunctions[index])();
             return true;
         } else {
-            std::cerr << "ReducedProduction's index " << index << "is out of range" << std::endl;
+            fmt::print(stderr,"ReducedProduction's index {} is out of range\n",index);
             hasError = true;
             return false;
         }
