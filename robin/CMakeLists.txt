@@ -36,6 +36,12 @@ add_executable(robin main.cpp
         src/parser/slrtableInit8.cpp
         src/parser/slrtableInit9.cpp
         src/parser/errorprocess.cpp
+        src/sema/sema.h
+        src/sema/sema.cpp
+        src/ast/symboltable.h
+        src/sema/stmtspace.h
+        src/sema/exprspace.h
+        src/ast/visit.cpp
 )
 
 

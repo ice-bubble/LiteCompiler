@@ -106,7 +106,7 @@ namespace lexer {
 
     void Lexer::_identifier() {
         // 一直消费字母和下划线，直到待消费的字符不是字母和下划线
-        while (isAlphaNumeric(peek())!='\0') advance();
+        while (isAlphaNumeric(peek()) != '\0') advance();
 
         String text = source.substr(start, current - start);
         auto tokentype = token::Token::getKeywordTypeInMap(text);

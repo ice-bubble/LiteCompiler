@@ -3,13 +3,38 @@
 #ifndef ROBIN_PRODUCTION_H
 #define ROBIN_PRODUCTION_H
 
-#include <utility>
-
+#include "symboltable.h"
+#include "type.h"
 #include "../common.h"
 #include "../token/token.h"
 #include "../ast/symbol.h"
+#include "../sema/stmtspace.h"
+#include "../sema/exprspace.h"
+
+namespace sema {
+    class Sema;
+
+    enum jmpTarget {
+        error,
+        code1,
+        code2,
+        compare,
+        next,
+        right
+    };
+
+    String stringMul(String left, String right, Sema *semaAna);
+
+    String stringPlus(String left, String right, Sema *semaAna);
+}
+
 
 namespace production {
+    enum Usage {
+        reference,
+        define
+    };
+
     class S;
 
     class Program;
@@ -117,6 +142,17 @@ namespace production {
 
         symbol::Symbol thisSymbol = symbol::Symbol::BASE;
 
+        virtual void visit(sema::Sema *semaAna) = 0;
+
+        static void setJmpTarget(sema::jmpTarget target, size_t line, sema::Sema *semaAna);
+
+        static String autoConversion(String originName, ast::IdentifierType originType,
+                                     ast::IdentifierType expectType, size_t line, sema::Sema *semaAna);
+
+        static Pair<String, ast::IdentifierType> autoConversion(String leftName, ast::IdentifierType leftType,
+                                                                String rightName, ast::IdentifierType rightType,
+                                                                String op, size_t line, sema::Sema *semaAna);
+
         virtual String toString() = 0;
 
         virtual ~Production() = default;
@@ -132,6 +168,8 @@ namespace production {
                 : line(line), program(std::move(program)) { thisSymbol = symbol::Symbol::S; }
 
         String toString() override { return String{"S"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -141,9 +179,11 @@ namespace production {
         SharedPtr<Declarations> declarations;
 
         Program(size_t line, SharedPtr<Declarations> declarations)
-                : line(line), declarations(std::move(declarations)){ thisSymbol = symbol::Symbol::program; }
+                : line(line), declarations(std::move(declarations)) { thisSymbol = symbol::Symbol::program; }
 
         String toString() override { return String{"Program"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -151,11 +191,15 @@ namespace production {
     public:
         size_t line;
 
+        SharedPtr<ast::Type> returnType;
+
         explicit Declarations(size_t line) : line(line) { thisSymbol = symbol::Symbol::declarations; }
 
         ~Declarations() override = default;
 
         String toString() override { return String{"Declarations"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class Declarations1 : public Declarations {
@@ -167,12 +211,16 @@ namespace production {
                 : Declarations(line),
                   declaration(std::move(declaration)),
                   declarations(std::move(declarations)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
     class Declarations2 : public Declarations {
     public:
         explicit Declarations2(size_t line) : Declarations(line) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -180,18 +228,25 @@ namespace production {
     public:
         size_t line;
 
+        SharedPtr<ast::Type> returnType;
+
         explicit Declaration(size_t line) : line(line) { thisSymbol = symbol::Symbol::declaration; }
 
         ~Declaration() override = default;
 
         String toString() override { return String{"Declaration"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class Declaration1 : public Declaration {
     public:
         SharedPtr<FunDecl> funDecl;
 
-        Declaration1(size_t line, SharedPtr<FunDecl> funDecl) : Declaration(line), funDecl(std::move(funDecl)) {}
+        Declaration1(size_t line, SharedPtr<FunDecl> funDecl)
+                : Declaration(line), funDecl(std::move(funDecl)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -199,7 +254,10 @@ namespace production {
     public:
         SharedPtr<VarDecl> varDecl;
 
-        Declaration2(size_t line, SharedPtr<VarDecl> varDecl) : Declaration(line), varDecl(std::move(varDecl)) {}
+        Declaration2(size_t line, SharedPtr<VarDecl> varDecl)
+                : Declaration(line), varDecl(std::move(varDecl)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -209,6 +267,8 @@ namespace production {
 
         Declaration3(size_t line, SharedPtr<Statement> statement)
                 : Declaration(line), statement(std::move(statement)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -216,18 +276,25 @@ namespace production {
     public:
         size_t line;
 
+        SharedPtr<ast::Type> returnType;
+
         explicit Statement(size_t line) : line(line) { thisSymbol = symbol::Symbol::statement; }
 
         ~Statement() override = default;
 
         String toString() override { return String{"Statement"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class Statement1 : public Statement {
     public:
         SharedPtr<BreakStmt> breakStmt;
 
-        Statement1(size_t line, SharedPtr<BreakStmt> breakStmt) : Statement(line), breakStmt(std::move(breakStmt)) {}
+        Statement1(size_t line, SharedPtr<BreakStmt> breakStmt)
+                : Statement(line), breakStmt(std::move(breakStmt)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -237,6 +304,8 @@ namespace production {
 
         Statement2(size_t line, SharedPtr<ContinueStmt> continueStmt)
                 : Statement(line), continueStmt(std::move(continueStmt)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -246,6 +315,8 @@ namespace production {
 
         Statement3(size_t line, SharedPtr<ReturnStmt> returnStmt)
                 : Statement(line), returnStmt(std::move(returnStmt)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -253,7 +324,10 @@ namespace production {
     public:
         SharedPtr<ExprStmt> exprStmt;
 
-        Statement4(size_t line, SharedPtr<ExprStmt> exprStmt) : Statement(line), exprStmt(std::move(exprStmt)) {}
+        Statement4(size_t line, SharedPtr<ExprStmt> exprStmt)
+                : Statement(line), exprStmt(std::move(exprStmt)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -261,7 +335,10 @@ namespace production {
     public:
         SharedPtr<IfStmt> ifStmt;
 
-        Statement5(size_t line, SharedPtr<IfStmt> ifStmt) : Statement(line), ifStmt(std::move(ifStmt)) {}
+        Statement5(size_t line, SharedPtr<IfStmt> ifStmt)
+                : Statement(line), ifStmt(std::move(ifStmt)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -269,7 +346,10 @@ namespace production {
     public:
         SharedPtr<WhileStmt> whileStmt;
 
-        Statement6(size_t line, SharedPtr<WhileStmt> whileStmt) : Statement(line), whileStmt(std::move(whileStmt)) {}
+        Statement6(size_t line, SharedPtr<WhileStmt> whileStmt)
+                : Statement(line), whileStmt(std::move(whileStmt)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -279,6 +359,8 @@ namespace production {
 
         Statement7(size_t line, SharedPtr<RepeatStmt> repeatStmt)
                 : Statement(line), repeatStmt(std::move(repeatStmt)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -287,6 +369,8 @@ namespace production {
         SharedPtr<Block> block;
 
         Statement8(size_t line, SharedPtr<Block> block) : Statement(line), block(std::move(block)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class Statement9 : public Statement {
@@ -294,6 +378,8 @@ namespace production {
         SharedPtr<ForStmt> forStmt;
 
         Statement9(size_t line, SharedPtr<ForStmt> forStmt) : Statement(line), forStmt(std::move(forStmt)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -309,6 +395,8 @@ namespace production {
                   token_SEMICOLON(std::move(token_SEMICOLON)) { thisSymbol = symbol::Symbol::breakStmt; }
 
         String toString() override { return String{"BreakStmt"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -324,6 +412,8 @@ namespace production {
                   token_SEMICOLON(std::move(token_SEMICOLON)) { thisSymbol = symbol::Symbol::continueStmt; }
 
         String toString() override { return String{"ContinueStmt"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -333,12 +423,16 @@ namespace production {
         SharedPtr<Token> token_RETURN;
         SharedPtr<ExprStmt> exprStmt;
 
+        SharedPtr<ast::Type> returnType;
+
         ReturnStmt(size_t line, SharedPtr<Token> token_RETURN, SharedPtr<ExprStmt> exprStmt)
                 : line(line),
                   token_RETURN(std::move(token_RETURN)),
                   exprStmt(std::move(exprStmt)) { thisSymbol = symbol::Symbol::returnStmt; }
 
         String toString() override { return String{"ReturnStmt"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -353,6 +447,9 @@ namespace production {
         SharedPtr<Token> token_RIGHT_PAREN;
         SharedPtr<Block> block;
 
+        String id;
+        SharedPtr<ast::Type> returnType;
+
         FunDecl(size_t line, SharedPtr<Token> token_IDENTIFIER, SharedPtr<Token> token_EQUAL,
                 SharedPtr<Token> token_FUNCTION, SharedPtr<Token> token_LEFT_PAREN, SharedPtr<ParamList> paramList,
                 SharedPtr<Token> token_RIGHT_PAREN, SharedPtr<Block> block)
@@ -366,6 +463,8 @@ namespace production {
                   block(std::move(block)) { thisSymbol = symbol::Symbol::funDecl; }
 
         String toString() override { return String{"FunDecl"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -386,6 +485,8 @@ namespace production {
                   token_SEMICOLON(std::move(token_SEMICOLON)) { thisSymbol = symbol::Symbol::varDecl; }
 
         String toString() override { return String{"VarDecl"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -395,11 +496,16 @@ namespace production {
         SharedPtr<Var> var;
         SharedPtr<VarInit> varInit;
 
+        String width = "0";
+        SharedPtr<ast::Type> type;
+
         VarDef(size_t line, SharedPtr<Var> var, SharedPtr<VarInit> varInit)
                 : line(line), var(std::move(var)),
                   varInit(std::move(varInit)) { thisSymbol = symbol::Symbol::varDef; }
 
         String toString() override { return String{"VarDef"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -407,11 +513,16 @@ namespace production {
     public:
         size_t line;
 
+        String width = "0";
+        SharedPtr<ast::Type> type;
+
         explicit VarDefs(size_t line) : line(line) { thisSymbol = symbol::Symbol::varDefs; }
 
         ~VarDefs() override = default;
 
         String toString() override { return String{"VarDefs"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class VarDefs1 : public VarDefs {
@@ -425,12 +536,16 @@ namespace production {
                   token_COMMA(std::move(token_COMMA)),
                   varDef(std::move(varDef)),
                   varDefs(std::move(varDefs)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
     class VarDefs2 : public VarDefs {
     public:
         explicit VarDefs2(size_t line) : VarDefs(line) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -438,11 +553,16 @@ namespace production {
     public:
         size_t line;
 
+        SharedPtr<ast::Type> type;
+        String val;
+
         explicit VarInit(size_t line) : line(line) { thisSymbol = symbol::Symbol::varInit; }
 
         ~VarInit() override = default;
 
         String toString() override { return String{"VarInit"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class VarInit1 : public VarInit {
@@ -454,12 +574,16 @@ namespace production {
                 : VarInit(line),
                   token_EQUAL(std::move(token_EQUAL)),
                   expression(std::move(expression)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
     class VarInit2 : public VarInit {
     public:
         explicit VarInit2(size_t line) : VarInit(line) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -467,11 +591,16 @@ namespace production {
     public:
         size_t line;
 
+        String width = "0";
+        SharedPtr<ast::Type> type;
+
         explicit Type(size_t line) : line(line) { thisSymbol = symbol::Symbol::type; }
 
         ~Type() override = default;
 
         String toString() override { return String{"Type"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class Type1 : public Type {
@@ -479,6 +608,8 @@ namespace production {
         SharedPtr<Token> token_INTEGER;
 
         Type1(size_t line, SharedPtr<Token> token_INTEGER) : Type(line), token_INTEGER(std::move(token_INTEGER)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -487,6 +618,8 @@ namespace production {
         SharedPtr<Token> token_DOUBLE;
 
         Type2(size_t line, SharedPtr<Token> token_DOUBLE) : Type(line), token_DOUBLE(std::move(token_DOUBLE)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -495,6 +628,8 @@ namespace production {
         SharedPtr<Token> token_STRING;
 
         Type3(size_t line, SharedPtr<Token> token_STRING) : Type(line), token_STRING(std::move(token_STRING)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -503,6 +638,8 @@ namespace production {
         SharedPtr<Token> token_BOOL;
 
         Type4(size_t line, SharedPtr<Token> token_BOOL) : Type(line), token_BOOL(std::move(token_BOOL)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -511,6 +648,8 @@ namespace production {
         SharedPtr<Token> token_CHAR;
 
         Type5(size_t line, SharedPtr<Token> token_CHAR) : Type(line), token_CHAR(std::move(token_CHAR)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -519,6 +658,8 @@ namespace production {
         SharedPtr<Token> token_VAR;
 
         Type6(size_t line, SharedPtr<Token> token_VAR) : Type(line), token_VAR(std::move(token_VAR)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -526,11 +667,20 @@ namespace production {
     public:
         size_t line;
 
+        String val;
+        SharedPtr<ast::Type> type;
+        SharedPtr<ast::Type> returnType;
+        bool jmp = false;
+        sema::jmpTarget trueJmp = sema::jmpTarget::error;
+        sema::jmpTarget falseJmp = sema::jmpTarget::error;
+
         explicit ExprStmt(size_t line) : line(line) { thisSymbol = symbol::Symbol::exprStmt; }
 
         ~ExprStmt() override = default;
 
         String toString() override { return String{"ExprStmt"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class ExprStmt1 : public ExprStmt {
@@ -542,6 +692,8 @@ namespace production {
                 : ExprStmt(line),
                   expression(std::move(expression)),
                   token_SEMICOLON(std::move(token_SEMICOLON)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -551,6 +703,8 @@ namespace production {
 
         ExprStmt2(size_t line, SharedPtr<Token> token_SEMICOLON)
                 : ExprStmt(line), token_SEMICOLON(std::move(token_SEMICOLON)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -564,6 +718,8 @@ namespace production {
         SharedPtr<Statement> statement;
         SharedPtr<ElseBranch> elseBranch;
 
+        SharedPtr<ast::Type> returnType;
+
         IfStmt(size_t line, SharedPtr<Token> token_IF, SharedPtr<Token> token_LEFT_PAREN,
                SharedPtr<Expression> expression, SharedPtr<Token> token_RIGHT_PAREN, SharedPtr<Statement> statement,
                SharedPtr<ElseBranch> elseBranch)
@@ -576,6 +732,8 @@ namespace production {
                   elseBranch(std::move(elseBranch)) { thisSymbol = symbol::Symbol::ifStmt; }
 
         String toString() override { return String{"IfStmt"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -583,11 +741,15 @@ namespace production {
     public:
         size_t line;
 
+        SharedPtr<ast::Type> returnType;
+
         explicit ElseBranch(size_t line) : line(line) { thisSymbol = symbol::Symbol::elseBranch; }
 
         ~ElseBranch() override = default;
 
         String toString() override { return String{"ElseBranch"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class ElseBranch1 : public ElseBranch {
@@ -599,12 +761,16 @@ namespace production {
                 : ElseBranch(line),
                   token_ELSE(std::move(token_ELSE)),
                   statement(std::move(statement)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
     class ElseBranch2 : public ElseBranch {
     public:
         explicit ElseBranch2(size_t line) : ElseBranch(line) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -617,6 +783,8 @@ namespace production {
         SharedPtr<Token> token_RIGHT_PAREN;
         SharedPtr<Statement> statement;
 
+        SharedPtr<ast::Type> returnType;
+
         WhileStmt(size_t line, SharedPtr<Token> token_WHILE, SharedPtr<Token> token_LEFT_PAREN,
                   SharedPtr<Expression> expression, SharedPtr<Token> token_RIGHT_PAREN, SharedPtr<Statement> statement)
                 : line(line),
@@ -627,6 +795,8 @@ namespace production {
                   statement(std::move(statement)) { thisSymbol = symbol::Symbol::whileStmt; }
 
         String toString() override { return String{"WhileStmt"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -634,11 +804,15 @@ namespace production {
     public:
         size_t line;
 
+        SharedPtr<ast::Type> returnType;
+
         explicit ForStmt(size_t line) : line(line) { thisSymbol = symbol::Symbol::forStmt; }
 
         ~ForStmt() override = default;
 
         String toString() override { return String{"ForStmt"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class ForStmt1 : public ForStmt {
@@ -655,6 +829,8 @@ namespace production {
                 : ForStmt(line), token_FOR(std::move(token_FOR)), token_LEFT_PAREN(std::move(token_LEFT_PAREN)),
                   varDecl(std::move(varDecl)), exprStmt(std::move(exprStmt)),
                   token_RIGHT_PAREN(std::move(token_RIGHT_PAREN)), statement(std::move(statement)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -679,6 +855,8 @@ namespace production {
                   expression(std::move(expression)),
                   token_RIGHT_PAREN(std::move(token_RIGHT_PAREN)),
                   statement(std::move(statement)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -701,6 +879,8 @@ namespace production {
                   exprStmt2(std::move(exprStmt2)),
                   token_RIGHT_PAREN(std::move(token_RIGHT_PAREN)),
                   statement(std::move(statement)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -725,6 +905,8 @@ namespace production {
                   expression(std::move(expression)),
                   token_RIGHT_PAREN(std::move(token_RIGHT_PAREN)),
                   statement(std::move(statement)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -735,6 +917,8 @@ namespace production {
         SharedPtr<Declarations> declarations;
         SharedPtr<Token> token_RIGHT_BRACE;
 
+        SharedPtr<ast::Type> returnType;
+
         Block(size_t line, SharedPtr<Token> token_LEFT_BRACE, SharedPtr<Declarations> declarations,
               SharedPtr<Token> token_RIGHT_BRACE)
                 : line(line),
@@ -743,6 +927,8 @@ namespace production {
                   token_RIGHT_BRACE(std::move(token_RIGHT_BRACE)) { thisSymbol = symbol::Symbol::block; }
 
         String toString() override { return String{"Block"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -757,6 +943,8 @@ namespace production {
         SharedPtr<Token> token_RIGHT_PAREN;
         SharedPtr<Token> token_SEMICOLON;
 
+        SharedPtr<ast::Type> returnType;
+
         RepeatStmt(size_t line, SharedPtr<Token> token_REPEAT, SharedPtr<Statement> statement,
                    SharedPtr<Token> token_UNTIL, SharedPtr<Token> token_LEFT_PAREN, SharedPtr<Expression> expression,
                    SharedPtr<Token> token_RIGHT_PAREN, SharedPtr<Token> token_SEMICOLON)
@@ -770,6 +958,8 @@ namespace production {
                   token_SEMICOLON(std::move(token_SEMICOLON)) { thisSymbol = symbol::Symbol::repeatStmt; }
 
         String toString() override { return String{"RepeatStmt"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -782,6 +972,8 @@ namespace production {
         ~ParamList() override = default;
 
         String toString() override { return String{"ParamList"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class ParamList1 : public ParamList {
@@ -793,12 +985,16 @@ namespace production {
                 : ParamList(line),
                   parameter(std::move(parameter)),
                   parameters(std::move(parameters)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
     class ParamList2 : public ParamList {
     public:
         explicit ParamList2(size_t line) : ParamList(line) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -811,6 +1007,8 @@ namespace production {
         ~Parameters() override = default;
 
         String toString() override { return String{"Parameters"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class Parameters1 : public Parameters {
@@ -824,12 +1022,16 @@ namespace production {
                                                         token_COMMA(std::move(token_COMMA)),
                                                         parameter(std::move(parameter)),
                                                         parameters(std::move(parameters)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
     class Parameters2 : public Parameters {
     public:
         explicit Parameters2(size_t line) : Parameters(line) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -844,6 +1046,8 @@ namespace production {
                   type(std::move(type)), var(std::move(var)) { thisSymbol = symbol::Symbol::parameter; }
 
         String toString() override { return String{"Parameter"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -852,11 +1056,19 @@ namespace production {
         size_t line;
         SharedPtr<Assignment> assignment;
 
+        SharedPtr<ast::Type> type;
+        String val;
+        bool jmp = false;
+        sema::jmpTarget trueJmp = sema::jmpTarget::error;
+        sema::jmpTarget falseJmp = sema::jmpTarget::error;
+
         Expression(size_t line, SharedPtr<Assignment> assignment)
                 : line(line),
                   assignment(std::move(assignment)) { thisSymbol = symbol::Symbol::expression; }
 
         String toString() override { return String{"Expression"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -864,11 +1076,19 @@ namespace production {
     public:
         size_t line;
 
+        SharedPtr<ast::Type> type;
+        String val;
+        bool jmp = false;
+        sema::jmpTarget trueJmp = sema::jmpTarget::error;
+        sema::jmpTarget falseJmp = sema::jmpTarget::error;
+
         explicit Assignment(size_t line) : line(line) { thisSymbol = symbol::Symbol::assignment; }
 
         ~Assignment() override = default;
 
         String toString() override { return String{"Assignment"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class Assignment1 : public Assignment {
@@ -882,6 +1102,8 @@ namespace production {
                   var(std::move(var)),
                   token_EQUAL(std::move(token_EQUAL)),
                   assignment(std::move(assignment)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -890,6 +1112,8 @@ namespace production {
         SharedPtr<Logic_or> logic_or;
 
         Assignment2(size_t line, SharedPtr<Logic_or> logic_or) : Assignment(line), logic_or(std::move(logic_or)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -899,12 +1123,20 @@ namespace production {
         SharedPtr<Logic_and> logic_and;
         SharedPtr<Logic_or_prime> logic_or_prime;
 
+        SharedPtr<ast::Type> type;
+        String val;
+        bool jmp = false;
+        sema::jmpTarget trueJmp = sema::jmpTarget::error;
+        sema::jmpTarget falseJmp = sema::jmpTarget::error;
+
         Logic_or(size_t line, SharedPtr<Logic_and> logic_and, SharedPtr<Logic_or_prime> logic_or_prime)
                 : line(line),
                   logic_and(std::move(logic_and)),
                   logic_or_prime(std::move(logic_or_prime)) { thisSymbol = symbol::Symbol::logic_or; }
 
         String toString() override { return String{"Logic_or"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -912,11 +1144,20 @@ namespace production {
     public:
         size_t line;
 
+        SharedPtr<ast::Type> type;
+        String val;
+        String op;
+        bool jmp = false;
+        sema::jmpTarget trueJmp = sema::jmpTarget::error;
+        sema::jmpTarget falseJmp = sema::jmpTarget::error;
+
         explicit Logic_or_prime(size_t line) : line(line) { thisSymbol = symbol::Symbol::logic_or_prime; }
 
         ~Logic_or_prime() override = default;
 
         String toString() override { return String{"Logic_or_prime"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class Logic_or_prime1 : public Logic_or_prime {
@@ -926,12 +1167,16 @@ namespace production {
 
         Logic_or_prime1(size_t line, SharedPtr<Token> token_OR, SharedPtr<Logic_or> logic_or)
                 : Logic_or_prime(line), token_OR(std::move(token_OR)), logic_or(std::move(logic_or)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
     class Logic_or_prime2 : public Logic_or_prime {
     public:
         explicit Logic_or_prime2(size_t line) : Logic_or_prime(line) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -941,12 +1186,20 @@ namespace production {
         SharedPtr<Equality> equality;
         SharedPtr<Logic_and_prime> logic_and_prime;
 
+        SharedPtr<ast::Type> type;
+        String val;
+        bool jmp = false;
+        sema::jmpTarget trueJmp = sema::jmpTarget::error;
+        sema::jmpTarget falseJmp = sema::jmpTarget::error;
+
         Logic_and(size_t line, SharedPtr<Equality> equality, SharedPtr<Logic_and_prime> logic_and_prime)
                 : line(line),
                   equality(std::move(equality)),
                   logic_and_prime(std::move(logic_and_prime)) { thisSymbol = symbol::Symbol::logic_and; }
 
         String toString() override { return String{"Logic_and"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -954,11 +1207,20 @@ namespace production {
     public:
         size_t line;
 
+        SharedPtr<ast::Type> type;
+        String val;
+        String op;
+        bool jmp = false;
+        sema::jmpTarget trueJmp = sema::jmpTarget::error;
+        sema::jmpTarget falseJmp = sema::jmpTarget::error;
+
         explicit Logic_and_prime(size_t line) : line(line) { thisSymbol = symbol::Symbol::logic_and_prime; }
 
         ~Logic_and_prime() override = default;
 
         String toString() override { return String{"Logic_and_prime"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class Logic_and_prime1 : public Logic_and_prime {
@@ -968,12 +1230,16 @@ namespace production {
 
         Logic_and_prime1(size_t line, SharedPtr<Token> token_AND, SharedPtr<Logic_and> logic_and)
                 : Logic_and_prime(line), token_AND(std::move(token_AND)), logic_and(std::move(logic_and)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
     class Logic_and_prime2 : public Logic_and_prime {
     public:
         explicit Logic_and_prime2(size_t line) : Logic_and_prime(line) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -983,12 +1249,17 @@ namespace production {
         SharedPtr<Comparison> comparison;
         SharedPtr<Equality_prime> equality_prime;
 
+        SharedPtr<ast::Type> type;
+        String val;
+
         Equality(size_t line, SharedPtr<Comparison> comparison, SharedPtr<Equality_prime> equality_prime)
                 : line(line),
                   comparison(std::move(comparison)),
                   equality_prime(std::move(equality_prime)) { thisSymbol = symbol::Symbol::equality; }
 
         String toString() override { return String{"Equality"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -996,11 +1267,17 @@ namespace production {
     public:
         size_t line;
 
+        SharedPtr<ast::Type> type;
+        String val;
+        String op;
+
         explicit Equality_prime(size_t line) : line(line) { thisSymbol = symbol::Symbol::equality_prime; }
 
         ~Equality_prime() override = default;
 
         String toString() override { return String{"Equality_prime"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class Equality_prime1 : public Equality_prime {
@@ -1012,6 +1289,8 @@ namespace production {
                 : Equality_prime(line),
                   token_NOT_EQUAL(std::move(token_NOT_EQUAL)),
                   equality(std::move(equality)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1024,12 +1303,16 @@ namespace production {
                 : Equality_prime(line),
                   token_EQUAL_EQUAL(std::move(token_EQUAL_EQUAL)),
                   equality(std::move(equality)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
     class Equality_prime3 : public Equality_prime {
     public:
         explicit Equality_prime3(size_t line) : Equality_prime(line) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1039,12 +1322,17 @@ namespace production {
         SharedPtr<Term> term;
         SharedPtr<Comparison_prime> comparison_prime;
 
+        SharedPtr<ast::Type> type;
+        String val;
+
         Comparison(size_t line, SharedPtr<Term> term, SharedPtr<Comparison_prime> comparison_prime)
                 : line(line),
                   term(std::move(term)),
                   comparison_prime(std::move(comparison_prime)) { thisSymbol = symbol::Symbol::comparison; }
 
         String toString() override { return String{"Comparison"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1052,11 +1340,17 @@ namespace production {
     public:
         size_t line;
 
+        SharedPtr<ast::Type> type;
+        String val;
+        String op;
+
         explicit Comparison_prime(size_t line) : line(line) { thisSymbol = symbol::Symbol::comparison_prime; }
 
         ~Comparison_prime() override = default;
 
         String toString() override { return String{"Comparison_prime"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class Comparison_prime1 : public Comparison_prime {
@@ -1065,7 +1359,11 @@ namespace production {
         SharedPtr<Comparison> comparison;
 
         Comparison_prime1(size_t line, SharedPtr<Token> token_GREATER, SharedPtr<Comparison> comparison)
-                : Comparison_prime(line), token_GREATER(std::move(token_GREATER)), comparison(std::move(comparison)) {}
+                : Comparison_prime(line),
+                  token_GREATER(std::move(token_GREATER)),
+                  comparison(std::move(comparison)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1078,6 +1376,8 @@ namespace production {
                 : Comparison_prime(line),
                   token_GREATER_EQUAL(std::move(token_GREATER_EQUAL)),
                   comparison(std::move(comparison)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1090,6 +1390,8 @@ namespace production {
                 : Comparison_prime(line),
                   token_LESS(std::move(token_LESS)),
                   comparison(std::move(comparison)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1102,12 +1404,16 @@ namespace production {
                 : Comparison_prime(line),
                   token_LESS_EQUAL(std::move(token_LESS_EQUAL)),
                   comparison(std::move(comparison)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
     class Comparison_prime5 : public Comparison_prime {
     public:
         explicit Comparison_prime5(size_t line) : Comparison_prime(line) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1117,12 +1423,17 @@ namespace production {
         SharedPtr<Factor> factor;
         SharedPtr<Term_prime> term_prime;
 
+        SharedPtr<ast::Type> type;
+        String val;
+
         Term(size_t line, SharedPtr<Factor> factor, SharedPtr<Term_prime> term_prime)
                 : line(line),
                   factor(std::move(factor)),
                   term_prime(std::move(term_prime)) { thisSymbol = symbol::Symbol::term; }
 
         String toString() override { return String{"Term"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1130,11 +1441,17 @@ namespace production {
     public:
         size_t line;
 
+        SharedPtr<ast::Type> type;
+        String val;
+        String op;
+
         explicit Term_prime(size_t line) : line(line) { thisSymbol = symbol::Symbol::term_prime; }
 
         ~Term_prime() override = default;
 
         String toString() override { return String{"Term_prime"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class Term_prime1 : public Term_prime {
@@ -1144,6 +1461,8 @@ namespace production {
 
         Term_prime1(size_t line, SharedPtr<Token> token_MINUS, SharedPtr<Term> term)
                 : Term_prime(line), token_MINUS(std::move(token_MINUS)), term(std::move(term)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1154,12 +1473,16 @@ namespace production {
 
         Term_prime2(size_t line, SharedPtr<Token> token_PLUS, SharedPtr<Term> term)
                 : Term_prime(line), token_PLUS(std::move(token_PLUS)), term(std::move(term)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
     class Term_prime3 : public Term_prime {
     public:
         explicit Term_prime3(size_t line) : Term_prime(line) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1169,12 +1492,17 @@ namespace production {
         SharedPtr<Incr_exp> incr_exp;
         SharedPtr<Factor_prime> factor_prime;
 
+        SharedPtr<ast::Type> type;
+        String val;
+
         Factor(size_t line, SharedPtr<Incr_exp> incr_exp, SharedPtr<Factor_prime> factor_prime)
                 : line(line),
                   incr_exp(std::move(incr_exp)),
                   factor_prime(std::move(factor_prime)) { thisSymbol = symbol::Symbol::factor; }
 
         String toString() override { return String{"Factor"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1182,11 +1510,17 @@ namespace production {
     public:
         size_t line;
 
+        SharedPtr<ast::Type> type;
+        String val;
+        String op;
+
         explicit Factor_prime(size_t line) : line(line) { thisSymbol = symbol::Symbol::factor_prime; }
 
         ~Factor_prime() override = default;
 
         String toString() override { return String{"Factor_prime"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class Factor_prime1 : public Factor_prime {
@@ -1196,6 +1530,8 @@ namespace production {
 
         Factor_prime1(size_t line, SharedPtr<Token> token_DIV, SharedPtr<Factor> factor)
                 : Factor_prime(line), token_DIV(std::move(token_DIV)), factor(std::move(factor)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1206,6 +1542,8 @@ namespace production {
 
         Factor_prime2(size_t line, SharedPtr<Token> token_STAR, SharedPtr<Factor> factor)
                 : Factor_prime(line), token_STAR(std::move(token_STAR)), factor(std::move(factor)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1216,12 +1554,16 @@ namespace production {
 
         Factor_prime3(size_t line, SharedPtr<Token> token_MOD, SharedPtr<Factor> factor)
                 : Factor_prime(line), token_MOD(std::move(token_MOD)), factor(std::move(factor)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
     class Factor_prime4 : public Factor_prime {
     public:
         explicit Factor_prime4(size_t line) : Factor_prime(line) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1231,12 +1573,17 @@ namespace production {
         SharedPtr<Unary> unary;
         SharedPtr<Incr_op> incr_op;
 
+        SharedPtr<ast::Type> type;
+        String val;
+
         Incr_exp(size_t line, SharedPtr<Unary> unary, SharedPtr<Incr_op> incr_op)
                 : line(line),
                   unary(std::move(unary)),
                   incr_op(std::move(incr_op)) { thisSymbol = symbol::Symbol::incr_exp; }
 
         String toString() override { return String{"Incr_exp"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1244,11 +1591,16 @@ namespace production {
     public:
         size_t line;
 
+        bool ifUsed = false;
+        int val = 0;
+
         explicit Incr_op(size_t line) : line(line) { thisSymbol = symbol::Symbol::incr_op; }
 
         ~Incr_op() override = default;
 
         String toString() override { return String{"Incr_op"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class Incr_op1 : public Incr_op {
@@ -1260,6 +1612,8 @@ namespace production {
                 : Incr_op(line),
                   token_DOUBLE_ADD(std::move(token_DOUBLE_ADD)),
                   incr_op(std::move(incr_op)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1272,12 +1626,16 @@ namespace production {
                 : Incr_op(line),
                   token_DOUBLE_MINUS(std::move(token_DOUBLE_MINUS)),
                   incr_op(std::move(incr_op)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
     class Incr_op3 : public Incr_op {
     public:
         explicit Incr_op3(size_t line) : Incr_op(line) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1285,11 +1643,16 @@ namespace production {
     public:
         size_t line;
 
+        SharedPtr<ast::Type> type;
+        String val;
+
         explicit Unary(size_t line) : line(line) { thisSymbol = symbol::Symbol::unary; }
 
         ~Unary() override = default;
 
         String toString() override { return String{"Unary"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class Unary1 : public Unary {
@@ -1301,6 +1664,8 @@ namespace production {
                 : Unary(line),
                   token_NOT(std::move(token_NOT)),
                   unary(std::move(unary)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1313,6 +1678,8 @@ namespace production {
                 : Unary(line),
                   token_MINUS(std::move(token_MINUS)),
                   unary(std::move(unary)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1321,6 +1688,8 @@ namespace production {
         SharedPtr<Call> call;
 
         Unary3(size_t line, SharedPtr<Call> call) : Unary(line), call(std::move(call)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1330,12 +1699,17 @@ namespace production {
         SharedPtr<Primary> primary;
         SharedPtr<Call_suffix> call_suffix;
 
+        SharedPtr<ast::Type> type;
+        String val;
+
         Call(size_t line, SharedPtr<Primary> primary, SharedPtr<Call_suffix> call_suffix)
                 : line(line),
                   primary(std::move(primary)),
                   call_suffix(std::move(call_suffix)) { thisSymbol = symbol::Symbol::call; }
 
         String toString() override { return String{"Call"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1343,11 +1717,18 @@ namespace production {
     public:
         size_t line;
 
+        SharedPtr<ast::Type> type;
+        String val;
+        String callee;
+        bool isExist = false;
+
         explicit Call_suffix(size_t line) : line(line) { thisSymbol = symbol::Symbol::call_suffix; }
 
         ~Call_suffix() override = default;
 
         String toString() override { return String{"Call_suffix"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class Call_suffix1 : public Call_suffix {
@@ -1364,12 +1745,16 @@ namespace production {
                   argList(std::move(argList)),
                   token_RIGHT_PAREN(std::move(token_RIGHT_PAREN)),
                   call_suffix(std::move(call_suffix)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
     class Call_suffix2 : public Call_suffix {
     public:
         explicit Call_suffix2(size_t line) : Call_suffix(line) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1377,11 +1762,15 @@ namespace production {
     public:
         size_t line;
 
+        int sum = 0;
+
         explicit ArgList(size_t line) : line(line) { thisSymbol = symbol::Symbol::argList; }
 
         ~ArgList() override = default;
 
         String toString() override { return String{"ArgList"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class ArgList1 : public ArgList {
@@ -1393,12 +1782,16 @@ namespace production {
                 : ArgList(line),
                   expression(std::move(expression)),
                   arguments(std::move(arguments)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
     class ArgList2 : public ArgList {
     public:
         explicit ArgList2(size_t line) : ArgList(line) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1406,12 +1799,16 @@ namespace production {
     public:
         size_t line;
 
+        int sum = 0;
+
         explicit Arguments(size_t line)
                 : line(line) { thisSymbol = symbol::Symbol::arguments; }
 
         ~Arguments() override = default;
 
         String toString() override { return String{"Arguments"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class Arguments1 : public Arguments {
@@ -1425,12 +1822,16 @@ namespace production {
                                                      token_COMMA(std::move(token_COMMA)),
                                                      expression(std::move(expression)),
                                                      arguments(std::move(arguments)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
     class Arguments2 : public Arguments {
     public:
         explicit Arguments2(size_t line) : Arguments(line) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1438,12 +1839,17 @@ namespace production {
     public:
         size_t line;
 
+        SharedPtr<ast::Type> type;
+        String val;
+
         explicit Primary(size_t line)
                 : line(line) { thisSymbol = symbol::Symbol::primary; }
 
         ~Primary() override = default;
 
         String toString() override { return String{"Primary"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class Primary1 : public Primary {
@@ -1452,6 +1858,8 @@ namespace production {
 
         Primary1(size_t line, SharedPtr<ConstVal> constVal)
                 : Primary(line), constVal(std::move(constVal)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1466,6 +1874,8 @@ namespace production {
                                                        token_LEFT_PAREN(std::move(token_LEFT_PAREN)),
                                                        expression(std::move(expression)),
                                                        token_RIGHT_PAREN(std::move(token_RIGHT_PAREN)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1475,6 +1885,8 @@ namespace production {
 
         Primary3(size_t line, SharedPtr<Var> var)
                 : Primary(line), var(std::move(var)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1482,12 +1894,17 @@ namespace production {
     public:
         size_t line;
 
+        SharedPtr<ast::Type> type;
+        String val;
+
         explicit ConstVal(size_t line)
                 : line(line) { thisSymbol = symbol::Symbol::constVal; }
 
         ~ConstVal() override = default;
 
         String toString() override { return String{"ConstVal"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class ConstVal1 : public ConstVal {
@@ -1496,6 +1913,8 @@ namespace production {
 
         ConstVal1(size_t line, SharedPtr<Token> token_TRUE)
                 : ConstVal(line), token_TRUE(std::move(token_TRUE)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1505,6 +1924,8 @@ namespace production {
 
         ConstVal2(size_t line, SharedPtr<Token> token_FALSE)
                 : ConstVal(line), token_FALSE(std::move(token_FALSE)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1514,6 +1935,8 @@ namespace production {
 
         ConstVal3(size_t line, SharedPtr<Token> token_NIL)
                 : ConstVal(line), token_NIL(std::move(token_NIL)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1523,6 +1946,8 @@ namespace production {
 
         ConstVal4(size_t line, SharedPtr<Token> token_INT_)
                 : ConstVal(line), token_INT_(std::move(token_INT_)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1532,6 +1957,8 @@ namespace production {
 
         ConstVal5(size_t line, SharedPtr<Token> token_REAL_)
                 : ConstVal(line), token_REAL_(std::move(token_REAL_)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1541,6 +1968,8 @@ namespace production {
 
         ConstVal6(size_t line, SharedPtr<Token> token_STRING_)
                 : ConstVal(line), token_STRING_(std::move(token_STRING_)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1550,12 +1979,23 @@ namespace production {
         SharedPtr<Token> token_IDENTIFIER;
         SharedPtr<VarSuffix> varSuffix;
 
+        String w = "0";
+        SharedPtr<ast::Type> t;
+        String width = "0";
+        SharedPtr<ast::Type> type;
+        String offset = "0";
+        String id;
+        String val;
+        Usage usage = Usage::reference;
+
         Var(size_t line, SharedPtr<Token> token_IDENTIFIER, SharedPtr<VarSuffix> varSuffix)
                 : line(line),
                   token_IDENTIFIER(std::move(token_IDENTIFIER)),
                   varSuffix(std::move(varSuffix)) { thisSymbol = symbol::Symbol::var; }
 
         String toString() override { return String{"Var"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1563,11 +2003,23 @@ namespace production {
     public:
         size_t line;
 
+        String w = "0";
+        SharedPtr<ast::Type> t;
+        String width = "0";
+        SharedPtr<ast::Type> type;
+        String len;
+        String length = "0";
+        String offset = "0";
+        Usage usage = Usage::reference;
+
+
         explicit VarSuffix(size_t line) : line(line) { thisSymbol = symbol::Symbol::varSuffix; }
 
         ~VarSuffix() override = default;
 
         String toString() override { return String{"VarSuffix"}; }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
     class VarSuffix1 : public VarSuffix {
@@ -1584,12 +2036,16 @@ namespace production {
                   expression(std::move(expression)),
                   token_RIGHT_BRACKET(std::move(token_RIGHT_BRACKET)),
                   varSuffix(std::move(varSuffix)) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
     class VarSuffix2 : public VarSuffix {
     public:
         explicit VarSuffix2(size_t line) : VarSuffix(line) {}
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 
@@ -1611,6 +2067,8 @@ namespace production {
                 return "EOF";
             return thisToken.getLexeme();
         }
+
+        void visit(sema::Sema *semaAna) override;
     };
 
 }

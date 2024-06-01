@@ -43,7 +43,7 @@ void printSymbolTable(const List<token::Token> &tokenlist) {
             insertToSymbolTable(t, symbolTable);
         }
     }
-    for (auto t: symbolTable) {
+    for (const auto &t: symbolTable) {
         std::cout << "IDENTIFIER " << t << std::endl;
     }
 }
@@ -53,4 +53,12 @@ void insertToSymbolTable(const token::Token &t, List<String> &symboltable) {
         if (t.getLiteralString() == item) return;
     }
     symboltable.push_back(t.getLexeme());
+}
+
+void printIRCODE(const List<String> &irCode) {
+    fmt::print("\n========irCode========\n");
+    for (int i = 0; i < irCode.size(); i++) {
+        std::cout<<i<<": "<<irCode[i]<<std::endl;
+        //fmt::print("{}:{}\n", i, irCode[i]);
+    }
 }

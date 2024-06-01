@@ -37,8 +37,8 @@ namespace parser {
         size_t currentToken = 0;                                  ///< 语法分析时输入token序列的待输入token
         static Map<Pair<State, symbol::Symbol>, Action> slrTable; ///< SLR分析表
         static List<VoidFuncPtr> ReduceFunctions;                 ///< reduce函数列表
-        static Map<State ,String> errorMessage;
-        static Map<State,State>errorStateToExpectState;
+        static Map<State, String> errorMessage;
+        static Map<State, State> errorStateToExpectState;
 
 
     public:
@@ -69,7 +69,7 @@ namespace parser {
 
         bool errorProcess(State errorState);
 
-        void addTokenToProductionsAndStack(token::TokenType type, const std::string& lexeme, int errorState);
+        void addTokenToProductionsAndStack(token::TokenType type, const std::string &lexeme, int errorState);
 
         /////以下是reduce函数
 
@@ -283,6 +283,7 @@ namespace parser {
 ///slr分析表初始化
     public:
         static void slrTableInit();
+
     private:
         static void slrTableInit1();
 

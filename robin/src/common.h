@@ -18,6 +18,7 @@
 #include <utility>
 #include <memory>
 #include <stack>
+#include <type_traits>
 #include "fmt/core.h"
 
 
@@ -33,6 +34,9 @@ using Map = std::map<Key, Value>;
 
 template<typename TYPE>
 using SharedPtr = std::shared_ptr<TYPE>;
+
+template<typename TYPE>
+using WeakPtr = std::weak_ptr<TYPE>;
 
 template<typename T1, typename T2>
 using Pair = std::pair<T1, T2>;

@@ -9,6 +9,13 @@
     ├── main.cpp                    主函数
     ├── README.md                   本文件
     └── src                         源代码
+        ├── ast                     语法树相关类的定义
+        │   ├── initAst.h           初始化ast目录下面的一些类的静态成员
+        │   ├── production.h        语法树中产生式的类
+        │   ├── symbol.h            存放产生式相关定义
+        │   ├── symboltable.h       存放符号栈相关定义
+        │   ├── type.h              区分标识符和字面值具体类型的类     
+        │   └── visit.cpp           语义分析所用的函数
         ├── common.h                一些项目用到的宏定义和头文件
         ├── debug                   debug文件
         │   ├── debug.cpp           debug函数实现
@@ -16,8 +23,11 @@
         ├── error                   编译器错误处理模块
         │   ├── error.cpp           error函数定义
         │   └── error.h             error函数声明
+        ├── lexer                   词法分析器
+        │   ├── lexer.cpp           词法分析器lexer函数实现
+        │   └── lexer.h             词法分析器lexer类声明
         ├── parser                  语法分析器
-        │   ├── errorprocess.cpp    词法分析中的错误处理部分
+        │   ├── errorprocess.cpp    语法分析中的错误处理部分
         │   ├── parser.cpp          语法分析器parser函数实现
         │   ├── parser.h            语法分析器parser类声明
         │   ├── reduce.cpp          reduce函数相关定义
@@ -30,14 +40,11 @@
         │   ├── slrtableInit7.cpp   初始化SLR分析表函数7
         │   ├── slrtableInit8.cpp   初始化SLR分析表函数8
         │   └── slrtableInit9.cpp   初始化SLR分析表函数9
-        ├── ast                     语法树相关类的定义
-        │   ├── initAst.h           初始化ast目录下面的一些类的静态成员
-        │   ├── production.h        语法树中产生式的类
-        │   ├── symbol.h            存放符号相关定义（用于符号栈）
-        │   └── type.h              区分标识符和字面值具体类型的类（弃用）
-        ├── lexer                   词法分析器
-        │   ├── lexer.cpp           词法分析器lexer函数实现
-        │   └── lexer.h             词法分析器lexer类声明
+        ├── sema
+        │   ├── exprspace.h         表达式空间定义
+        │   ├── sema.cpp            语义分析类的函数定义
+        │   ├── sema.h              语义分析类的声明
+        │   └── stmtspace.h         语句空间的定义
         └── token                   token相关
             ├── token.cpp           token类函数实现
             └── token.h             tokenType定义和token类声明

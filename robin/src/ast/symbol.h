@@ -113,7 +113,5 @@ namespace symbol {
         Goto,
         Error
     };
-
-
 }
 #endif //ROBIN_SYMBOL_H

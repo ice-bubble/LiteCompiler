@@ -25,3 +25,8 @@ void reportParserError(parser::Parser *error_parser, const token::Token &error_t
     if (error_token.getType() == token::TOKEN_EOF) return error(error_token.getLine() - 1, message);
     error(error_token, message);
 }
+
+void reportSemanticError(size_t line, StringView message) {
+    error(line, message);
+    exit(EXIT_FAILURE);
+}

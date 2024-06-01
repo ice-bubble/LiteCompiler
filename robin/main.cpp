@@ -10,6 +10,7 @@
 #include "src/lexer/lexer.h"
 #include "src/parser/parser.h"
 #include "src/ast/production.h"
+#include "src/sema/sema.h"
 
 #ifdef DEBUG
 
@@ -46,6 +47,13 @@ static void repl() {
         List<SharedPtr<production::Production>> ast = parser.parserAst();
         if (parser.hasError)
             std::cerr << "There are syntax errors in the source code" << std::endl;
+        else {
+            sema::Sema sema = sema::Sema(ast[0]);
+            List<String> irCode = sema.generateIRCODE();
+            printIRCODE(irCode);
+        }
+
+
     }
 }
 
@@ -100,6 +108,12 @@ static void runFile(const String &path) {
     List<SharedPtr<production::Production>> ast = parser.parserAst();
     if (parser.hasError)
         std::cerr << "There are syntax errors in the source code" << std::endl;
+    else {
+        sema::Sema sema = sema::Sema(ast[0]);
+        List<String> irCode = sema.generateIRCODE();
+        printIRCODE(irCode);
+    }
+
 }
 
 

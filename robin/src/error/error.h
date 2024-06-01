@@ -30,4 +30,6 @@ void error(const token::Token &error_token, StringView message);
 
 void reportParserError(parser::Parser *error_parser, const token::Token &error_token, StringView message);
 
+void reportSemanticError(size_t line, StringView message);
+
 #endif //ROBIN_ERROR_H
