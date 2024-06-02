@@ -120,6 +120,8 @@ namespace production {
     class Token;
 
 
+    void mergeUniqueIntoA(List<size_t>* a, List<size_t>* b);
+
     class Production {
     public:
         static Map<token::TokenType, symbol::Symbol> tokenToSym;

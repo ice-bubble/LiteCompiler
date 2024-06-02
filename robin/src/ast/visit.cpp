@@ -453,8 +453,8 @@ namespace production {
 
         semaAna->codeStmtSpace.top().compare = static_cast<int>(semaAna->irCode.size());
         exprStmt2->jmp = true;
-        exprStmt2->trueJmp =  &(semaAna->codeStmtSpace.top().code2Sentences);
-        exprStmt2->falseJmp =  &(semaAna->codeStmtSpace.top().nextSentences);
+        exprStmt2->trueJmp = &(semaAna->codeStmtSpace.top().code2Sentences);
+        exprStmt2->falseJmp = &(semaAna->codeStmtSpace.top().nextSentences);
 
         exprStmt2->visit(semaAna);
 
@@ -497,8 +497,8 @@ namespace production {
         semaAna->codeStmtSpace.top().compareSentences.push_back(semaAna->irCode.size() - 1);
         semaAna->codeStmtSpace.top().compare = static_cast<int>(semaAna->irCode.size());
         expression->jmp = true;
-        expression->trueJmp =  &(semaAna->codeStmtSpace.top().code2Sentences);
-        expression->falseJmp =  &(semaAna->codeStmtSpace.top().nextSentences);
+        expression->trueJmp = &(semaAna->codeStmtSpace.top().nextSentences);
+        expression->falseJmp = &(semaAna->codeStmtSpace.top().code2Sentences);
 
         expression->visit(semaAna);
 
@@ -628,14 +628,14 @@ namespace production {
             val = resultPair.first;
             type = std::make_shared<ast::BOOL_Type>();
         } else {
-
             val = logic_and->val;
             type = logic_and->type;
+            if (jmp) {
+                mergeUniqueIntoA(falseJmp, &(semaAna->codeExprSpace.top().rightSentences));
+                semaAna->codeExprSpace.top().rightSentences.clear();
+            }
         }
-        if (jmp) {
-            semaAna->irCode.emplace_back("goto {}");
-            falseJmp->push_back(semaAna->irCode.size() - 1);
-        }
+
         semaAna->codeExprSpace.top().backpatch();
         semaAna->codeExprSpace.pop();
 
@@ -701,30 +701,19 @@ namespace production {
                                              logic_and_prime->op, line, semaAna);
             val = resultPair.first;
             type = std::make_shared<ast::BOOL_Type>();
-
         } else {
             std::cerr << "arrive Logic_and logic_and_prime op empty " << line << "\n";
             printIRCODE(semaAna->irCode);
             val = equality->val;
             type = equality->type;
-
+            if (jmp) {
+                mergeUniqueIntoA(trueJmp, &(semaAna->codeExprSpace.top().rightSentences));
+                semaAna->codeExprSpace.top().rightSentences.clear();
+            };
         }
-        if (jmp) {
-            semaAna->irCode.emplace_back("goto {}");
-            trueJmp->push_back(semaAna->irCode.size() - 1);
-        }
-        std::cerr << "arrive Logic_and before backpatch " << line << "\n";
-        printIRCODE(semaAna->irCode);
 
         semaAna->codeExprSpace.top().backpatch();
-
-        std::cerr << "arrive Logic_and before pop " << line << "\n";
-        printIRCODE(semaAna->irCode);
-
         semaAna->codeExprSpace.pop();
-
-        std::cerr << "arrive Logic_andEnd " << line << "\n";
-        printIRCODE(semaAna->irCode);
     }
 
     void Logic_and_prime::visit(sema::Sema *semaAna) {
@@ -940,7 +929,8 @@ namespace production {
             String numStr = std::to_string(incr_op->val > 0 ? incr_op->val : -incr_op->val);
             auto resultPair = autoConversion(unary->val, unary->type->selfType,
                                              numStr, ast::IdentifierType::INT_, op, line, semaAna);
-            val = resultPair.first;
+            val = unary->val;
+            if (val != resultPair.first) semaAna->irCode.emplace_back(fmt::format("{}={}", val, resultPair.first));
             type = ast::Type::makeTypeInstance(resultPair.second);
         }
     }

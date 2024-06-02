@@ -15,6 +15,7 @@
 #include <map>
 #include <vector>
 #include <any>
+#include <unordered_set>
 #include <utility>
 #include <memory>
 #include <stack>
@@ -31,6 +32,9 @@ using List = std::vector<T>;
 
 template<typename Key, typename Value>
 using Map = std::map<Key, Value>;
+
+template<typename T>
+using Set = std::unordered_set<T>;
 
 template<typename TYPE>
 using SharedPtr = std::shared_ptr<TYPE>;
