@@ -9,14 +9,9 @@
 namespace sema {
     class Sema;
 
-    enum jmpTarget {
-        error,
-        code1,
-        code2,
-        compare,
-        next,
-        right
-    };
+    class StmtSpace;
+
+    class ExprSpace;
 
     String stringMul(String left, String right, Sema *semaAna);
 

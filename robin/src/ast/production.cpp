@@ -61,28 +61,6 @@ namespace production {
             {token::TOKEN_FOR,           symbol::Symbol::FOR}
     };
 
-    void Production::setJmpTarget(sema::jmpTarget target, size_t line, sema::Sema *semaAna) {
-        switch (target) {
-            case sema::code1:
-                semaAna->codeStmtSpace.top().code1Sentences.push_back(line);
-                break;
-            case sema::code2:
-                semaAna->codeStmtSpace.top().code2Sentences.push_back(line);
-                break;
-            case sema::compare:
-                semaAna->codeStmtSpace.top().compareSentences.push_back(line);
-                break;
-            case sema::next:
-                semaAna->codeStmtSpace.top().nextSentences.push_back(line);
-                break;
-            case sema::right:
-                semaAna->codeExprSpace.top().rightSentences.push_back(line);
-                break;
-            default:
-                reportSemanticError(line, "backpatching error in irCode");
-        }
-    }
-
     String Production::autoConversion(String originName, ast::IdentifierType originType,
                                       ast::IdentifierType expectType, size_t line, sema::Sema *semaAna) {
         auto realT = ast::Type::typeTransform[{originType, expectType}];

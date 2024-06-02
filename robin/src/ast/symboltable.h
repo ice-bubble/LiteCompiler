@@ -28,7 +28,7 @@ namespace ast {
 
     class SymTab {
     public:
-        SharedPtr<SymTab> outer = nullptr;
+        SymTab *outer = nullptr;
         size_t offset = 0;
 
         SymTab() = default;
@@ -45,19 +45,35 @@ namespace ast {
             return true; // 插入成功
         }
 
-        bool changeReturnType(String name, SharedPtr<Type> returnType) {
-            auto thisVar = varTab.find(name);
-            if (thisVar == varTab.end()) {
-                return false;
-            }
-            thisVar->second.returnType=returnType->selfType;
-            return true;
-        }
-
         Variable *lookup(const String &name) {
             auto it = varTab.find(name);
             if (it != varTab.end()) return &(it->second);
-            return nullptr;
+            if (outer == nullptr) return nullptr;
+            return outer->lookup(name);
+        }
+
+        bool changeReturnType(const String& name, SharedPtr<Type> returnType) {
+            auto thisVar = lookup(name);
+            if (thisVar == nullptr) return false;
+            thisVar->returnType = returnType->selfType;
+            return true;
+        }
+
+
+
+        static SymTab *genNewSymTab(SymTab *thisTab) {
+            if (thisTab == nullptr) return nullptr;
+            auto newTab = new SymTab;
+            newTab->outer = thisTab;
+            return newTab;
+        }
+
+
+        static SymTab *throwThisSymTab(SymTab *thisTab) {
+            if (thisTab == nullptr) return nullptr;
+            SymTab *outerTab = thisTab->outer;
+            delete thisTab;
+            return outerTab;
         }
 
     private:

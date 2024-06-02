@@ -128,8 +128,6 @@ namespace production {
 
         virtual void visit(sema::Sema *semaAna) = 0;
 
-        static void setJmpTarget(sema::jmpTarget target, size_t line, sema::Sema *semaAna);
-
         static String autoConversion(String originName, ast::IdentifierType originType,
                                      ast::IdentifierType expectType, size_t line, sema::Sema *semaAna);
 
@@ -655,8 +653,8 @@ namespace production {
         SharedPtr<ast::Type> type;
         SharedPtr<ast::Type> returnType;
         bool jmp = false;
-        sema::jmpTarget trueJmp = sema::jmpTarget::error;
-        sema::jmpTarget falseJmp = sema::jmpTarget::error;
+        List<size_t> *trueJmp = nullptr;
+        List<size_t> *falseJmp = nullptr;
 
         explicit ExprStmt(size_t line) : line(line) { thisSymbol = symbol::Symbol::exprStmt; }
 
@@ -1043,8 +1041,8 @@ namespace production {
         SharedPtr<ast::Type> type;
         String val;
         bool jmp = false;
-        sema::jmpTarget trueJmp = sema::jmpTarget::error;
-        sema::jmpTarget falseJmp = sema::jmpTarget::error;
+        List<size_t> *trueJmp = nullptr;
+        List<size_t> *falseJmp = nullptr;
 
         Expression(size_t line, SharedPtr<Assignment> assignment)
                 : line(line),
@@ -1063,8 +1061,8 @@ namespace production {
         SharedPtr<ast::Type> type;
         String val;
         bool jmp = false;
-        sema::jmpTarget trueJmp = sema::jmpTarget::error;
-        sema::jmpTarget falseJmp = sema::jmpTarget::error;
+        List<size_t> *trueJmp = nullptr;
+        List<size_t> *falseJmp = nullptr;
 
         explicit Assignment(size_t line) : line(line) { thisSymbol = symbol::Symbol::assignment; }
 
@@ -1110,8 +1108,8 @@ namespace production {
         SharedPtr<ast::Type> type;
         String val;
         bool jmp = false;
-        sema::jmpTarget trueJmp = sema::jmpTarget::error;
-        sema::jmpTarget falseJmp = sema::jmpTarget::error;
+        List<size_t> *trueJmp = nullptr;
+        List<size_t> *falseJmp = nullptr;
 
         Logic_or(size_t line, SharedPtr<Logic_and> logic_and, SharedPtr<Logic_or_prime> logic_or_prime)
                 : line(line),
@@ -1132,8 +1130,8 @@ namespace production {
         String val;
         String op;
         bool jmp = false;
-        sema::jmpTarget trueJmp = sema::jmpTarget::error;
-        sema::jmpTarget falseJmp = sema::jmpTarget::error;
+        List<size_t> *trueJmp = nullptr;
+        List<size_t> *falseJmp = nullptr;
 
         explicit Logic_or_prime(size_t line) : line(line) { thisSymbol = symbol::Symbol::logic_or_prime; }
 
@@ -1173,8 +1171,8 @@ namespace production {
         SharedPtr<ast::Type> type;
         String val;
         bool jmp = false;
-        sema::jmpTarget trueJmp = sema::jmpTarget::error;
-        sema::jmpTarget falseJmp = sema::jmpTarget::error;
+        List<size_t> *trueJmp = nullptr;
+        List<size_t> *falseJmp = nullptr;
 
         Logic_and(size_t line, SharedPtr<Equality> equality, SharedPtr<Logic_and_prime> logic_and_prime)
                 : line(line),
@@ -1195,8 +1193,8 @@ namespace production {
         String val;
         String op;
         bool jmp = false;
-        sema::jmpTarget trueJmp = sema::jmpTarget::error;
-        sema::jmpTarget falseJmp = sema::jmpTarget::error;
+        List<size_t> *trueJmp = nullptr;
+        List<size_t> *falseJmp = nullptr;
 
         explicit Logic_and_prime(size_t line) : line(line) { thisSymbol = symbol::Symbol::logic_and_prime; }
 

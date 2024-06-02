@@ -120,7 +120,13 @@ namespace production {
         id = token_IDENTIFIER->toString();
         semaAna->irCode.emplace_back(fmt::format("{}:", id));
         SharedPtr<ast::Type> thisType = std::make_shared<ast::FUNC_Type>();
-        semaAna->top.insert(id, thisType, thisType->width);
+        if (!semaAna->top->insert(id, thisType, thisType->width)) {
+            reportSemanticError(line, fmt::format("the variable '{}' is exist in symbol table", id));
+        }
+
+        semaAna->top = ast::SymTab::genNewSymTab(semaAna->top);
+        if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
+
         paramList->visit(semaAna);
         block->visit(semaAna);
         returnType = block->returnType;
@@ -128,9 +134,11 @@ namespace production {
         if (returnType->selfType == ast::IdentifierType::VAR_) {
             reportSemanticError(line, "invalid return type for the function");
         }
-        if (!semaAna->top.changeReturnType(id, returnType)) {
+        if (!semaAna->top->changeReturnType(id, returnType)) {
             reportSemanticError(line, "invalid function definition");
         }
+        semaAna->top = ast::SymTab::throwThisSymTab(semaAna->top);
+        if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
     }
 
     void VarDecl::visit(sema::Sema *semaAna) {
@@ -155,7 +163,7 @@ namespace production {
             ast::IdentifierType legalType =
                     ast::Type::typeTransform[{varInit->type->selfType, var->type->selfType}];
             if (legalType != ast::IdentifierType::BASE_) {
-                auto varInTop = semaAna->top.lookup(var->id);
+                auto varInTop = semaAna->top->lookup(var->id);
                 varInTop->value = varInit->val;
             } else {
                 String errorMsg = fmt::format("assignment from {} to {} is illegal",
@@ -248,7 +256,7 @@ namespace production {
     void ExprStmt2::visit(sema::Sema *semaAna) {
         if (jmp) {
             semaAna->irCode.emplace_back("goto {}");
-            setJmpTarget(trueJmp, semaAna->irCode.size() - 1, semaAna);
+            trueJmp->push_back(semaAna->irCode.size() - 1);
         }
         val = "true";
         type = std::make_shared<ast::BOOL_Type>();
@@ -256,32 +264,36 @@ namespace production {
     }
 
     void IfStmt::visit(sema::Sema *semaAna) {
+        semaAna->top = ast::SymTab::genNewSymTab(semaAna->top);
+        if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
         std::cerr << "arrive IfStmt " << line << "\n";
         printIRCODE(semaAna->irCode);
 
         semaAna->codeStmtSpace.emplace(&(semaAna->irCode));
         expression->jmp = true;
-        expression->trueJmp = sema::code1;
-        expression->falseJmp = sema::code2;
+        expression->trueJmp = &(semaAna->codeStmtSpace.top().code1Sentences);
+        expression->falseJmp = &(semaAna->codeStmtSpace.top().code2Sentences);
 
         expression->visit(semaAna);
-
-        semaAna->codeStmtSpace.top().code1 = static_cast<int>(semaAna->irCode.size());
 
         std::cout << semaAna->irCode.size() << std::endl;
         std::cerr << "arrive IfStmt statement " << line << "\n";
         printIRCODE(semaAna->irCode);
 
+        semaAna->codeStmtSpace.top().code1 = static_cast<int>(semaAna->irCode.size());
         statement->visit(semaAna);
 
         semaAna->irCode.emplace_back("goto {}");
         semaAna->codeStmtSpace.top().nextSentences.push_back(semaAna->irCode.size() - 1);
 
-        std::cout << semaAna->irCode.size() << std::endl;
         std::cerr << "arrive IfStmt elseBranch " << line << "\n";
         printIRCODE(semaAna->irCode);
 
+        semaAna->codeStmtSpace.top().code2 = static_cast<int>(semaAna->irCode.size());
         elseBranch->visit(semaAna);
+
+        std::cerr << "ifStmt code1:" << semaAna->codeStmtSpace.top().code1 << " code2:"
+                  << semaAna->codeStmtSpace.top().code2 << std::endl;
 
         returnType = ast::Type::chooseReturnType(statement->returnType, elseBranch->returnType, line);
         semaAna->irCode.emplace_back("goto {}");
@@ -293,6 +305,8 @@ namespace production {
 
         std::cerr << "arrive IfStmtEnd " << line << "\n";
         printIRCODE(semaAna->irCode);
+        semaAna->top = ast::SymTab::throwThisSymTab(semaAna->top);
+        if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
     }
 
     void ElseBranch::visit(sema::Sema *semaAna) {
@@ -300,23 +314,23 @@ namespace production {
     }
 
     void ElseBranch1::visit(sema::Sema *semaAna) {
-        semaAna->codeStmtSpace.top().code2 = static_cast<int>(semaAna->irCode.size());
         statement->visit(semaAna);
         returnType = statement->returnType;
     }
 
     void ElseBranch2::visit(sema::Sema *semaAna) {
-        semaAna->codeStmtSpace.top().code2 = static_cast<int>(semaAna->irCode.size());
         returnType = std::make_shared<ast::BASE_Type>();
     }
 
     void WhileStmt::visit(sema::Sema *semaAna) {
+        semaAna->top = ast::SymTab::genNewSymTab(semaAna->top);
+        if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
         semaAna->codeStmtSpace.emplace(&(semaAna->irCode));
         semaAna->codeStmtSpace.top().compare = static_cast<int>(semaAna->irCode.size());
         semaAna->codeStmtSpace.top().code1 = static_cast<int>(semaAna->irCode.size());
         expression->jmp = true;
-        expression->trueJmp = sema::code2;
-        expression->falseJmp = sema::next;
+        expression->trueJmp = &(semaAna->codeStmtSpace.top().code2Sentences);
+        expression->falseJmp = &(semaAna->codeStmtSpace.top().nextSentences);
 
         expression->visit(semaAna);
 
@@ -330,6 +344,8 @@ namespace production {
         semaAna->codeStmtSpace.top().next = static_cast<int>(semaAna->irCode.size());
         semaAna->codeStmtSpace.top().backpatch();
         semaAna->codeStmtSpace.pop();
+        semaAna->top = ast::SymTab::throwThisSymTab(semaAna->top);
+        if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
     }
 
     void ForStmt::visit(sema::Sema *semaAna) {
@@ -337,6 +353,8 @@ namespace production {
     }
 
     void ForStmt1::visit(sema::Sema *semaAna) {
+        semaAna->top = ast::SymTab::genNewSymTab(semaAna->top);
+        if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
         semaAna->codeStmtSpace.emplace(&(semaAna->irCode));
 
         varDecl->visit(semaAna);
@@ -344,8 +362,8 @@ namespace production {
         semaAna->codeStmtSpace.top().compare = static_cast<int>(semaAna->irCode.size());
         semaAna->codeStmtSpace.top().code1 = static_cast<int>(semaAna->irCode.size());
         exprStmt->jmp = true;
-        exprStmt->trueJmp = sema::code2;
-        exprStmt->falseJmp = sema::next;
+        exprStmt->trueJmp = &(semaAna->codeStmtSpace.top().code2Sentences);
+        exprStmt->falseJmp = &(semaAna->codeStmtSpace.top().nextSentences);
 
         exprStmt->visit(semaAna);
 
@@ -359,17 +377,21 @@ namespace production {
         semaAna->codeStmtSpace.top().next = static_cast<int>(semaAna->irCode.size());
         semaAna->codeStmtSpace.top().backpatch();
         semaAna->codeStmtSpace.pop();
+        semaAna->top = ast::SymTab::throwThisSymTab(semaAna->top);
+        if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
     }
 
     void ForStmt2::visit(sema::Sema *semaAna) {
+        semaAna->top = ast::SymTab::genNewSymTab(semaAna->top);
+        if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
         semaAna->codeStmtSpace.emplace(&(semaAna->irCode));
 
         varDecl->visit(semaAna);
 
         semaAna->codeStmtSpace.top().compare = static_cast<int>(semaAna->irCode.size());
         exprStmt->jmp = true;
-        exprStmt->trueJmp = sema::code2;
-        exprStmt->falseJmp = sema::next;
+        exprStmt->trueJmp = &(semaAna->codeStmtSpace.top().code2Sentences);
+        exprStmt->falseJmp = &(semaAna->codeStmtSpace.top().nextSentences);
 
         exprStmt->visit(semaAna);
 
@@ -389,9 +411,13 @@ namespace production {
         semaAna->codeStmtSpace.top().next = static_cast<int>(semaAna->irCode.size());
         semaAna->codeStmtSpace.top().backpatch();
         semaAna->codeStmtSpace.pop();
+        semaAna->top = ast::SymTab::throwThisSymTab(semaAna->top);
+        if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
     }
 
     void ForStmt3::visit(sema::Sema *semaAna) {
+        semaAna->top = ast::SymTab::genNewSymTab(semaAna->top);
+        if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
         semaAna->codeStmtSpace.emplace(&(semaAna->irCode));
 
         exprStmt1->visit(semaAna);
@@ -399,8 +425,8 @@ namespace production {
         semaAna->codeStmtSpace.top().compare = static_cast<int>(semaAna->irCode.size());
         semaAna->codeStmtSpace.top().code1 = static_cast<int>(semaAna->irCode.size());
         exprStmt2->jmp = true;
-        exprStmt2->trueJmp = sema::code2;
-        exprStmt2->falseJmp = sema::next;
+        exprStmt2->trueJmp = &(semaAna->codeStmtSpace.top().code2Sentences);
+        exprStmt2->falseJmp = &(semaAna->codeStmtSpace.top().nextSentences);
 
         exprStmt2->visit(semaAna);
 
@@ -414,17 +440,21 @@ namespace production {
         semaAna->codeStmtSpace.top().next = static_cast<int>(semaAna->irCode.size());
         semaAna->codeStmtSpace.top().backpatch();
         semaAna->codeStmtSpace.pop();
+        semaAna->top = ast::SymTab::throwThisSymTab(semaAna->top);
+        if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
     }
 
     void ForStmt4::visit(sema::Sema *semaAna) {
+        semaAna->top = ast::SymTab::genNewSymTab(semaAna->top);
+        if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
         semaAna->codeStmtSpace.emplace(&(semaAna->irCode));
 
         exprStmt1->visit(semaAna);
 
         semaAna->codeStmtSpace.top().compare = static_cast<int>(semaAna->irCode.size());
         exprStmt2->jmp = true;
-        exprStmt2->trueJmp = sema::code2;
-        exprStmt2->falseJmp = sema::next;
+        exprStmt2->trueJmp =  &(semaAna->codeStmtSpace.top().code2Sentences);
+        exprStmt2->falseJmp =  &(semaAna->codeStmtSpace.top().nextSentences);
 
         exprStmt2->visit(semaAna);
 
@@ -444,14 +474,19 @@ namespace production {
         semaAna->codeStmtSpace.top().next = static_cast<int>(semaAna->irCode.size());
         semaAna->codeStmtSpace.top().backpatch();
         semaAna->codeStmtSpace.pop();
+        semaAna->top = ast::SymTab::throwThisSymTab(semaAna->top);
+        if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
     }
 
     void Block::visit(sema::Sema *semaAna) {
+
         declarations->visit(semaAna);
         returnType = declarations->returnType;
     }
 
     void RepeatStmt::visit(sema::Sema *semaAna) {
+        semaAna->top = ast::SymTab::genNewSymTab(semaAna->top);
+        if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
         semaAna->codeStmtSpace.emplace(&(semaAna->irCode));
         semaAna->codeStmtSpace.top().code2 = static_cast<int>(semaAna->irCode.size());
 
@@ -462,14 +497,16 @@ namespace production {
         semaAna->codeStmtSpace.top().compareSentences.push_back(semaAna->irCode.size() - 1);
         semaAna->codeStmtSpace.top().compare = static_cast<int>(semaAna->irCode.size());
         expression->jmp = true;
-        expression->trueJmp = sema::code2;
-        expression->falseJmp = sema::next;
+        expression->trueJmp =  &(semaAna->codeStmtSpace.top().code2Sentences);
+        expression->falseJmp =  &(semaAna->codeStmtSpace.top().nextSentences);
 
         expression->visit(semaAna);
 
         semaAna->codeStmtSpace.top().next = static_cast<int>(semaAna->irCode.size());
         semaAna->codeStmtSpace.top().backpatch();
         semaAna->codeStmtSpace.pop();
+        semaAna->top = ast::SymTab::throwThisSymTab(semaAna->top);
+        if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
     }
 
     void ParamList::visit(sema::Sema *semaAna) {
@@ -542,9 +579,9 @@ namespace production {
         type = var->type;
         if (jmp) {
             semaAna->irCode.emplace_back("if " + var->val + " goto {}");
-            setJmpTarget(trueJmp, semaAna->irCode.size() - 1, semaAna);
+            trueJmp->push_back(semaAna->irCode.size() - 1);
             semaAna->irCode.emplace_back("goto {}");
-            setJmpTarget(falseJmp, semaAna->irCode.size() - 1, semaAna);
+            falseJmp->push_back(semaAna->irCode.size() - 1);
         }
     }
 
@@ -573,7 +610,7 @@ namespace production {
         semaAna->codeExprSpace.emplace(&(semaAna->irCode));
         logic_and->jmp = jmp;
         logic_and->trueJmp = trueJmp;
-        logic_and->falseJmp = sema::right;
+        logic_and->falseJmp = &(semaAna->codeExprSpace.top().rightSentences);
         logic_or_prime->jmp = jmp;
         logic_or_prime->trueJmp = trueJmp;
         logic_or_prime->falseJmp = falseJmp;
@@ -591,12 +628,13 @@ namespace production {
             val = resultPair.first;
             type = std::make_shared<ast::BOOL_Type>();
         } else {
-            if (jmp) {
-                semaAna->irCode.emplace_back("goto {}");
-                setJmpTarget(trueJmp, semaAna->irCode.size() - 1, semaAna);
-            }
+
             val = logic_and->val;
             type = logic_and->type;
+        }
+        if (jmp) {
+            semaAna->irCode.emplace_back("goto {}");
+            falseJmp->push_back(semaAna->irCode.size() - 1);
         }
         semaAna->codeExprSpace.top().backpatch();
         semaAna->codeExprSpace.pop();
@@ -643,7 +681,7 @@ namespace production {
             semaAna->irCode.emplace_back("if " + equality->val + " goto {}");
             semaAna->codeExprSpace.top().rightSentences.push_back(semaAna->irCode.size() - 1);
             semaAna->irCode.emplace_back("goto {}");
-            setJmpTarget(falseJmp, semaAna->irCode.size() - 1, semaAna);
+            falseJmp->push_back(semaAna->irCode.size() - 1);
         }
         semaAna->codeExprSpace.top().right = static_cast<int>(semaAna->irCode.size());
 
@@ -663,21 +701,17 @@ namespace production {
                                              logic_and_prime->op, line, semaAna);
             val = resultPair.first;
             type = std::make_shared<ast::BOOL_Type>();
-            if (jmp) {
-                semaAna->irCode.push_back("if " + logic_and_prime->val + " goto {}");
-                setJmpTarget(trueJmp, semaAna->irCode.size() - 1, semaAna);
-                semaAna->irCode.emplace_back("goto {}");
-                setJmpTarget(falseJmp, semaAna->irCode.size() - 1, semaAna);
-            }
+
         } else {
             std::cerr << "arrive Logic_and logic_and_prime op empty " << line << "\n";
             printIRCODE(semaAna->irCode);
             val = equality->val;
             type = equality->type;
-            if (jmp) {
-                semaAna->irCode.emplace_back("goto {}");
-                setJmpTarget(trueJmp, semaAna->irCode.size() - 1, semaAna);
-            }
+
+        }
+        if (jmp) {
+            semaAna->irCode.emplace_back("goto {}");
+            trueJmp->push_back(semaAna->irCode.size() - 1);
         }
         std::cerr << "arrive Logic_and before backpatch " << line << "\n";
         printIRCODE(semaAna->irCode);
@@ -1000,7 +1034,7 @@ namespace production {
         call_suffix->visit(semaAna);
 
         isExist = true;
-        auto calleeInTop = semaAna->top.lookup(callee);
+        auto calleeInTop = semaAna->top->lookup(callee);
         if (calleeInTop != nullptr) {
             type = ast::Type::makeTypeInstance(calleeInTop->returnType);
         } else {
@@ -1122,7 +1156,7 @@ namespace production {
             varSuffix->w = w;
         } else {
             id = token_IDENTIFIER->toString();
-            auto thisVarInTop = semaAna->top.lookup(id);
+            auto thisVarInTop = semaAna->top->lookup(id);
             if (thisVarInTop != nullptr) {
                 type = thisVarInTop->varType;
             } else {
@@ -1139,11 +1173,13 @@ namespace production {
         if (usage == define) {
             type = varSuffix->type;
             width = sema::stringMul(varSuffix->width, varSuffix->length, semaAna);
-            semaAna->top.insert(id, type, width);
+            if (!semaAna->top->insert(id, type, width)) {
+                reportSemanticError(line, fmt::format("the variable '{}' is exist in symbol table", id));
+            }
             semaAna->irCode.emplace_back(fmt::format("define {} {}", id, type->toString()));
         } else {
             offset = varSuffix->offset;
-            type=varSuffix->returnType;
+            type = varSuffix->returnType;
             if (offset == "0") {
                 val = id;
             } else {
@@ -1152,7 +1188,7 @@ namespace production {
                 val = tmpT1;
             }
         }
-        std::cerr << line << " " << id <<" "<<offset<< std::endl;
+        std::cerr << line << " " << id << " " << offset << std::endl;
     }
 
     void VarSuffix::visit(sema::Sema *semaAna) {
@@ -1188,12 +1224,12 @@ namespace production {
             type = std::make_shared<ast::ARRAY_Type>(varSuffix->type, tmpT1, length);
 
         } else {
-            std::cerr<<"before get width length:"<<varSuffix->length<<" width:"<<varSuffix->width<<" \n";
+            std::cerr << "before get width length:" << varSuffix->length << " width:" << varSuffix->width << " \n";
             width = sema::stringMul(varSuffix->width, varSuffix->length, semaAna);
-            std::cerr<<"len:"<<len<<" width:"<<width<<" \n";
+            std::cerr << "len:" << len << " width:" << width << " \n";
             String tmpT1 = sema::stringMul(len, width, semaAna);
             offset = sema::stringPlus(varSuffix->offset, tmpT1, semaAna);
-            returnType=varSuffix->returnType;
+            returnType = varSuffix->returnType;
         }
     }
 
@@ -1208,8 +1244,8 @@ namespace production {
             width = w;
         } else {
             width = type->width;
-            returnType=type;
-            std::cerr<<"length:"<<length<<" width:"<<width<<" \n";
+            returnType = type;
+            std::cerr << "length:" << length << " width:" << width << " \n";
         }
     }
 

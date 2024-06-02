@@ -18,7 +18,7 @@ namespace sema {
 
         SharedPtr<production::Production> program;
         List<String> irCode;
-        ast::SymTab top;
+        ast::SymTab *top;
         Stack<StmtSpace> codeStmtSpace;
         Stack<ExprSpace> codeExprSpace;
 
