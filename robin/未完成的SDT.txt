@@ -971,6 +971,7 @@ List<Variable> top;
                     irCode.push_back("{tmp1}={var.id}+{var.offset}");
                     var.val=tmp1;
                 }
+                var.type=varSuffix.returnType;
             }
          }
          
@@ -1003,6 +1004,7 @@ List<Variable> top;
                     {
                         varSuffix.width=varSuffix1.width*varSuffix1.length;
                         varSuffix.offset=varSuffix1.offset+varSuffix.len*varSuffix.width;
+                        varSuffix.returnType=varSuffix1.returnType;
                     }
                }
                
@@ -1018,5 +1020,6 @@ List<Variable> top;
                     {
                         varSuffix.width=varSuffix.type.length;
                         varSuffix.offset=0;
+                        varSuffix.returnType=varSuffix.type;
                     }
                }

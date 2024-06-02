@@ -38,7 +38,7 @@ namespace ast {
 
         static SharedPtr<Type> makeTypeInstance(ast::IdentifierType requestedType);
 
-        //static IdentifierType getTypeTransform(IdentifierType t1,IdentifierType t2);
+        static SharedPtr<Type> chooseReturnType(SharedPtr<Type> t1, SharedPtr<Type> t2, size_t line);
 
         Type() = default;
 

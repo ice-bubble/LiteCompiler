@@ -4,6 +4,7 @@
 #define ROBIN_PRODUCTION_H
 
 #include "symboltable.h"
+#include "presema.h"
 #include "type.h"
 #include "../common.h"
 #include "../token/token.h"
@@ -11,25 +12,8 @@
 #include "../sema/stmtspace.h"
 #include "../sema/exprspace.h"
 
-namespace sema {
-    class Sema;
-
-    enum jmpTarget {
-        error,
-        code1,
-        code2,
-        compare,
-        next,
-        right
-    };
-
-    String stringMul(String left, String right, Sema *semaAna);
-
-    String stringPlus(String left, String right, Sema *semaAna);
-}
-
-
 namespace production {
+
     enum Usage {
         reference,
         define
@@ -2007,7 +1991,8 @@ namespace production {
         SharedPtr<ast::Type> t;
         String width = "0";
         SharedPtr<ast::Type> type;
-        String len;
+        SharedPtr<ast::Type> returnType;
+        String len="0";
         String length = "0";
         String offset = "0";
         Usage usage = Usage::reference;

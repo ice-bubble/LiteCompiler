@@ -9,65 +9,6 @@
 
 namespace production {
 
-    void Production::setJmpTarget(sema::jmpTarget target, size_t line, sema::Sema *semaAna) {
-        switch (target) {
-            case sema::code1:
-                semaAna->codeStmtSpace.top().code1Sentences.push_back(line);
-                break;
-            case sema::code2:
-                semaAna->codeStmtSpace.top().code2Sentences.push_back(line);
-                break;
-            case sema::compare:
-                semaAna->codeStmtSpace.top().compareSentences.push_back(line);
-                break;
-            case sema::next:
-                semaAna->codeStmtSpace.top().nextSentences.push_back(line);
-                break;
-            case sema::right:
-                semaAna->codeExprSpace.top().rightSentences.push_back(line);
-                break;
-            default:
-                reportSemanticError(line, "backpatching error in irCode");
-        }
-    }
-
-    String Production::autoConversion(String originName, ast::IdentifierType originType,
-                                      ast::IdentifierType expectType, size_t line, sema::Sema *semaAna) {
-        auto realT = ast::Type::typeTransform[{originType, expectType}];
-        if (realT != ast::IdentifierType::BASE_) {
-            if (realT == originType) return originName;
-            String tmpT = sema::Sema::genT();
-            String code = fmt::format("{}=({}){}", tmpT, ast::Type::typeToString[realT], originName);
-            semaAna->irCode.emplace_back(code);
-            return tmpT;
-        } else {
-            String errorMsg = fmt::format("assignment from {} to {} is illegal",
-                                          ast::Type::typeToString[originType], ast::Type::typeToString[expectType]);
-            reportSemanticError(line, errorMsg);
-        }
-        return "";
-    }
-
-    Pair<String, ast::IdentifierType> Production::autoConversion(String leftName, ast::IdentifierType leftType,
-                                                                 String rightName, ast::IdentifierType rightType,
-                                                                 String op, size_t line, sema::Sema *semaAna) {
-        ast::IdentifierType leftT = ast::Type::typeTransform[{leftType, rightType}];
-        ast::IdentifierType rightT = ast::Type::typeTransform[{rightType, leftType}];
-        if (leftT != rightT || leftT == ast::IdentifierType::BASE_ || rightType == ast::IdentifierType::BASE_) {
-            String errorMsg = fmt::format("operation between {} and {} is illegal",
-                                          ast::Type::typeToString[leftType], ast::Type::typeToString[rightType]);
-            reportSemanticError(line, errorMsg);
-        } else {
-            String tmpT1 = autoConversion(leftName, leftType, leftT, line, semaAna);
-            String tmpT2 = autoConversion(rightName, rightType, rightT, line, semaAna);
-            String tmpT3 = sema::Sema::genT();
-            String code = fmt::format("{}={}{}{}", tmpT3, tmpT1, op, tmpT2);
-            semaAna->irCode.emplace_back(code);
-            return std::make_pair(tmpT3, leftT);
-        }
-        return std::make_pair("", ast::IdentifierType::BASE_);
-    }
-
     void S::visit(sema::Sema *semaAna) {
         program->visit(semaAna);
     }
@@ -84,18 +25,11 @@ namespace production {
         declaration->visit(semaAna);
         returnType = declaration->returnType;
         declarations->visit(semaAna);
-        auto deType = declaration->returnType->selfType;
-        auto desType = declarations->returnType->selfType;
-        if (deType == ast::IdentifierType::VAR_) { returnType = declarations->returnType; }
-
-        if (deType != ast::IdentifierType::VAR_ && desType != ast::IdentifierType::VAR_ && deType != desType &&
-            (deType != ast::IdentifierType::NIL_ && desType != ast::IdentifierType::NIL_)) {
-            reportSemanticError(line, "this function has more then a type of return");
-        }
+        returnType = ast::Type::chooseReturnType(declaration->returnType, declarations->returnType, line);
     }
 
     void Declarations2::visit(sema::Sema *semaAna) {
-        returnType = std::make_shared<ast::VAR_Type>();
+        returnType = std::make_shared<ast::BASE_Type>();
     }
 
     void Declaration::visit(sema::Sema *semaAna) {
@@ -104,12 +38,12 @@ namespace production {
 
     void Declaration1::visit(sema::Sema *semaAna) {
         funDecl->visit(semaAna);
-        returnType = std::make_shared<ast::NIL_Type>();
+        returnType = std::make_shared<ast::BASE_Type>();
     }
 
     void Declaration2::visit(sema::Sema *semaAna) {
         varDecl->visit(semaAna);
-        returnType = std::make_shared<ast::NIL_Type>();
+        returnType = std::make_shared<ast::BASE_Type>();
     }
 
     void Declaration3::visit(sema::Sema *semaAna) {
@@ -123,12 +57,12 @@ namespace production {
 
     void Statement1::visit(sema::Sema *semaAna) {
         breakStmt->visit(semaAna);
-        returnType = std::make_shared<ast::NIL_Type>();
+        returnType = std::make_shared<ast::BASE_Type>();
     }
 
     void Statement2::visit(sema::Sema *semaAna) {
         continueStmt->visit(semaAna);
-        returnType = std::make_shared<ast::NIL_Type>();
+        returnType = std::make_shared<ast::BASE_Type>();
     }
 
     void Statement3::visit(sema::Sema *semaAna) {
@@ -138,7 +72,7 @@ namespace production {
 
     void Statement4::visit(sema::Sema *semaAna) {
         exprStmt->visit(semaAna);
-        returnType = std::make_shared<ast::NIL_Type>();
+        returnType = std::make_shared<ast::BASE_Type>();
     }
 
     void Statement5::visit(sema::Sema *semaAna) {
@@ -190,6 +124,7 @@ namespace production {
         paramList->visit(semaAna);
         block->visit(semaAna);
         returnType = block->returnType;
+        if (returnType->selfType == ast::IdentifierType::BASE_) { returnType = std::make_shared<ast::NIL_Type>(); }
         if (returnType->selfType == ast::IdentifierType::VAR_) {
             reportSemanticError(line, "invalid return type for the function");
         }
@@ -339,7 +274,6 @@ namespace production {
 
         statement->visit(semaAna);
 
-        returnType = statement->returnType;
         semaAna->irCode.emplace_back("goto {}");
         semaAna->codeStmtSpace.top().nextSentences.push_back(semaAna->irCode.size() - 1);
 
@@ -349,16 +283,7 @@ namespace production {
 
         elseBranch->visit(semaAna);
 
-        auto stateType = statement->returnType->selfType;
-        auto elseType = elseBranch->returnType->selfType;
-        if (elseType != ast::IdentifierType::VAR_) {
-            returnType = elseBranch->returnType;
-        }
-        if (stateType != ast::IdentifierType::VAR_ && elseType != ast::IdentifierType::VAR_ &&
-            stateType != elseType &&
-            stateType != ast::IdentifierType::NIL_ && elseType != ast::IdentifierType::NIL_) {
-            reportSemanticError(line, "this function has more then a type of return");
-        }
+        returnType = ast::Type::chooseReturnType(statement->returnType, elseBranch->returnType, line);
         semaAna->irCode.emplace_back("goto {}");
         semaAna->codeStmtSpace.top().nextSentences.push_back(semaAna->irCode.size() - 1);
 
@@ -382,7 +307,7 @@ namespace production {
 
     void ElseBranch2::visit(sema::Sema *semaAna) {
         semaAna->codeStmtSpace.top().code2 = static_cast<int>(semaAna->irCode.size());
-        returnType = std::make_shared<ast::NIL_Type>();
+        returnType = std::make_shared<ast::BASE_Type>();
     }
 
     void WhileStmt::visit(sema::Sema *semaAna) {
@@ -1209,8 +1134,6 @@ namespace production {
             varSuffix->length = varSuffix->type->length;
         }
 
-        std::cerr << line << " " << id << std::endl;
-
         varSuffix->visit(semaAna);
 
         if (usage == define) {
@@ -1220,6 +1143,7 @@ namespace production {
             semaAna->irCode.emplace_back(fmt::format("define {} {}", id, type->toString()));
         } else {
             offset = varSuffix->offset;
+            type=varSuffix->returnType;
             if (offset == "0") {
                 val = id;
             } else {
@@ -1228,6 +1152,7 @@ namespace production {
                 val = tmpT1;
             }
         }
+        std::cerr << line << " " << id <<" "<<offset<< std::endl;
     }
 
     void VarSuffix::visit(sema::Sema *semaAna) {
@@ -1250,7 +1175,7 @@ namespace production {
             len = expression->val;
             varSuffix->usage = usage;
             varSuffix->type = type->varType;
-            varSuffix->length = type->length;
+            varSuffix->length = varSuffix->type->length;
         }
 
         varSuffix->visit(semaAna);
@@ -1263,9 +1188,12 @@ namespace production {
             type = std::make_shared<ast::ARRAY_Type>(varSuffix->type, tmpT1, length);
 
         } else {
+            std::cerr<<"before get width length:"<<varSuffix->length<<" width:"<<varSuffix->width<<" \n";
             width = sema::stringMul(varSuffix->width, varSuffix->length, semaAna);
+            std::cerr<<"len:"<<len<<" width:"<<width<<" \n";
             String tmpT1 = sema::stringMul(len, width, semaAna);
             offset = sema::stringPlus(varSuffix->offset, tmpT1, semaAna);
+            returnType=varSuffix->returnType;
         }
     }
 
@@ -1279,7 +1207,9 @@ namespace production {
             type = t;
             width = w;
         } else {
-            width = type->length;
+            width = type->width;
+            returnType=type;
+            std::cerr<<"length:"<<length<<" width:"<<width<<" \n";
         }
     }
 

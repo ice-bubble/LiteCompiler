@@ -36,7 +36,7 @@ namespace sema {
         int intRight;
         bool signRight = false;
         try {
-            intRight = std::stoi(left);
+            intRight = std::stoi(right);
             signRight = true;
         }
         catch (const std::invalid_argument &e) {
@@ -44,13 +44,10 @@ namespace sema {
         catch (const std::out_of_range &e) {
             reportSemanticError(0, "a integer variable is out of range");
         }
-        if (signLeft && signRight) {
-            return std::to_string(intLeft * intRight);
-        } else {
-            String tmpT = Sema::genT();
-            semaAna->irCode.emplace_back(fmt::format("{}={}*{}", tmpT, left, right));
-            return tmpT;
-        }
+        if (signLeft && signRight) return std::to_string(intLeft * intRight);
+        String tmpT = Sema::genT();
+        semaAna->irCode.emplace_back(fmt::format("{}={}*{}", tmpT, left, right));
+        return tmpT;
     }
 
     String stringPlus(String left, String right, Sema *semaAna) {
@@ -68,7 +65,7 @@ namespace sema {
         int intRight;
         bool signRight = false;
         try {
-            intRight = std::stoi(left);
+            intRight = std::stoi(right);
             signRight = true;
         }
         catch (const std::invalid_argument &e) {
@@ -76,12 +73,10 @@ namespace sema {
         catch (const std::out_of_range &e) {
             reportSemanticError(0, "a integer variable is out of range");
         }
-        if (signLeft && signRight) {
-            return std::to_string(intLeft + intRight);
-        } else {
-            String tmpT = Sema::genT();
-            semaAna->irCode.emplace_back(fmt::format("{}={}+{}", tmpT, left, right));
-            return tmpT;
-        }
+        if (signLeft && signRight) return std::to_string(intLeft + intRight);
+        String tmpT = Sema::genT();
+        semaAna->irCode.emplace_back(fmt::format("{}={}+{}", tmpT, left, right));
+        return tmpT;
+
     }
 }

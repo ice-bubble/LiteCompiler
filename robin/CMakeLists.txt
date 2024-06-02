@@ -25,7 +25,7 @@ add_executable(robin main.cpp
         src/parser/parser.cpp
         src/parser/reduce.cpp
         src/ast/symbol.h
-        src/ast/initAst.cpp
+        src/ast/type.cpp
         src/parser/slrtableInit1.cpp
         src/parser/slrtableInit2.cpp
         src/parser/slrtableInit3.cpp
@@ -42,6 +42,8 @@ add_executable(robin main.cpp
         src/sema/stmtspace.h
         src/sema/exprspace.h
         src/ast/visit.cpp
+        src/ast/production.cpp
+        src/ast/presema.h
 )
 
 

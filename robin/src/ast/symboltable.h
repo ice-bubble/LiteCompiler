@@ -5,8 +5,6 @@
 #ifndef ROBIN_SYMBOLTABLE_H
 #define ROBIN_SYMBOLTABLE_H
 
-#include <utility>
-
 #include "../common.h"
 #include "type.h"
 

@@ -7,7 +7,6 @@
 #include "error.h"
 
 void error(size_t line, StringView message) {
-    std::cerr << "[line: " << line << "] Error:" << message << std::endl;
     fmt::print(stderr, "[line: {}] Error: {}\n", line, message);
 }
 

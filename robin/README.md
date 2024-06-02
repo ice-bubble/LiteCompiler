@@ -10,11 +10,13 @@
     ├── README.md                   本文件
     └── src                         源代码
         ├── ast                     语法树相关类的定义
-        │   ├── initAst.h           初始化ast目录下面的一些类的静态成员
+        │   ├── presema.h           对于sema命名空间中sema类和函数的前置声明
+        │   ├── production.cpp      语法树类成员和函数的定义
         │   ├── production.h        语法树中产生式的类
         │   ├── symbol.h            存放产生式相关定义
         │   ├── symboltable.h       存放符号栈相关定义
-        │   ├── type.h              区分标识符和字面值具体类型的类     
+        │   ├── type.cpp			type类的成员和函数的定义
+        │   ├── type.h              区分标识符和字面值具体类型的类的声明
         │   └── visit.cpp           语义分析所用的函数
         ├── common.h                一些项目用到的宏定义和头文件
         ├── debug                   debug文件
