@@ -22,8 +22,11 @@ namespace production {
     }
 
     void Declarations1::visit(sema::Sema *semaAna) {
+        declaration->code1Jmp=code1Jmp;
+        declaration->nextJmp=nextJmp;
+        declarations->code1Jmp=code1Jmp;
+        declarations->nextJmp=nextJmp;
         declaration->visit(semaAna);
-        returnType = declaration->returnType;
         declarations->visit(semaAna);
         returnType = ast::Type::chooseReturnType(declaration->returnType, declarations->returnType, line);
     }
@@ -47,6 +50,8 @@ namespace production {
     }
 
     void Declaration3::visit(sema::Sema *semaAna) {
+        statement->code1Jmp=code1Jmp;
+        statement->nextJmp=nextJmp;
         statement->visit(semaAna);
         returnType = statement->returnType;
     }
@@ -56,11 +61,13 @@ namespace production {
     }
 
     void Statement1::visit(sema::Sema *semaAna) {
+        breakStmt->nextJmp = nextJmp;
         breakStmt->visit(semaAna);
         returnType = std::make_shared<ast::BASE_Type>();
     }
 
     void Statement2::visit(sema::Sema *semaAna) {
+        continueStmt->code1Jmp = code1Jmp;
         continueStmt->visit(semaAna);
         returnType = std::make_shared<ast::BASE_Type>();
     }
@@ -76,6 +83,8 @@ namespace production {
     }
 
     void Statement5::visit(sema::Sema *semaAna) {
+        ifStmt->code1Jmp=code1Jmp;
+        ifStmt->nextJmp=nextJmp;
         ifStmt->visit(semaAna);
         returnType = ifStmt->returnType;
     }
@@ -91,6 +100,8 @@ namespace production {
     }
 
     void Statement8::visit(sema::Sema *semaAna) {
+        block->code1Jmp = code1Jmp;
+        block->nextJmp = nextJmp;
         block->visit(semaAna);
         returnType = block->returnType;
     }
@@ -101,13 +112,15 @@ namespace production {
     }
 
     void BreakStmt::visit(sema::Sema *semaAna) {
+        if (nextJmp == nullptr) return reportSemanticError(line, "the breakStmt is not in a loop");
         semaAna->irCode.emplace_back("goto {}");
-        semaAna->codeStmtSpace.top().nextSentences.push_back(semaAna->irCode.size() - 1);
+        nextJmp->push_back(semaAna->irCode.size() - 1);
     }
 
     void ContinueStmt::visit(sema::Sema *semaAna) {
+        if (code1Jmp == nullptr) return reportSemanticError(line, "the continueStmt is not in a loop");
         semaAna->irCode.emplace_back("goto {}");
-        semaAna->codeStmtSpace.top().code1Sentences.push_back(semaAna->irCode.size() - 1);
+        code1Jmp->push_back(semaAna->irCode.size() - 1);
     }
 
     void ReturnStmt::visit(sema::Sema *semaAna) {
@@ -165,7 +178,7 @@ namespace production {
             if (legalType != ast::IdentifierType::BASE_) {
                 auto varInTop = semaAna->top->lookup(var->id);
                 varInTop->value = varInit->val;
-                semaAna->irCode.emplace_back(fmt::format("{}={}",var->id,varInit->val));
+                semaAna->irCode.emplace_back(fmt::format("{}={}", var->id, varInit->val));
             } else {
                 String errorMsg = fmt::format("assignment from {} to {} is illegal",
                                               varInit->type->toString(), var->type->toString());
@@ -282,6 +295,9 @@ namespace production {
         printIRCODE(semaAna->irCode);
 
         semaAna->codeStmtSpace.top().code1 = static_cast<int>(semaAna->irCode.size());
+
+        statement->code1Jmp=code1Jmp;
+        statement->nextJmp=nextJmp;
         statement->visit(semaAna);
 
         semaAna->irCode.emplace_back("goto {}");
@@ -291,6 +307,9 @@ namespace production {
         printIRCODE(semaAna->irCode);
 
         semaAna->codeStmtSpace.top().code2 = static_cast<int>(semaAna->irCode.size());
+
+        elseBranch->code1Jmp=code1Jmp;
+        elseBranch->nextJmp=nextJmp;
         elseBranch->visit(semaAna);
 
         std::cerr << "ifStmt code1:" << semaAna->codeStmtSpace.top().code1 << " code2:"
@@ -315,6 +334,8 @@ namespace production {
     }
 
     void ElseBranch1::visit(sema::Sema *semaAna) {
+        statement->code1Jmp=code1Jmp;
+        statement->nextJmp=nextJmp;
         statement->visit(semaAna);
         returnType = statement->returnType;
     }
@@ -337,6 +358,8 @@ namespace production {
 
         semaAna->codeStmtSpace.top().code2 = static_cast<int>(semaAna->irCode.size());
 
+        statement->code1Jmp=&(semaAna->codeStmtSpace.top().code1Sentences);
+        statement->nextJmp=&(semaAna->codeStmtSpace.top().nextSentences);
         statement->visit(semaAna);
 
         returnType = statement->returnType;
@@ -370,6 +393,8 @@ namespace production {
 
         semaAna->codeStmtSpace.top().code2 = static_cast<int>(semaAna->irCode.size());
 
+        statement->code1Jmp=&(semaAna->codeStmtSpace.top().code1Sentences);
+        statement->nextJmp=&(semaAna->codeStmtSpace.top().nextSentences);
         statement->visit(semaAna);
 
         returnType = statement->returnType;
@@ -404,6 +429,8 @@ namespace production {
         semaAna->codeStmtSpace.top().compareSentences.push_back(semaAna->irCode.size() - 1);
         semaAna->codeStmtSpace.top().code2 = static_cast<int>(semaAna->irCode.size());
 
+        statement->code1Jmp=&(semaAna->codeStmtSpace.top().code1Sentences);
+        statement->nextJmp=&(semaAna->codeStmtSpace.top().nextSentences);
         statement->visit(semaAna);
 
         returnType = statement->returnType;
@@ -433,6 +460,8 @@ namespace production {
 
         semaAna->codeStmtSpace.top().code2 = static_cast<int>(semaAna->irCode.size());
 
+        statement->code1Jmp=&(semaAna->codeStmtSpace.top().code1Sentences);
+        statement->nextJmp=&(semaAna->codeStmtSpace.top().nextSentences);
         statement->visit(semaAna);
 
         returnType = statement->returnType;
@@ -467,6 +496,8 @@ namespace production {
         semaAna->codeStmtSpace.top().compareSentences.push_back(semaAna->irCode.size() - 1);
         semaAna->codeStmtSpace.top().code2 = static_cast<int>(semaAna->irCode.size());
 
+        statement->code1Jmp=&(semaAna->codeStmtSpace.top().code1Sentences);
+        statement->nextJmp=&(semaAna->codeStmtSpace.top().nextSentences);
         statement->visit(semaAna);
 
         returnType = statement->returnType;
@@ -480,7 +511,8 @@ namespace production {
     }
 
     void Block::visit(sema::Sema *semaAna) {
-
+        declarations->code1Jmp = code1Jmp;
+        declarations->nextJmp = nextJmp;
         declarations->visit(semaAna);
         returnType = declarations->returnType;
     }
@@ -491,12 +523,15 @@ namespace production {
         semaAna->codeStmtSpace.emplace(&(semaAna->irCode));
         semaAna->codeStmtSpace.top().code2 = static_cast<int>(semaAna->irCode.size());
 
+        statement->code1Jmp=&(semaAna->codeStmtSpace.top().code1Sentences);
+        statement->nextJmp=&(semaAna->codeStmtSpace.top().nextSentences);
         statement->visit(semaAna);
 
         returnType = statement->returnType;
         semaAna->irCode.emplace_back("goto {}");
         semaAna->codeStmtSpace.top().compareSentences.push_back(semaAna->irCode.size() - 1);
         semaAna->codeStmtSpace.top().compare = static_cast<int>(semaAna->irCode.size());
+        semaAna->codeStmtSpace.top().code1 = static_cast<int>(semaAna->irCode.size());
         expression->jmp = true;
         expression->trueJmp = &(semaAna->codeStmtSpace.top().nextSentences);
         expression->falseJmp = &(semaAna->codeStmtSpace.top().code2Sentences);
@@ -710,7 +745,7 @@ namespace production {
             if (jmp) {
                 mergeUniqueIntoA(trueJmp, &(semaAna->codeExprSpace.top().rightSentences));
                 semaAna->codeExprSpace.top().rightSentences.clear();
-            };
+            }
         }
 
         semaAna->codeExprSpace.top().backpatch();

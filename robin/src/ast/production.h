@@ -120,7 +120,7 @@ namespace production {
     class Token;
 
 
-    void mergeUniqueIntoA(List<size_t>* a, List<size_t>* b);
+    void mergeUniqueIntoA(List<size_t> *a, List<size_t> *b);
 
     class Production {
     public:
@@ -176,6 +176,8 @@ namespace production {
         size_t line;
 
         SharedPtr<ast::Type> returnType;
+        List<size_t> *code1Jmp = nullptr;
+        List<size_t> *nextJmp = nullptr;
 
         explicit Declarations(size_t line) : line(line) { thisSymbol = symbol::Symbol::declarations; }
 
@@ -213,6 +215,8 @@ namespace production {
         size_t line;
 
         SharedPtr<ast::Type> returnType;
+        List<size_t> *code1Jmp = nullptr;
+        List<size_t> *nextJmp = nullptr;
 
         explicit Declaration(size_t line) : line(line) { thisSymbol = symbol::Symbol::declaration; }
 
@@ -261,6 +265,8 @@ namespace production {
         size_t line;
 
         SharedPtr<ast::Type> returnType;
+        List<size_t> *code1Jmp = nullptr;
+        List<size_t> *nextJmp = nullptr;
 
         explicit Statement(size_t line) : line(line) { thisSymbol = symbol::Symbol::statement; }
 
@@ -373,6 +379,8 @@ namespace production {
         SharedPtr<Token> token_BREAK;
         SharedPtr<Token> token_SEMICOLON;
 
+        List<size_t> *nextJmp = nullptr;
+
         BreakStmt(size_t line, SharedPtr<Token> token_BREAK, SharedPtr<Token> token_SEMICOLON)
                 : line(line),
                   token_BREAK(std::move(token_BREAK)),
@@ -389,6 +397,8 @@ namespace production {
         size_t line;
         SharedPtr<Token> token_CONTINUE;
         SharedPtr<Token> token_SEMICOLON;
+
+        List<size_t> *code1Jmp = nullptr;
 
         ContinueStmt(size_t line, SharedPtr<Token> token_CONTINUE, SharedPtr<Token> token_SEMICOLON)
                 : line(line),
@@ -703,6 +713,8 @@ namespace production {
         SharedPtr<ElseBranch> elseBranch;
 
         SharedPtr<ast::Type> returnType;
+        List<size_t> *code1Jmp = nullptr;
+        List<size_t> *nextJmp = nullptr;
 
         IfStmt(size_t line, SharedPtr<Token> token_IF, SharedPtr<Token> token_LEFT_PAREN,
                SharedPtr<Expression> expression, SharedPtr<Token> token_RIGHT_PAREN, SharedPtr<Statement> statement,
@@ -726,6 +738,8 @@ namespace production {
         size_t line;
 
         SharedPtr<ast::Type> returnType;
+        List<size_t> *code1Jmp = nullptr;
+        List<size_t> *nextJmp = nullptr;
 
         explicit ElseBranch(size_t line) : line(line) { thisSymbol = symbol::Symbol::elseBranch; }
 
@@ -902,6 +916,8 @@ namespace production {
         SharedPtr<Token> token_RIGHT_BRACE;
 
         SharedPtr<ast::Type> returnType;
+        List<size_t> *code1Jmp = nullptr;
+        List<size_t> *nextJmp = nullptr;
 
         Block(size_t line, SharedPtr<Token> token_LEFT_BRACE, SharedPtr<Declarations> declarations,
               SharedPtr<Token> token_RIGHT_BRACE)
@@ -1992,7 +2008,7 @@ namespace production {
         String width = "0";
         SharedPtr<ast::Type> type;
         SharedPtr<ast::Type> returnType;
-        String len="0";
+        String len = "0";
         String length = "0";
         String offset = "0";
         Usage usage = Usage::reference;
