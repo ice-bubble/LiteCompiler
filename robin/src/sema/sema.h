@@ -5,12 +5,13 @@
 #ifndef ROBIN_SEMA_H
 #define ROBIN_SEMA_H
 
-#include "stmtspace.h"
-#include "exprspace.h"
 #include "../common.h"
-#include "../ast/production.h"
 #include "../ast/symboltable.h"
 
+//前向定义
+namespace production{
+    class Production;
+}
 
 namespace sema {
     class Sema {
@@ -19,8 +20,6 @@ namespace sema {
         SharedPtr<production::Production> program;
         List<String> irCode;
         ast::SymTab *top;
-        Stack<StmtSpace> codeStmtSpace;
-        Stack<ExprSpace> codeExprSpace;
 
         explicit Sema(SharedPtr<production::Production> program);
 
@@ -29,6 +28,10 @@ namespace sema {
         List<String> generateIRCODE();
 
     };
+
+    String stringMul(String left, String right, Sema *semaAna);
+
+    String stringPlus(String left, String right, Sema *semaAna);
 }
 
 #endif //ROBIN_SEMA_H

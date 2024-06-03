@@ -10,7 +10,7 @@
     ├── README.md                   本文件
     └── src                         源代码
         ├── ast                     语法树相关类的定义
-        │   ├── presema.h           对于sema命名空间中sema类和函数的前置声明
+        │   ├── codespace.h         代码的当前产生式空间，用于配合回填
         │   ├── production.cpp      语法树类成员和函数的定义
         │   ├── production.h        语法树中产生式的类
         │   ├── symbol.h            存放产生式相关定义
@@ -43,10 +43,8 @@
         │   ├── slrtableInit8.cpp   初始化SLR分析表函数8
         │   └── slrtableInit9.cpp   初始化SLR分析表函数9
         ├── sema
-        │   ├── exprspace.h         表达式空间定义
         │   ├── sema.cpp            语义分析类的函数定义
-        │   ├── sema.h              语义分析类的声明
-        │   └── stmtspace.h         语句空间的定义
+        │   └── sema.h              语义分析类的声明
         └── token                   token相关
             ├── token.cpp           token类函数实现
             └── token.h             tokenType定义和token类声明

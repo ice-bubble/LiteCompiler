@@ -3,7 +3,6 @@
 //
 
 #include "type.h"
-#include "presema.h"
 #include "../error/error.h"
 
 namespace ast {

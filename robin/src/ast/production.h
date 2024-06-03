@@ -4,13 +4,11 @@
 #define ROBIN_PRODUCTION_H
 
 #include "symboltable.h"
-#include "presema.h"
 #include "type.h"
 #include "../common.h"
 #include "../token/token.h"
 #include "../ast/symbol.h"
-#include "../sema/stmtspace.h"
-#include "../sema/exprspace.h"
+#include "../sema/sema.h"
 
 namespace production {
 

@@ -1,41 +1,32 @@
 优化SDT请参考robin/src/ast/visit.cpp
 
-
 List<String> irCode;
 
-class Statement{
+class CodeSpace{
 int compare=-1;
 int code1=-1;
 int code2=-1;
 int next=-1;
+int right=-1;
 List<int> compareSentences;
 List<int> code1Sentences;
 List<int> code2Sentences;
 List<int> nextSentences;
+List<int>rightSentences;
     void packpatch(){
         for(auto i:compareSentences)
-            irCode[i]=fmt::format(irCode[i],compare);     
+            irCode[i]=fmt::format(irCode[i],compare);
         for(auto i:code1Sentences)
             irCode[i]=fmt::format(irCode[i],code1);
         for(auto i:code2Sentences)
             irCode[i]=fmt::format(irCode[i],code2);
         for(auto i:nextSentences)
             irCode[i]=fmt::format(irCode[i],next);
-    }
-};
-
-class Expression{
-    int right;
-    List<int>rightSentences;
-    void packpatch()
-    {
         for(auto i:rightSentences)
             irCode[i]=fmt::format(irCode[i],rightSentences);
     }
-}
+};
 
-stack<StmtSpace> codeStmtSpace;
-stack<ExprSpace> codeExprSpace;
 
 String genT(){
     static int Tindex=0;
@@ -221,7 +212,7 @@ Type chooseReturnType(Type t1,Type t2);
                 }
            }
 
-22 varDefs::COMMA 
+22 varDefs::COMMA
              {
                 varDef.type=varDefs.type;
                 varDef.width=varDefs.width;
@@ -307,24 +298,24 @@ Type chooseReturnType(Type t1,Type t2);
                 exprStmt.returnType=NIL;
              }
 
-34 ifStmt::{codeStmtSpace.push(new(StmtSpace));}
+34 ifStmt::{CodeSpace thisSpace;}
            IF LEFT_PAREN
            {
                 expression.jmp=true;
-                expression.trueJmp=codeStmtSpace.top().code1Sentences;
-                expression.falseJmp=codeStmtSpace.top().code2Sentences;
+                expression.trueJmp=thisSpace.code1Sentences;
+                expression.falseJmp=thisSpace.code2Sentences;
            }
            expression RIGHT_PAREN
            {
-            codeStmtSpace.top().code1=irCode.size();
+            thisSpace.code1=irCode.size();
             statement.code1Jmp=ifStmt.code1Jmp;
             statement.nextJmp=ifStmt.nextJmp;
            }
            statement
            {
             irCode.push_back("goto {}");
-            codeStmtSpace.top().nextSentences.push(irCode.size()-1);
-            codeStmtSpace.top().code2=irCode.size();
+            thisSpace.nextSentences.push(irCode.size()-1);
+            thisSpace.code2=irCode.size();
             elseBranch.code1Jmp=ifStmt.code1Jmp;
             elseBranch.nextJmp=ifStmt.nextJmp;
            }
@@ -334,11 +325,10 @@ Type chooseReturnType(Type t1,Type t2);
             if(elseBranch.ifExist)
             {
                 irCode.push_back("goto {}");
-                codeStmtSpace.top().nextSentences.push(irCode.size()-1);
+                thisSpace.nextSentences.push(irCode.size()-1);
             }
-            codeStmtSpace.top().next=irCode.size();
-            codeStmtSpace.top().backpatch();
-            codeStmtSpace.pop();
+            thisSpace.next=irCode.size();
+            thisSpace.backpatch();
            }
 
 35 elseBranch::ELSE
@@ -356,150 +346,145 @@ Type chooseReturnType(Type t1,Type t2);
                     elseBranch.ifExist=false;
                     elseBranch.returnType=BASE_;
                }
-               ε      
+               ε
 
 37 whileStmt::WHILE LEFT_PAREN
               {
-                codeStmtSpace.push(new(StmtSpace));
-                codeStmtSpace.top().compare=irCode.size();
-                codeStmtSpace.top().code1=irCode.size();
+                CodeSpace thisSpace;
+                thisSpace.compare=irCode.size();
+                thisSpace.code1=irCode.size();
                 expression.jmp=true;
-                expression.trueJmp=codeStmtSpace.top().code2Sentences;
-                expression.falseJmp=codeStmtSpace.top().nextSentences;
+                expression.trueJmp=thisSpace.code2Sentences;
+                expression.falseJmp=thisSpace.nextSentences;
 
               }
               expression RIGHT_PAREN
               {
-                codeStmtSpace.top().code2=irCode.size();
-                statement.code1Jmp=codeStmtSpace.top().code1Sentences;
-                statement.nextJmp=codeStmtSpace.top().nextSentences;
+                thisSpace.code2=irCode.size();
+                statement.code1Jmp=thisSpace.code1Sentences;
+                statement.nextJmp=thisSpace.nextSentences;
               }
               statement
               {
                 ifStmt.returnType=statement.returnType;
                 irCode.push_back("goto {}")
-                codeStmtSpace.top().compareSentences.push(irCode.size()-1);
-                codeStmtSpace.top().next=irCode.size();
-                codeStmtSpace.top().backpatch();
-                codeStmtSpace.pop();
+                thisSpace.compareSentences.push(irCode.size()-1);
+                thisSpace.next=irCode.size();
+                thisSpace.backpatch();
               }
 
 38 forStmt::{
-                codeStmtSpace.push(new(StmtSpace));
+                CodeSpace thisSpace;
             }
             FOR LEFT_PAREN varDecl
             {
-                codeStmtSpace.top().compare=irCode.size();
-                codeStmtSpace.top().code1=irCode.size();
+                thisSpace.compare=irCode.size();
+                thisSpace.code1=irCode.size();
                 exprStmt.jmp=true;
-                exprStmt.trueJmp=codeStmtSpace.top().code2Sentences;
-                exprStmt.falseJmp=codeStmtSpace.top().nextSentences;
+                exprStmt.trueJmp=thisSpace.code2Sentences;
+                exprStmt.falseJmp=thisSpace.nextSentences;
             }
             exprStmt RIGHT_PAREN
             {
-                codeStmtSpace.top().code2=irCode.size();
-                statement.code1Jmp=codeStmtSpace.top().code1Sentences;
-                statement.nextJmp=codeStmtSpace.top().nextSentences;
+                thisSpace.code2=irCode.size();
+                statement.code1Jmp=thisSpace.code1Sentences;
+                statement.nextJmp=thisSpace.nextSentences;
             }
             statement
             {
                 ifStmt.returnType=statement.returnType;
                 irCode.push_back("goto {}");
-                codeStmtSpace.top().code1Sentences.push(irCode.size()-1);
-                codeStmtSpace.top().next=irCode.size();
-                codeStmtSpace.top().backpatch();
-                codeStmtSpace.pop();
+                thisSpace.code1Sentences.push(irCode.size()-1);
+                thisSpace.next=irCode.size();
+                thisSpace.backpatch();
             }
 
 39 forStmt::{
-                codeStmtSpace.push(new(StmtSpace));
+                CodeSpace thisSpace;
             }
             FOR LEFT_PAREN varDecl
             {
-                codeStmtSpace.top().compare=irCode.size();
+                thisSpace.compare=irCode.size();
                 exprStmt.jmp=true;
-                exprStmt.trueJmp=codeStmtSpace.top().code2Sentences;
-                exprStmt.falseJmp=codeStmtSpace.top().nextSentences;
+                exprStmt.trueJmp=thisSpace.code2Sentences;
+                exprStmt.falseJmp=thisSpace.nextSentences;
             }
             exprStmt
             {
-                codeStmtSpace.top().code1=irCode.size();
+                thisSpace.code1=irCode.size();
             }
             expression RIGHT_PAREN
             {
                 irCode.push_back("goto {}");
-                codeStmtSpace.top().compareSentences.push(irCode.size()-1);
-                codeStmtSpace.top().code2=irCode.size();
-                statement.code1Jmp=codeStmtSpace.top().code1Sentences;
-                statement.nextJmp=codeStmtSpace.top().nextSentences;
+                thisSpace.compareSentences.push(irCode.size()-1);
+                thisSpace.code2=irCode.size();
+                statement.code1Jmp=thisSpace.code1Sentences;
+                statement.nextJmp=thisSpace.nextSentences;
             }
             statement
             {
                 ifStmt.returnType=statement.returnType;
                 irCode.push_back("goto {}");
-                codeStmtSpace.top().code1Sentences.push(irCode.size()-1);
-                codeStmtSpace.top().next=irCode.size();
-                codeStmtSpace.top().backpatch();
-                codeStmtSpace.pop();
+                thisSpace.code1Sentences.push(irCode.size()-1);
+                thisSpace.next=irCode.size();
+                thisSpace.backpatch();
             }
 
 40 forStmt::{
-                codeStmtSpace.push(new(StmtSpace));
+                CodeSpace thisSpace;
             }
             FOR LEFT_PAREN exprStmt1
             {
-                codeStmtSpace.top().compare=irCode.size();
-                codeStmtSpace.top().code1=irCode.size();
+                thisSpace.compare=irCode.size();
+                thisSpace.code1=irCode.size();
                 exprStmt2.jmp=true;
-                exprStmt2.trueJmp=codeStmtSpace.top().code2Sentences;
-                exprStmt2.falseJmp=codeStmtSpace.top().nextSentences;
+                exprStmt2.trueJmp=thisSpace.code2Sentences;
+                exprStmt2.falseJmp=thisSpace.nextSentences;
             }
             exprStmt2 RIGHT_PAREN
             {
-                codeStmtSpace.top().code2=irCode.size();
-                statement.code1Jmp=codeStmtSpace.top().code1Sentences;
-                statement.nextJmp=codeStmtSpace.top().nextSentences;
+                thisSpace.code2=irCode.size();
+                statement.code1Jmp=thisSpace.code1Sentences;
+                statement.nextJmp=thisSpace.nextSentences;
             }
             statement
             {
                 ifStmt.returnType=statement.returnType;
                 irCode.push_back("goto {}")
-                codeStmtSpace.top().code1Sentences.push(irCode.size()-1);
-                codeStmtSpace.top().next=irCode.size();
-                codeStmtSpace.top().backpatch();
-                codeStmtSpace.pop();
+                thisSpace.code1Sentences.push(irCode.size()-1);
+                thisSpace.next=irCode.size();
+                thisSpace.backpatch();
             }
 
 41 forStmt::{
-                codeStmtSpace.push(new(StmtSpace));
+                CodeSpace thisSpace;
             }
             FOR LEFT_PAREN exprStmt1
             {
-                codeStmtSpace.top().compare=irCode.size();
+                thisSpace.compare=irCode.size();
                 exprStmt2.jmp=true;
-                exprStmt2.trueJmp=codeStmtSpace.top().code2Sentences;
-                exprStmt2.falseJmp=codeStmtSpace.top().nextSentences;
+                exprStmt2.trueJmp=thisSpace.code2Sentences;
+                exprStmt2.falseJmp=thisSpace.nextSentences;
             }
             exprStmt2
             {
-                codeStmtSpace.top().code1=irCode.size();
+                thisSpace.code1=irCode.size();
             }
             expression RIGHT_PAREN
             {
                 irCode.push_back("goto {}");
-                codeStmtSpace.top().compareSentences.push(irCode.size()-1);
-                codeStmtSpace.top().code2=irCode.size();
-                statement.code1Jmp=codeStmtSpace.top().code1Sentences;
-                statement.nextJmp=codeStmtSpace.top().nextSentences;
+                thisSpace.compareSentences.push(irCode.size()-1);
+                thisSpace.code2=irCode.size();
+                statement.code1Jmp=thisSpace.code1Sentences;
+                statement.nextJmp=thisSpace.nextSentences;
             }
             statement
             {
                 ifStmt.returnType=statement.returnType;
                 irCode.push_back("goto {}");
-                codeStmtSpace.top().code1Sentences.push(irCode.size()-1);
-                codeStmtSpace.top().next=irCode.size();
-                codeStmtSpace.top().backpatch();
-                codeStmtSpace.pop();
+                thisSpace.code1Sentences.push(irCode.size()-1);
+                thisSpace.next=irCode.size();
+                thisSpace.backpatch();
             }
 
 42 block::LEFT_BRACE
@@ -513,27 +498,26 @@ Type chooseReturnType(Type t1,Type t2);
         }
 
 43 repeatStmt::{
-                    codeStmtSpace.push(new(StmtSpace));
-                    codeStmtSpace.top().code2=irCode.size();
-                    statement.code1Jmp=codeStmtSpace.top().code1Sentences;
-                    statement.nextJmp=codeStmtSpace.top().nextSentences;
+                    CodeSpace thisSpace;
+                    thisSpace.code2=irCode.size();
+                    statement.code1Jmp=thisSpace.code1Sentences;
+                    statement.nextJmp=thisSpace.nextSentences;
                }
                REPEAT statement
                {
                     ifStmt.returnType=statement.returnType;
                     irCode.push_back("goto {}");
-                    codeStmtSpace.top().compareSentences.push(irCode.size()-1);
-                    codeStmtSpace.top().compare=irCode.size();
-                    codeStmtSpace.top().code1=irCode.size();
+                    thisSpace.compareSentences.push(irCode.size()-1);
+                    thisSpace.compare=irCode.size();
+                    thisSpace.code1=irCode.size();
                     expression.jmp=true;
-                    expression.trueJmp=codeStmtSpace.top().nextSentences;
-                    expression.falseJmp=codeStmtSpace.top().code2Sentences;
+                    expression.trueJmp=thisSpace.nextSentences;
+                    expression.falseJmp=thisSpace.code2Sentences;
                }
                UNTIL LEFT_PAREN expression RIGHT_PAREN SEMICOLON
                {
-                    codeStmtSpace.top().next=irCode.size();
-                    codeStmtSpace.top().backpatch();
-                    codeStmtSpace.pop();
+                    thisSpace.next=irCode.size();
+                    thisSpace.backpatch();
                }
 
 
@@ -559,7 +543,7 @@ Type chooseReturnType(Type t1,Type t2);
                     assignment.jmp=expression.jmp;
                     assignment.trueJmp=expression.trueJmp;
                     assignment.falseJmp=expression.falseJmp;
-               } 
+               }
                assignment
                {
                     expression.val=assignment.val;
@@ -595,17 +579,17 @@ Type chooseReturnType(Type t1,Type t2);
 
 52 logic_or::
              {
-                codeExprSpace.push(new(ExprSpace));
+                CodeSpace thisSpace;
                 logic_and.jmp=logic_or.jmp;
                 logic_and.trueJmp=logic_or.trueJmp;
-                logic_and.falseJmp=codeExprSpace.top().rightSentences;
+                logic_and.falseJmp=thisSpace.rightSentences;
                 logic_or_prime.jmp=logic_or.jmp;
                 logic_or_prime.trueJmp=logic_or.trueJmp;
                 logic_or_prime.falseJmp=logic_or.falseJmp;
              }
              logic_and
              {
-                codeExprSpace.top().right=irCode.size();
+                thisSpace.right=irCode.size();
              }
              logic_or_prime
                {
@@ -620,14 +604,13 @@ Type chooseReturnType(Type t1,Type t2);
                     {
                         if(logic_or_prime.jmp)
                         {
-                            merge(logic_or.falseJmp, codeExprSpace.top().rightSentences);
-                            codeExprSpace.top().rightSentences.clear();
+                            merge(logic_or.falseJmp, thisSpace.rightSentences);
+                            thisSpace.rightSentences.clear();
                         }
                         logic_or.val=logic_and.val;
                         logic_or.type=logic_and.type;
                     }
-                    codeExprSpace.top().backpatch;
-                    codeExprSpace.pop();
+                    thisSpace.backpatch;
                }
 
 53 logic_or_prime::OR
@@ -647,7 +630,7 @@ Type chooseReturnType(Type t1,Type t2);
 
 55 logic_and::
               {
-                    codeExprSpace.push(new(ExprSpace));
+                    CodeSpace thisSpace;
                     logic_and_prime.jmp=logic_and.jmp;
                     logic_and_prime.trueJmp=logic_and.trueJmp;
                     logic_and_prime.falseJmp=logic_and.falseJmp;
@@ -657,11 +640,11 @@ Type chooseReturnType(Type t1,Type t2);
                 if(logic_and.jmp)
                 {
                     irCode.push("if {equality.val} goto {}");
-                    codeExprSpace.top().rightSentences.push(irCode.size()-1);
+                    thisSpace.rightSentences.push(irCode.size()-1);
                     irCode.push("goto {}");
                     logic_and.falseJmp.push_back(irCode.size()-1);
                 }
-                codeExprSpace.top().right=irCode.size();
+                thisSpace.right=irCode.size();
               }
               logic_and_prime
                    {
@@ -678,12 +661,11 @@ Type chooseReturnType(Type t1,Type t2);
                             logic_and.type=equality.type;
                             if(logic_and.jmp)
                             {
-                                merge(logic_and.trueJmp, codeExprSpace.top().rightSentences);
-                                codeExprSpace.top().rightSentences.clear();
+                                merge(logic_and.trueJmp, thisSpace.rightSentences);
+                                thisSpace.rightSentences.clear();
                             }
                         }
-                    codeExprSpace.top().backpatch;
-                    codeExprSpace.pop();
+                    thisSpace.backpatch;
                    }
 
 56 logic_and_prime::AND

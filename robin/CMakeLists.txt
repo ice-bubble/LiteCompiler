@@ -39,11 +39,9 @@ add_executable(robin main.cpp
         src/sema/sema.h
         src/sema/sema.cpp
         src/ast/symboltable.h
-        src/sema/stmtspace.h
-        src/sema/exprspace.h
         src/ast/visit.cpp
         src/ast/production.cpp
-        src/ast/presema.h
+        src/ast/codespace.h
 )
 
 
