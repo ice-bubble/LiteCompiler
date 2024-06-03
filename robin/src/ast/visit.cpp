@@ -22,10 +22,10 @@ namespace production {
     }
 
     void Declarations1::visit(sema::Sema *semaAna) {
-        declaration->code1Jmp=code1Jmp;
-        declaration->nextJmp=nextJmp;
-        declarations->code1Jmp=code1Jmp;
-        declarations->nextJmp=nextJmp;
+        declaration->code1Jmp = code1Jmp;
+        declaration->nextJmp = nextJmp;
+        declarations->code1Jmp = code1Jmp;
+        declarations->nextJmp = nextJmp;
         declaration->visit(semaAna);
         declarations->visit(semaAna);
         returnType = ast::Type::chooseReturnType(declaration->returnType, declarations->returnType, line);
@@ -50,8 +50,8 @@ namespace production {
     }
 
     void Declaration3::visit(sema::Sema *semaAna) {
-        statement->code1Jmp=code1Jmp;
-        statement->nextJmp=nextJmp;
+        statement->code1Jmp = code1Jmp;
+        statement->nextJmp = nextJmp;
         statement->visit(semaAna);
         returnType = statement->returnType;
     }
@@ -83,8 +83,8 @@ namespace production {
     }
 
     void Statement5::visit(sema::Sema *semaAna) {
-        ifStmt->code1Jmp=code1Jmp;
-        ifStmt->nextJmp=nextJmp;
+        ifStmt->code1Jmp = code1Jmp;
+        ifStmt->nextJmp = nextJmp;
         ifStmt->visit(semaAna);
         returnType = ifStmt->returnType;
     }
@@ -143,10 +143,10 @@ namespace production {
         paramList->visit(semaAna);
         block->visit(semaAna);
         returnType = block->returnType;
-        if (returnType->selfType == ast::IdentifierType::BASE_) { returnType = std::make_shared<ast::NIL_Type>(); }
-        if (returnType->selfType == ast::IdentifierType::VAR_) {
+        if (returnType->selfType == ast::IdentifierType::BASE_)
+            returnType = std::make_shared<ast::NIL_Type>();
+        if (returnType->selfType == ast::IdentifierType::VAR_)
             reportSemanticError(line, "invalid return type for the function");
-        }
         if (!semaAna->top->changeReturnType(id, returnType)) {
             reportSemanticError(line, "invalid function definition");
         }
@@ -280,9 +280,6 @@ namespace production {
     void IfStmt::visit(sema::Sema *semaAna) {
         semaAna->top = ast::SymTab::genNewSymTab(semaAna->top);
         if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
-        std::cerr << "arrive IfStmt " << line << "\n";
-        printIRCODE(semaAna->irCode);
-
         semaAna->codeStmtSpace.emplace(&(semaAna->irCode));
         expression->jmp = true;
         expression->trueJmp = &(semaAna->codeStmtSpace.top().code1Sentences);
@@ -290,41 +287,28 @@ namespace production {
 
         expression->visit(semaAna);
 
-        std::cout << semaAna->irCode.size() << std::endl;
-        std::cerr << "arrive IfStmt statement " << line << "\n";
-        printIRCODE(semaAna->irCode);
-
         semaAna->codeStmtSpace.top().code1 = static_cast<int>(semaAna->irCode.size());
+        statement->code1Jmp = code1Jmp;
+        statement->nextJmp = nextJmp;
 
-        statement->code1Jmp=code1Jmp;
-        statement->nextJmp=nextJmp;
         statement->visit(semaAna);
 
         semaAna->irCode.emplace_back("goto {}");
         semaAna->codeStmtSpace.top().nextSentences.push_back(semaAna->irCode.size() - 1);
-
-        std::cerr << "arrive IfStmt elseBranch " << line << "\n";
-        printIRCODE(semaAna->irCode);
-
         semaAna->codeStmtSpace.top().code2 = static_cast<int>(semaAna->irCode.size());
+        elseBranch->code1Jmp = code1Jmp;
+        elseBranch->nextJmp = nextJmp;
 
-        elseBranch->code1Jmp=code1Jmp;
-        elseBranch->nextJmp=nextJmp;
         elseBranch->visit(semaAna);
 
-        std::cerr << "ifStmt code1:" << semaAna->codeStmtSpace.top().code1 << " code2:"
-                  << semaAna->codeStmtSpace.top().code2 << std::endl;
-
         returnType = ast::Type::chooseReturnType(statement->returnType, elseBranch->returnType, line);
-        semaAna->irCode.emplace_back("goto {}");
-        semaAna->codeStmtSpace.top().nextSentences.push_back(semaAna->irCode.size() - 1);
-
+        if (elseBranch->ifExist){
+            semaAna->irCode.emplace_back("goto {}");
+            semaAna->codeStmtSpace.top().nextSentences.push_back(semaAna->irCode.size() - 1);
+        }
         semaAna->codeStmtSpace.top().next = static_cast<int>(semaAna->irCode.size());
         semaAna->codeStmtSpace.top().backpatch();
         semaAna->codeStmtSpace.pop();
-
-        std::cerr << "arrive IfStmtEnd " << line << "\n";
-        printIRCODE(semaAna->irCode);
         semaAna->top = ast::SymTab::throwThisSymTab(semaAna->top);
         if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
     }
@@ -334,9 +318,12 @@ namespace production {
     }
 
     void ElseBranch1::visit(sema::Sema *semaAna) {
-        statement->code1Jmp=code1Jmp;
-        statement->nextJmp=nextJmp;
+        ifExist=true;
+        statement->code1Jmp = code1Jmp;
+        statement->nextJmp = nextJmp;
+
         statement->visit(semaAna);
+
         returnType = statement->returnType;
     }
 
@@ -357,9 +344,9 @@ namespace production {
         expression->visit(semaAna);
 
         semaAna->codeStmtSpace.top().code2 = static_cast<int>(semaAna->irCode.size());
+        statement->code1Jmp = &(semaAna->codeStmtSpace.top().code1Sentences);
+        statement->nextJmp = &(semaAna->codeStmtSpace.top().nextSentences);
 
-        statement->code1Jmp=&(semaAna->codeStmtSpace.top().code1Sentences);
-        statement->nextJmp=&(semaAna->codeStmtSpace.top().nextSentences);
         statement->visit(semaAna);
 
         returnType = statement->returnType;
@@ -392,9 +379,9 @@ namespace production {
         exprStmt->visit(semaAna);
 
         semaAna->codeStmtSpace.top().code2 = static_cast<int>(semaAna->irCode.size());
+        statement->code1Jmp = &(semaAna->codeStmtSpace.top().code1Sentences);
+        statement->nextJmp = &(semaAna->codeStmtSpace.top().nextSentences);
 
-        statement->code1Jmp=&(semaAna->codeStmtSpace.top().code1Sentences);
-        statement->nextJmp=&(semaAna->codeStmtSpace.top().nextSentences);
         statement->visit(semaAna);
 
         returnType = statement->returnType;
@@ -428,9 +415,9 @@ namespace production {
         semaAna->irCode.emplace_back("goto {}");
         semaAna->codeStmtSpace.top().compareSentences.push_back(semaAna->irCode.size() - 1);
         semaAna->codeStmtSpace.top().code2 = static_cast<int>(semaAna->irCode.size());
+        statement->code1Jmp = &(semaAna->codeStmtSpace.top().code1Sentences);
+        statement->nextJmp = &(semaAna->codeStmtSpace.top().nextSentences);
 
-        statement->code1Jmp=&(semaAna->codeStmtSpace.top().code1Sentences);
-        statement->nextJmp=&(semaAna->codeStmtSpace.top().nextSentences);
         statement->visit(semaAna);
 
         returnType = statement->returnType;
@@ -459,9 +446,9 @@ namespace production {
         exprStmt2->visit(semaAna);
 
         semaAna->codeStmtSpace.top().code2 = static_cast<int>(semaAna->irCode.size());
+        statement->code1Jmp = &(semaAna->codeStmtSpace.top().code1Sentences);
+        statement->nextJmp = &(semaAna->codeStmtSpace.top().nextSentences);
 
-        statement->code1Jmp=&(semaAna->codeStmtSpace.top().code1Sentences);
-        statement->nextJmp=&(semaAna->codeStmtSpace.top().nextSentences);
         statement->visit(semaAna);
 
         returnType = statement->returnType;
@@ -495,9 +482,9 @@ namespace production {
         semaAna->irCode.emplace_back("goto {}");
         semaAna->codeStmtSpace.top().compareSentences.push_back(semaAna->irCode.size() - 1);
         semaAna->codeStmtSpace.top().code2 = static_cast<int>(semaAna->irCode.size());
+        statement->code1Jmp = &(semaAna->codeStmtSpace.top().code1Sentences);
+        statement->nextJmp = &(semaAna->codeStmtSpace.top().nextSentences);
 
-        statement->code1Jmp=&(semaAna->codeStmtSpace.top().code1Sentences);
-        statement->nextJmp=&(semaAna->codeStmtSpace.top().nextSentences);
         statement->visit(semaAna);
 
         returnType = statement->returnType;
@@ -522,9 +509,9 @@ namespace production {
         if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
         semaAna->codeStmtSpace.emplace(&(semaAna->irCode));
         semaAna->codeStmtSpace.top().code2 = static_cast<int>(semaAna->irCode.size());
+        statement->code1Jmp = &(semaAna->codeStmtSpace.top().code1Sentences);
+        statement->nextJmp = &(semaAna->codeStmtSpace.top().nextSentences);
 
-        statement->code1Jmp=&(semaAna->codeStmtSpace.top().code1Sentences);
-        statement->nextJmp=&(semaAna->codeStmtSpace.top().nextSentences);
         statement->visit(semaAna);
 
         returnType = statement->returnType;
@@ -582,9 +569,6 @@ namespace production {
     }
 
     void Expression::visit(sema::Sema *semaAna) {
-        std::cerr << "arrive Expression " << line << "\n";
-        printIRCODE(semaAna->irCode);
-
         assignment->jmp = jmp;
         assignment->trueJmp = trueJmp;
         assignment->falseJmp = falseJmp;
@@ -593,9 +577,6 @@ namespace production {
 
         val = assignment->val;
         type = assignment->type;
-
-        std::cerr << "arrive ExpressionEnd " << line << "\n";
-        printIRCODE(semaAna->irCode);
     }
 
     void Assignment::visit(sema::Sema *semaAna) {
@@ -606,11 +587,9 @@ namespace production {
         var->visit(semaAna);
         assignment->visit(semaAna);
 
-        String code;
         String tmpT = autoConversion(assignment->val, assignment->type->selfType,
                                      var->type->selfType, line, semaAna);
         semaAna->irCode.emplace_back(fmt::format("{}={}", var->val, tmpT));
-
         val = var->val;
         type = var->type;
         if (jmp) {
@@ -622,10 +601,6 @@ namespace production {
     }
 
     void Assignment2::visit(sema::Sema *semaAna) {
-
-        std::cerr << "arrive Assignment " << line << "\n";
-        printIRCODE(semaAna->irCode);
-
         logic_or->jmp = jmp;
         logic_or->trueJmp = trueJmp;
         logic_or->falseJmp = falseJmp;
@@ -634,15 +609,9 @@ namespace production {
 
         val = logic_or->val;
         type = logic_or->type;
-
-        std::cerr << "arrive AssignmentEnd " << line << "\n";
-        printIRCODE(semaAna->irCode);
     }
 
     void Logic_or::visit(sema::Sema *semaAna) {
-        std::cerr << "arrive Logic_or " << line << "\n";
-        printIRCODE(semaAna->irCode);
-
         semaAna->codeExprSpace.emplace(&(semaAna->irCode));
         logic_and->jmp = jmp;
         logic_and->trueJmp = trueJmp;
@@ -674,9 +643,6 @@ namespace production {
 
         semaAna->codeExprSpace.top().backpatch();
         semaAna->codeExprSpace.pop();
-
-        std::cerr << "arrive Logic_orEnd " << line << "\n";
-        printIRCODE(semaAna->irCode);
     }
 
     void Logic_or_prime::visit(sema::Sema *semaAna) {
@@ -700,18 +666,12 @@ namespace production {
     }
 
     void Logic_and::visit(sema::Sema *semaAna) {
-        std::cerr << "arrive Logic_and " << line << "\n";
-        printIRCODE(semaAna->irCode);
-
         semaAna->codeExprSpace.emplace(&(semaAna->irCode));
         logic_and_prime->jmp = jmp;
         logic_and_prime->trueJmp = trueJmp;
         logic_and_prime->falseJmp = falseJmp;
 
         equality->visit(semaAna);
-
-        std::cerr << "arrive Logic_and equalityEnd " << line << "\n";
-        printIRCODE(semaAna->irCode);
 
         if (jmp) {
             semaAna->irCode.emplace_back("if " + equality->val + " goto {}");
@@ -721,25 +681,15 @@ namespace production {
         }
         semaAna->codeExprSpace.top().right = static_cast<int>(semaAna->irCode.size());
 
-        std::cerr << "arrive Logic_and logic_and_prime " << line << "\n";
-        printIRCODE(semaAna->irCode);
-
         logic_and_prime->visit(semaAna);
 
-        std::cerr << "finish Logic_and logic_and_prime " << line << "\n";
-        printIRCODE(semaAna->irCode);
-
         if (logic_and_prime->op == "&&") {
-            std::cerr << "arrive Logic_and logic_and_prime op &&" << line << "\n";
-            printIRCODE(semaAna->irCode);
             auto resultPair = autoConversion(equality->val, equality->type->selfType,
                                              logic_and_prime->val, logic_and_prime->type->selfType,
                                              logic_and_prime->op, line, semaAna);
             val = resultPair.first;
             type = std::make_shared<ast::BOOL_Type>();
         } else {
-            std::cerr << "arrive Logic_and logic_and_prime op empty " << line << "\n";
-            printIRCODE(semaAna->irCode);
             val = equality->val;
             type = equality->type;
             if (jmp) {
@@ -747,7 +697,6 @@ namespace production {
                 semaAna->codeExprSpace.top().rightSentences.clear();
             }
         }
-
         semaAna->codeExprSpace.top().backpatch();
         semaAna->codeExprSpace.pop();
     }
@@ -773,11 +722,10 @@ namespace production {
     }
 
     void Equality::visit(sema::Sema *semaAna) {
-        std::cerr << "arrive Equality " << line << "\n";
-        printIRCODE(semaAna->irCode);
-
         comparison->visit(semaAna);
+
         equality_prime->visit(semaAna);
+
         if (equality_prime->op == "!=" || equality_prime->op == "==") {
             auto resultPair = autoConversion(comparison->val, comparison->type->selfType,
                                              equality_prime->val, equality_prime->type->selfType,
@@ -788,8 +736,6 @@ namespace production {
             val = comparison->val;
             type = comparison->type;
         }
-        std::cerr << "arrive EqualityEnd " << line << "\n";
-        printIRCODE(semaAna->irCode);
     }
 
     void Equality_prime::visit(sema::Sema *semaAna) {
@@ -798,6 +744,7 @@ namespace production {
 
     void Equality_prime1::visit(sema::Sema *semaAna) {
         equality->visit(semaAna);
+
         op = "!=";
         val = equality->val;
         type = equality->type;
@@ -805,6 +752,7 @@ namespace production {
 
     void Equality_prime2::visit(sema::Sema *semaAna) {
         equality->visit(semaAna);
+
         op = "==";
         val = equality->val;
         type = equality->type;
@@ -816,6 +764,7 @@ namespace production {
 
     void Comparison::visit(sema::Sema *semaAna) {
         term->visit(semaAna);
+
         comparison_prime->visit(semaAna);
 
         if (comparison_prime->op == ">" || comparison_prime->op == ">=" || comparison_prime->op == "<" ||
@@ -837,6 +786,7 @@ namespace production {
 
     void Comparison_prime1::visit(sema::Sema *semaAna) {
         comparison->visit(semaAna);
+
         op = ">";
         val = comparison->val;
         type = comparison->type;
@@ -844,6 +794,7 @@ namespace production {
 
     void Comparison_prime2::visit(sema::Sema *semaAna) {
         comparison->visit(semaAna);
+
         op = ">=";
         val = comparison->val;
         type = comparison->type;
@@ -851,6 +802,7 @@ namespace production {
 
     void Comparison_prime3::visit(sema::Sema *semaAna) {
         comparison->visit(semaAna);
+
         op = "<";
         val = comparison->val;
         type = comparison->type;
@@ -858,6 +810,7 @@ namespace production {
 
     void Comparison_prime4::visit(sema::Sema *semaAna) {
         comparison->visit(semaAna);
+
         op = "<=";
         val = comparison->val;
         type = comparison->type;
@@ -869,6 +822,7 @@ namespace production {
 
     void Term::visit(sema::Sema *semaAna) {
         factor->visit(semaAna);
+
         term_prime->visit(semaAna);
 
         if (term_prime->op == "+" || term_prime->op == "-") {
@@ -889,6 +843,7 @@ namespace production {
 
     void Term_prime1::visit(sema::Sema *semaAna) {
         term->visit(semaAna);
+
         op = "-";
         val = term->val;
         type = term->type;
@@ -896,6 +851,7 @@ namespace production {
 
     void Term_prime2::visit(sema::Sema *semaAna) {
         term->visit(semaAna);
+
         op = "+";
         val = term->val;
         type = term->type;
@@ -907,6 +863,7 @@ namespace production {
 
     void Factor::visit(sema::Sema *semaAna) {
         incr_exp->visit(semaAna);
+
         factor_prime->visit(semaAna);
 
         if (factor_prime->op == "/" || factor_prime->op == "*" || factor_prime->op == "%") {
@@ -955,6 +912,7 @@ namespace production {
 
     void Incr_exp::visit(sema::Sema *semaAna) {
         unary->visit(semaAna);
+
         incr_op->visit(semaAna);
 
         if (!incr_op->ifUsed) {
@@ -1093,7 +1051,7 @@ namespace production {
     }
 
     void ArgList2::visit(sema::Sema *semaAna) {
-        //产生式右部为空，不执行操作
+        sum=0;
     }
 
     void Arguments::visit(sema::Sema *semaAna) {
@@ -1102,11 +1060,16 @@ namespace production {
 
     void Arguments1::visit(sema::Sema *semaAna) {
         expression->visit(semaAna);
+
+        semaAna->irCode.emplace_back(fmt::format("param {}", expression->val));
+
         arguments->visit(semaAna);
+
+        sum = arguments->sum + 1;
     }
 
     void Arguments2::visit(sema::Sema *semaAna) {
-        //产生式右部为空，不执行操作
+        sum=0;
     }
 
     void Primary::visit(sema::Sema *semaAna) {
@@ -1171,10 +1134,6 @@ namespace production {
     }
 
     void Var::visit(sema::Sema *semaAna) {
-        std::cerr << "arrive Var " << line << "\n";
-        printIRCODE(semaAna->irCode);
-        std::cout << std::endl;
-
         if (usage == define) {
             id = token_IDENTIFIER->toString();
             varSuffix->usage = usage;
@@ -1214,7 +1173,6 @@ namespace production {
                 val = tmpT1;
             }
         }
-        std::cerr << line << " " << id << " " << offset << std::endl;
     }
 
     void VarSuffix::visit(sema::Sema *semaAna) {
@@ -1222,11 +1180,6 @@ namespace production {
     }
 
     void VarSuffix1::visit(sema::Sema *semaAna) {
-        std::cerr << "arrive VarSuffix1 " << line << "\n";
-        printIRCODE(semaAna->irCode);
-        std::cout << std::endl;
-
-
         expression->visit(semaAna);
 
         if (usage == define) {
@@ -1250,9 +1203,7 @@ namespace production {
             type = std::make_shared<ast::ARRAY_Type>(varSuffix->type, tmpT1, length);
 
         } else {
-            std::cerr << "before get width length:" << varSuffix->length << " width:" << varSuffix->width << " \n";
             width = sema::stringMul(varSuffix->width, varSuffix->length, semaAna);
-            std::cerr << "len:" << len << " width:" << width << " \n";
             String tmpT1 = sema::stringMul(len, width, semaAna);
             offset = sema::stringPlus(varSuffix->offset, tmpT1, semaAna);
             returnType = varSuffix->returnType;
@@ -1260,10 +1211,6 @@ namespace production {
     }
 
     void VarSuffix2::visit(sema::Sema *semaAna) {
-        std::cerr << "arrive VarSuffix2 " << line << "\n";
-        printIRCODE(semaAna->irCode);
-        std::cout << std::endl;
-
         if (usage == define) {
             length = t->length;
             type = t;
@@ -1271,7 +1218,6 @@ namespace production {
         } else {
             width = type->width;
             returnType = type;
-            std::cerr << "length:" << length << " width:" << width << " \n";
         }
     }
 

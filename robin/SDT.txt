@@ -1,0 +1,1136 @@
+优化SDT请参考robin/src/ast/visit.cpp
+
+
+List<String> irCode;
+
+class Statement{
+int compare=-1;
+int code1=-1;
+int code2=-1;
+int next=-1;
+List<int> compareSentences;
+List<int> code1Sentences;
+List<int> code2Sentences;
+List<int> nextSentences;
+    void packpatch(){
+        for(auto i:compareSentences)
+            irCode[i]=fmt::format(irCode[i],compare);     
+        for(auto i:code1Sentences)
+            irCode[i]=fmt::format(irCode[i],code1);
+        for(auto i:code2Sentences)
+            irCode[i]=fmt::format(irCode[i],code2);
+        for(auto i:nextSentences)
+            irCode[i]=fmt::format(irCode[i],next);
+    }
+};
+
+class Expression{
+    int right;
+    List<int>rightSentences;
+    void packpatch()
+    {
+        for(auto i:rightSentences)
+            irCode[i]=fmt::format(irCode[i],rightSentences);
+    }
+}
+
+stack<StmtSpace> codeStmtSpace;
+stack<ExprSpace> codeExprSpace;
+
+String genT(){
+    static int Tindex=0;
+    return fmt::format("T{}", Tindex++);
+}
+
+class Variable{
+    int width;
+    int offset;
+    Type type;
+    String name;
+    Object value;
+};
+
+List<Variable> top;
+
+Type chooseReturnType(Type t1,Type t2);
+
+以上是部分使用的类、变量、函数的定义
+/////////////////////////////////////////////////////////////////////////////
+
+0 S::program
+
+1 program::declarations
+
+2 declarations::{
+                    declaration.code1Jmp=declarations.code1Jmp;
+                    declaration.nextJmp=declarations.nextJmp;
+                    declarations1.code1Jmp=declarations.code1Jmp;
+                    declarations1.nextJmp=declarations.nextJmp;
+                }
+                declaration declarations1
+                {
+                    declarations.returnType=chooseReturnType(declaration.returnType, declarations1.returnType);
+                }
+
+
+3 declarations::ε
+                {
+                    declarations.returnType=BASE_;
+                }
+
+4 declaration::funDecl
+                {
+                    declaration.returnType=BASE_;
+                }
+
+5 declaration::varDecl
+                {
+                    declaration.returnType=BASE_;
+                }
+
+6 declaration::{
+                    statement.code1Jmp=declaration.code1Jmp;
+                    statement.nextJmp=declaration.nextJmp;
+               }
+               statement
+               {
+                declaration.returnType=statement.returnType;
+               }
+
+7 statement::
+            {
+                breakStmt.nextJmp = statement.nextJmp;
+            }
+            breakStmt
+            {
+                statement.returnType=BASE_;
+            }
+
+8 statement::
+            {
+                continueStmt.nextJmp = statement.nextJmp;
+            }
+            continueStmt
+            {
+                statement.returnType=BASE_;
+            }
+
+9 statement::returnStmt
+             {
+                statement.returnType=returnStmt.returnType;
+             }
+
+10 statement::exprStmt
+            {
+                statement.returnType=BASE_;
+            }
+
+11 statement::
+            {
+                ifStmt.code1Jmp=statement.code1Jmp;
+                ifStmt.nextJmp=statement.nextJmp;
+            }
+            ifStmt
+            {
+                statement.returnType=ifStmt.returnType;
+            }
+
+12 statement::whileStmt
+            {
+                statement.returnType=whileStmt.returnType;
+            }
+
+13 statement::repeatStmt
+            {
+                statement.returnType=repeatStmt.returnType;
+            }
+
+14 statement::
+            {
+                block.code1Jmp = statement.code1Jmp;
+                block.nextJmp = statement.nextJmp;
+            }
+            block
+            {
+                statement.returnType=block.returnType;
+            }
+
+15 statement::forStmt
+            {
+                statement.returnType=forStmt.returnType;
+            }
+
+16 breakStmt::BREAK SEMICOLON
+              {
+                if (breakStmt.nextJmp == nullptr) return reportError();
+                irCode.push_back("goto {}");
+                continueStmt.nextJmp.push(irCode.size()-1);
+              }
+
+17 continueStmt::CONTINUE SEMICOLON
+                 {
+                    if(continueStmt.code1Jmp==nullptr) return reportError();
+                    irCode.push_back("goto {}");
+                    continueStmt.code1Jmp.push(irCode.size()-1);
+                 }
+
+18 returnStmt::RETURN exprStmt
+               {
+                irCode.push_back("return {exprStmt.val}");
+                returnStmt.returnType=exprStmt.returnType;
+               }
+
+
+19 funDecl::IDENTIFIER
+            {
+                funDecl.id=IDENTIFIER;
+                top.add(funDecl);
+            }
+            EQUAL FUNCTION LEFT_PAREN paramList RIGHT_PAREN block
+            {
+                returnType=block.returnType;
+            }
+
+20 varDecl::type
+            {
+                varDef.type=type.type;
+                varDef.width=type.width;
+            }
+            varDef
+            {
+                varDefs.type=type.type;
+                varDefs.width=type.width;
+            }
+            varDefs SEMICOLON
+
+21 varDef::{var.usage=define;
+           var.t=varDef.type;
+           var.w=varDef.width;}
+           var varInit
+           {
+                if(varInit.val)
+                {
+                    if(varInit.type!=var.type)
+                    {
+                        reportError();
+                    }
+                    else
+                    {
+                        irCode.push_back("{var.val}={varInit.val}");
+                    }
+                }
+           }
+
+22 varDefs::COMMA 
+             {
+                varDef.type=varDefs.type;
+                varDef.width=varDefs.width;
+             }
+             varDef
+             {
+                varDefs1.type=varDefs.type;
+                varDefs1.width=varDefs.width;
+             }
+             varDefs1
+
+23 varDefs::ε
+
+24 varInit::EQUAL expression
+            {
+                varInit.val=expression.val;
+                varInit.type=expression.type;
+            }
+
+25 varInit::ε
+
+26 type::INTEGER
+         {
+            type.type=INTEGER;
+            type.width=8;
+         }
+
+27 type::DOUBLE
+         {
+            type.type=DOUBLE;
+            type.width=8;
+         }
+
+28 type::STRING
+         {
+            type.type=STRING;
+            type.type=8;
+         }
+
+29 type::BOOL
+         {
+            type.type=BOOL;
+            type.width=8;
+         }
+
+30 type::CHAR
+         {
+            type.type=CHAR;
+            type.width=8;
+         }
+
+31 type::VAR
+         {
+            type.type=VAR;
+            type.width=8;
+         }
+
+32 exprStmt::
+             {
+                 expression.jmp=exprStmt.jmp;
+                 expression.trueJmp=exprStmt.trueJmp;
+                 expression.falseJmp=exprStmt.falseJmp;
+             }
+             expression SEMICOLON
+             {
+                exprStmt.val=expression.val;
+                exprStmt.type=expression.type;
+                exprStmt.returnType=expression.type;
+             }
+
+33 exprStmt::
+             {
+                 if(exprStmt.jmp)
+                 {
+                    irCode.push_back("goto {exprStmt.trueJmp}");
+                    trueJmp.push_back(irCode.size()-1);
+                 }
+             }
+             SEMICOLON
+             {
+                exprStmt.val=true;
+                exprStmt.type=BOOL;
+                exprStmt.returnType=NIL;
+             }
+
+34 ifStmt::{codeStmtSpace.push(new(StmtSpace));}
+           IF LEFT_PAREN
+           {
+                expression.jmp=true;
+                expression.trueJmp=codeStmtSpace.top().code1Sentences;
+                expression.falseJmp=codeStmtSpace.top().code2Sentences;
+           }
+           expression RIGHT_PAREN
+           {
+            codeStmtSpace.top().code1=irCode.size();
+            statement.code1Jmp=ifStmt.code1Jmp;
+            statement.nextJmp=ifStmt.nextJmp;
+           }
+           statement
+           {
+            irCode.push_back("goto {}");
+            codeStmtSpace.top().nextSentences.push(irCode.size()-1);
+            codeStmtSpace.top().code2=irCode.size();
+            elseBranch.code1Jmp=ifStmt.code1Jmp;
+            elseBranch.nextJmp=ifStmt.nextJmp;
+           }
+           elseBranch
+           {
+            ifStmt.returnType=chooseReturnType(statement.returnType,elseBranch.returnType);
+            if(elseBranch.ifExist)
+            {
+                irCode.push_back("goto {}");
+                codeStmtSpace.top().nextSentences.push(irCode.size()-1);
+            }
+            codeStmtSpace.top().next=irCode.size();
+            codeStmtSpace.top().backpatch();
+            codeStmtSpace.pop();
+           }
+
+35 elseBranch::ELSE
+               {
+                    elseBranch.ifExist=true;
+                    statement.code1Jmp=elseBranch.code1Jmp;
+                    statement.nextJmp=elseBranch.nextJmp;
+               }
+               statement
+               {
+                    elseBranch.returnType=statement.returnType;
+               }
+
+36 elseBranch::{
+                    elseBranch.ifExist=false;
+                    elseBranch.returnType=BASE_;
+               }
+               ε      
+
+37 whileStmt::WHILE LEFT_PAREN
+              {
+                codeStmtSpace.push(new(StmtSpace));
+                codeStmtSpace.top().compare=irCode.size();
+                codeStmtSpace.top().code1=irCode.size();
+                expression.jmp=true;
+                expression.trueJmp=codeStmtSpace.top().code2Sentences;
+                expression.falseJmp=codeStmtSpace.top().nextSentences;
+
+              }
+              expression RIGHT_PAREN
+              {
+                codeStmtSpace.top().code2=irCode.size();
+                statement.code1Jmp=codeStmtSpace.top().code1Sentences;
+                statement.nextJmp=codeStmtSpace.top().nextSentences;
+              }
+              statement
+              {
+                ifStmt.returnType=statement.returnType;
+                irCode.push_back("goto {}")
+                codeStmtSpace.top().compareSentences.push(irCode.size()-1);
+                codeStmtSpace.top().next=irCode.size();
+                codeStmtSpace.top().backpatch();
+                codeStmtSpace.pop();
+              }
+
+38 forStmt::{
+                codeStmtSpace.push(new(StmtSpace));
+            }
+            FOR LEFT_PAREN varDecl
+            {
+                codeStmtSpace.top().compare=irCode.size();
+                codeStmtSpace.top().code1=irCode.size();
+                exprStmt.jmp=true;
+                exprStmt.trueJmp=codeStmtSpace.top().code2Sentences;
+                exprStmt.falseJmp=codeStmtSpace.top().nextSentences;
+            }
+            exprStmt RIGHT_PAREN
+            {
+                codeStmtSpace.top().code2=irCode.size();
+                statement.code1Jmp=codeStmtSpace.top().code1Sentences;
+                statement.nextJmp=codeStmtSpace.top().nextSentences;
+            }
+            statement
+            {
+                ifStmt.returnType=statement.returnType;
+                irCode.push_back("goto {}");
+                codeStmtSpace.top().code1Sentences.push(irCode.size()-1);
+                codeStmtSpace.top().next=irCode.size();
+                codeStmtSpace.top().backpatch();
+                codeStmtSpace.pop();
+            }
+
+39 forStmt::{
+                codeStmtSpace.push(new(StmtSpace));
+            }
+            FOR LEFT_PAREN varDecl
+            {
+                codeStmtSpace.top().compare=irCode.size();
+                exprStmt.jmp=true;
+                exprStmt.trueJmp=codeStmtSpace.top().code2Sentences;
+                exprStmt.falseJmp=codeStmtSpace.top().nextSentences;
+            }
+            exprStmt
+            {
+                codeStmtSpace.top().code1=irCode.size();
+            }
+            expression RIGHT_PAREN
+            {
+                irCode.push_back("goto {}");
+                codeStmtSpace.top().compareSentences.push(irCode.size()-1);
+                codeStmtSpace.top().code2=irCode.size();
+                statement.code1Jmp=codeStmtSpace.top().code1Sentences;
+                statement.nextJmp=codeStmtSpace.top().nextSentences;
+            }
+            statement
+            {
+                ifStmt.returnType=statement.returnType;
+                irCode.push_back("goto {}");
+                codeStmtSpace.top().code1Sentences.push(irCode.size()-1);
+                codeStmtSpace.top().next=irCode.size();
+                codeStmtSpace.top().backpatch();
+                codeStmtSpace.pop();
+            }
+
+40 forStmt::{
+                codeStmtSpace.push(new(StmtSpace));
+            }
+            FOR LEFT_PAREN exprStmt1
+            {
+                codeStmtSpace.top().compare=irCode.size();
+                codeStmtSpace.top().code1=irCode.size();
+                exprStmt2.jmp=true;
+                exprStmt2.trueJmp=codeStmtSpace.top().code2Sentences;
+                exprStmt2.falseJmp=codeStmtSpace.top().nextSentences;
+            }
+            exprStmt2 RIGHT_PAREN
+            {
+                codeStmtSpace.top().code2=irCode.size();
+                statement.code1Jmp=codeStmtSpace.top().code1Sentences;
+                statement.nextJmp=codeStmtSpace.top().nextSentences;
+            }
+            statement
+            {
+                ifStmt.returnType=statement.returnType;
+                irCode.push_back("goto {}")
+                codeStmtSpace.top().code1Sentences.push(irCode.size()-1);
+                codeStmtSpace.top().next=irCode.size();
+                codeStmtSpace.top().backpatch();
+                codeStmtSpace.pop();
+            }
+
+41 forStmt::{
+                codeStmtSpace.push(new(StmtSpace));
+            }
+            FOR LEFT_PAREN exprStmt1
+            {
+                codeStmtSpace.top().compare=irCode.size();
+                exprStmt2.jmp=true;
+                exprStmt2.trueJmp=codeStmtSpace.top().code2Sentences;
+                exprStmt2.falseJmp=codeStmtSpace.top().nextSentences;
+            }
+            exprStmt2
+            {
+                codeStmtSpace.top().code1=irCode.size();
+            }
+            expression RIGHT_PAREN
+            {
+                irCode.push_back("goto {}");
+                codeStmtSpace.top().compareSentences.push(irCode.size()-1);
+                codeStmtSpace.top().code2=irCode.size();
+                statement.code1Jmp=codeStmtSpace.top().code1Sentences;
+                statement.nextJmp=codeStmtSpace.top().nextSentences;
+            }
+            statement
+            {
+                ifStmt.returnType=statement.returnType;
+                irCode.push_back("goto {}");
+                codeStmtSpace.top().code1Sentences.push(irCode.size()-1);
+                codeStmtSpace.top().next=irCode.size();
+                codeStmtSpace.top().backpatch();
+                codeStmtSpace.pop();
+            }
+
+42 block::LEFT_BRACE
+        {
+            declarations->code1Jmp = block.code1Jmp;
+            declarations->nextJmp = block.nextJmp;
+        }
+        declarations RIGHT_BRACE
+        {
+            block.returnType=declarations.returnType;
+        }
+
+43 repeatStmt::{
+                    codeStmtSpace.push(new(StmtSpace));
+                    codeStmtSpace.top().code2=irCode.size();
+                    statement.code1Jmp=codeStmtSpace.top().code1Sentences;
+                    statement.nextJmp=codeStmtSpace.top().nextSentences;
+               }
+               REPEAT statement
+               {
+                    ifStmt.returnType=statement.returnType;
+                    irCode.push_back("goto {}");
+                    codeStmtSpace.top().compareSentences.push(irCode.size()-1);
+                    codeStmtSpace.top().compare=irCode.size();
+                    codeStmtSpace.top().code1=irCode.size();
+                    expression.jmp=true;
+                    expression.trueJmp=codeStmtSpace.top().nextSentences;
+                    expression.falseJmp=codeStmtSpace.top().code2Sentences;
+               }
+               UNTIL LEFT_PAREN expression RIGHT_PAREN SEMICOLON
+               {
+                    codeStmtSpace.top().next=irCode.size();
+                    codeStmtSpace.top().backpatch();
+                    codeStmtSpace.pop();
+               }
+
+
+44 paramList::parameter parameters
+
+45 paramList::ε
+
+46 parameters::COMMA parameter parameters
+
+47 parameters::ε
+
+48 parameter::type
+              {
+                    var.usage=define;
+                    var.t=type.type;
+                    var.w=type.width;
+              }
+              var
+
+
+49 expression::
+               {
+                    assignment.jmp=expression.jmp;
+                    assignment.trueJmp=expression.trueJmp;
+                    assignment.falseJmp=expression.falseJmp;
+               } 
+               assignment
+               {
+                    expression.val=assignment.val;
+                    expression.type=assignment.type;
+               }
+
+50 assignment::var EQUAL assignment
+                {
+                    tmpT=autoConversion(assignment.val,assignment.type,var.type);
+                    irCode.push_back("{var.val}={tmpT}");
+                    assignment.val=var.val;
+                    assignment.type=var.type;
+                    if(assignment.jmp)
+                    {
+                        irCode.push_back("if {var.val} goto {}");
+                        assignment.trueJmp.push(irCode.size()-1);
+                        irCode.push_back("goto {}");
+                        assignment.falseJmp.push(irCode.size()-1);
+                    }
+                }
+
+51 assignment::
+               {
+                    logic_or.jmp=assignment.jmp;
+                    logic_or.trueJmp=assignment.trueJmp;
+                    logic_or.falseJmp=assignment.falseJmp;
+               }
+               logic_or
+               {
+                    assignment.val=logic_or.val;
+                    assignment.type=logic_or.type;
+               }
+
+52 logic_or::
+             {
+                codeExprSpace.push(new(ExprSpace));
+                logic_and.jmp=logic_or.jmp;
+                logic_and.trueJmp=logic_or.trueJmp;
+                logic_and.falseJmp=codeExprSpace.top().rightSentences;
+                logic_or_prime.jmp=logic_or.jmp;
+                logic_or_prime.trueJmp=logic_or.trueJmp;
+                logic_or_prime.falseJmp=logic_or.falseJmp;
+             }
+             logic_and
+             {
+                codeExprSpace.top().right=irCode.size();
+             }
+             logic_or_prime
+               {
+                    if(logic_or_prime.op=="||")
+                    {
+                        tmpT=autoConversion(logic_and.val,logic_and.type,logic_or_prime.val,
+                            logic_or_prime.type,logic_or_prime.op);
+                        logic_or.val=tmpT;
+                        logic_or.type=BOOL;
+                    }
+                    else
+                    {
+                        if(logic_or_prime.jmp)
+                        {
+                            merge(logic_or.falseJmp, codeExprSpace.top().rightSentences);
+                            codeExprSpace.top().rightSentences.clear();
+                        }
+                        logic_or.val=logic_and.val;
+                        logic_or.type=logic_and.type;
+                    }
+                    codeExprSpace.top().backpatch;
+                    codeExprSpace.pop();
+               }
+
+53 logic_or_prime::OR
+                   {
+                        logic_or.jmp=logic_or_prime.jmp;
+                        logic_or.trueJmp=logic_or_prime.trueJmp;
+                        logic_or.falseJmp=logic_or_prime.falseJmp;
+                   }
+                   logic_or
+                   {
+                        logic_or_prime.op="||";
+                        logic_or_prime.val=logic_or.val;
+                        logic_or_prime.type=logic_or.type;
+                   }
+
+54 logic_or_prime::ε
+
+55 logic_and::
+              {
+                    codeExprSpace.push(new(ExprSpace));
+                    logic_and_prime.jmp=logic_and.jmp;
+                    logic_and_prime.trueJmp=logic_and.trueJmp;
+                    logic_and_prime.falseJmp=logic_and.falseJmp;
+              }
+              equality
+              {
+                if(logic_and.jmp)
+                {
+                    irCode.push("if {equality.val} goto {}");
+                    codeExprSpace.top().rightSentences.push(irCode.size()-1);
+                    irCode.push("goto {}");
+                    logic_and.falseJmp.push_back(irCode.size()-1);
+                }
+                codeExprSpace.top().right=irCode.size();
+              }
+              logic_and_prime
+                   {
+                        if(logic_and_prime.op=="&&")
+                        {
+                            tmpT=autoConversion(equality.val,equality.type,logic_and_prime.val,
+                                logic_and_prime.type,logic_and_prime.op);
+                            logic_and.val=tmpT;
+                            logic_and.type=BOOL;
+                        }
+                        else
+                        {
+                            logic_and.val=equality.val;
+                            logic_and.type=equality.type;
+                            if(logic_and.jmp)
+                            {
+                                merge(logic_and.trueJmp, codeExprSpace.top().rightSentences);
+                                codeExprSpace.top().rightSentences.clear();
+                            }
+                        }
+                    codeExprSpace.top().backpatch;
+                    codeExprSpace.pop();
+                   }
+
+56 logic_and_prime::AND
+                    {
+                        logic_and.jmp=logic_and_prime.jmp;
+                        logic_and.trueJmp=logic_and_prime.trueJmp;
+                        logic_and.falseJmp=logic_and_prime.falseJmp;
+                    }
+                    logic_and
+                    {
+                        logic_and_prime.op="&&";
+                        logic_and_prime.val=logic_and.val;
+                        logic_and_prime.type=logic_and.type; 
+                    }
+
+57 logic_and_prime::ε
+
+58 equality::comparison equality_prime
+                   {
+                        if(equality_prime.op=="!=" || equality_prime.op=="==")
+                        {
+                            tmpT=autoConversion(comparison.val,comparison.type,equality_prime.val,equality_prime.type,equality_prime.op);
+                            equality.val=tmpT;
+                            equality.type=BOOL;
+                        }
+                        else
+                        {
+                            equality.val=comparison.val;
+                            equality.type=comparison.type;
+                        }
+                   }
+
+59 equality_prime::NOT_EQUAL equality
+                   {
+                    equality_prime.op="!=";
+                    equality_prime.val=equality.val;
+                    equality_prime.type=equality.type;
+                   }
+
+60 equality_prime::EQUAL_EQUAL equality
+                   {
+                    equality_prime.op="==";
+                    equality_prime.val=equality.val;
+                    equality_prime.type=equality.type;
+                   }
+
+61 equality_prime::ε
+
+62 comparison::term comparison_prime
+               {
+                if(comparison_prime.op==">" || comparison_prime.op==">=" || comparison_prime.op=="<"|| comparison_prime.op=="<=")
+                {
+                    tmpT=autoConversion(term.val,term.type,comparison_prime.val,comparison_prime.type,
+                                        comparison_prime.op);
+                    comparison.val=tmpT;
+                    comparison.type=BOOL;
+                }
+                else
+                {
+                    comparison.val=term.val;
+                    comparison.type=term.type;
+                }
+               }
+
+63 comparison_prime::GREATER comparison
+                     {
+                        comparison_prime.op=">";
+                        comparison_prime.val=comparison.val;
+                        comparison_prime.type=comparison.type;
+                     }
+
+64 comparison_prime::GREATER_EQUAL comparison
+                     {
+                        comparison_prime.op=">=";
+                        comparison_prime.val=comparison.val;
+                        comparison_prime.type=comparison.type;
+                     }
+
+65 comparison_prime::LESS comparison
+                     {
+                        comparison_prime.op="<";
+                        comparison_prime.val=comparison.val;
+                        comparison_prime.type=comparison.type;
+                     }
+
+66 comparison_prime::LESS_EQUAL comparison
+                     {
+                        comparison_prime.op="<=";
+                        comparison_prime.val=comparison.val;
+                        comparison_prime.type=comparison.type;
+                     }
+
+67 comparison_prime::ε
+
+68 term::factor term_prime
+         {
+            if(term_prime.op=='+' || term_prime.op=='-')
+            {
+                tmpT,tmpType=autoConversion(factor->val,factor->type,
+                    term_prime->val,term_prime->type,term_prime->op);
+                term.val=tmpT;
+                term.type=tmpType;
+            }
+            else
+            {
+                term.val=factor.val;
+                term.type=factor.type;
+            }
+         }       
+
+69 term_prime::MINUS term
+               {term_prime.op="-";
+               term_prime.val=term.val;
+               term_prime.type=term.type;}
+
+70 term_prime::PLUS term
+               {term_prime.op="+";
+               term_prime.val=term.val;
+               term_prime.type=term.type;}
+
+71 term_prime::ε
+
+72 factor::incr_exp factor_prime
+           {
+            if(factor_prime.op=="/" || factor_prime.op=="*" || factor_prime.op=="%")
+            {
+                tmpT,tmpType=autoConversion(incr_exp.val,incr_exp.type,
+                    factor_prime.val,factor_prime.type,factor_prime.op);
+                factor.val=tmpT;
+                factor.type=tmpType;
+            }
+            else
+            {
+                factor.val=incr_exp.val;
+                factor.type=incr_exp.type;
+            }
+           }
+
+73 factor_prime::DIV factor
+                 {factor_prime.op="/";
+                 factor_prime.val=factor.val;
+                 factor_prime.type=factor.type;}
+
+74 factor_prime::STAR factor
+                 {factor_prime.op="*";
+                 factor_prime.val=factor.val;
+                 factor_prime.type=factor.type;}
+
+75 factor_prime::MOD factor
+                 {factor_prime.op="%";
+                 factor_prime.val=factor.val;
+                 factor_prime.type=factor.type;}
+
+76 factor_prime::ε
+
+77 incr_exp::unary
+            incr_op
+             {
+                if(!incr_op.ifused)
+                {
+                    incr_exp.val=unary.val;
+                    incr_exp.type=unary.type;
+                }
+                else
+                {
+                    incr_exp.op=incr_op.val>0?"+":"-";
+                    num=|-incr_op.val|.to_string;
+                    tmpT,tmpType=autoConversion(unary.val,unary.type,num,INTEGER,op);
+                    incr_exp.val=unary.val;
+                    if(incr_exp.val!=tmpT)
+                    {
+                        irCode.push_back("{incr_exp.val}={tmpT}");
+                    }
+                    incr_exp.type=tmpType;
+                }
+             }
+
+78 incr_op::DOUBLE_ADD incr_op1
+             {
+                incr_op.ifused=true;
+                incr_op.val=incr_op1.val+1;
+             }
+
+79 incr_op::DOUBLE_MINUS incr_op1
+             {
+                incr_op.ifused=true;
+                incr_op.val=incr_op1.val-1;
+             }
+
+80 incr_op::ε
+            {
+                incr_op.ifused=false;
+                incr_op.val=0;
+            }
+
+81 unary::NOT unary1
+           {
+            tmpT1=autoConversion(unary1.val,unary1.type,BOOL);
+            tmpT2=genT();
+            irCode.push_back("{tmpT2}=!{tmpT1}");
+            unary.val=tmpT2;
+            unary.type=BOOL;
+           }
+           
+82 unary::MINUS unary1
+           {
+                if(unary1.type<INTEGER)
+                {
+                    tmpT1=genT();
+                    irCode.push_back("{tmpT1}=(interger){unary1.val}");
+                    tmpT2=genT();
+                    irCode.push_back("{tmpT2}=-{tmpT1}");
+                    unary.val=tmpT2;
+                    unary.type=INTEGER;
+                }
+                else
+                {
+                    tmpT1=genT();
+                    irCode.push_back("{tmpT1}=-{unary1.val}");
+                    unary.val=tmpT1;
+                    unary.type=unary1.type;
+                }
+           }
+83 unary::call
+          {unary.val=call.val;
+          unary.type=call.type;}
+
+
+84 call::primary
+        {
+            call_suffix.callee=primary.val;
+        }
+        call_suffix
+        {
+            if(call_suffix.exist)
+            {
+                call.val=call_suffix.val;
+                call.type=call_suffix.type;
+            }
+            else
+            {
+                call.val=primary.val;
+                call.type=primary.type;
+            }
+        }
+
+85 call_suffix::LEFT_PAREN argList RIGHT_PAREN
+                {
+                    tmpT1=genT();
+                    irCode.push_back("{tmpT1}=call {call_suffix.callee},{argList.sum}");
+                    call_suffix1.callee=tmpT1;
+                }
+                call_suffix1
+                {
+                    call_suffix.exist=true;
+                    call_suffix.type=top[call_suffix.callee].returnType;
+                    if(call_suffix1.exist)
+                    {
+                        call_suffix.val=call_suffix1.val;
+                        call_suffix.type.call_suffix1.type;
+                    }
+                    else
+                    {
+                        call_suffix.val=tmpT1;
+                    }
+                }
+
+86 call_suffix::ε
+               {
+                call_suffix.exist=false;
+               }
+
+87 argList::expression
+            {
+                irCode.push_back("param {expression.val}");
+            }
+            arguments
+            {
+                argList.sum=1+arguments.sum;
+            }
+
+88 argList::ε
+            {
+                argList.sum=0;
+            }
+
+89 arguments::COMMA expression
+               {
+                irCode.push_back("param {expression.val}");
+               }
+               arguments1
+               {
+                arguments.sum=1+arguments1.sum;
+               }
+
+90 arguments::ε
+              {
+                arguments.sum=0;
+              }
+
+91 primary::constVal
+            {
+                primary.val=constVal.val;
+                primary.type=constVal.type;
+            }
+
+92 primary::LEFT_PAREN expression RIGHT_PAREN
+            {
+                primary.val=expression.val;
+                primary.type=expression.type;
+            }
+
+93 primary::{
+                var.usage=reference;
+            }
+            var
+            {
+                primary.val=var.val;
+                primary.type=var.type;
+            }
+
+94 constVal::TRUE
+             {
+                constVal.val=TRUE.Lexeme;
+                constVal.type=BOOL;
+             }
+
+95 constVal::FALSE
+             {
+                constVal.val=FALSE.Lexeme;
+                constVal.type=BOOL;
+             }
+
+96 constVal::NIL
+             {
+                constVal.val=NIL.Lexeme;
+                constVal.type=NIL;
+             }
+
+97 constVal::INT_
+             {
+                constVal.val=INT_.Lexeme;
+                constVal.type=INTEGER;
+             }
+
+98 constVal::REAL_
+             {
+                constVal.val=REAL_.Lexeme;
+                constVal.type=DOUBLE;
+             }
+
+99 constVal::STRING_
+             {
+                constVal.val=STRING_.Lexeme;
+                constVal.type=STRING;
+             }
+
+100 var::IDENTIFIER
+         {
+            if (var.usage==define)
+            {
+                var.id=IDENTIFIER;
+                varSuffix.usage=var.usage;
+                varSuffix.t=var.t;
+                varSuffix.w=var.w;
+            }
+            else if(var.usage==reference)
+            {
+                var.id=IDENTIFIER;
+                var.type=top[var.id].type;
+                varSuffix.usage=var.usage;
+                varSuffix.type=var.type;
+                varSuffix.length=varSuffix.type.length;
+            }
+            
+          }
+         varSuffix
+         {
+            if (var.usage==define)
+            {
+                var.type=varSuffix.type;
+                var.width=varSuffix.width*varSuffix.length;
+                top.add(var);
+                irCode.push_back("define {var.id} {var.type.to_string()}");
+            }
+            else if(var.usage==reference)
+            {
+                var.offset=varSuffix.offset;
+                var.type=varSuffix.returnType;
+                if(var.offset==0)
+                {
+                    var.val=var.id;
+                }
+                else
+                {
+                    tmp1=genT();
+                    irCode.push_back("{tmp1}={var.id}+{var.offset}");
+                    var.val=tmp1;
+                }
+            }
+         }
+         
+101 varSuffix::LEFT_BRACKET expression RIGHT_BRACKET
+               {
+                    if (varSuffix.usage==define)
+                    {
+                        varSuffix1.usage=varSuffix.usage;
+                        varSuffix1.t=varSuffix.t;
+                        varSuffix1.w=varSuffix.w;
+                    }
+                    else if(varSuffix.usage==reference)
+                    {
+                        varSuffix.len=expression.val;
+                        varSuffix1.usage=varSuffix.usage;
+                        varSuffix1.type=varSuffix.type.type;
+                        varSuffix1.length=varSuffix1.type.length;
+                    }
+               }
+               varSuffix1
+               {
+                    if (varSuffix.usage==define)
+                    {
+                        varSuffix.length=expression.val;
+                        varSuffix.width=varSuffix1.width*varSuffix1.length;
+                        varSuffix.type=array(varSuffix.length,varSuffix1.type);
+                       
+                    }
+                    else if(varSuffix.usage==reference)
+                    {
+                        varSuffix.width=varSuffix1.width*varSuffix1.length;
+                        varSuffix.offset=varSuffix1.offset+varSuffix.len*varSuffix.width;
+                        varSuffix.returnType=varSuffix1.returnType;
+                    }
+               }
+               
+102 varSuffix::ε
+               {
+                    if (varSuffix.usage==define)
+                    {
+                        varSuffix.length=varSuffix.t.length;
+                        varSuffix.type=varSuffix.t;
+                        varSuffix.width=varSuffix.w;
+                    }
+                    else if(varSuffix.usage==reference)
+                    {
+                        varSuffix.width=varSuffix.type.length;
+                        varSuffix.offset=0;
+                        varSuffix.returnType=varSuffix.type;
+                    }
+               }

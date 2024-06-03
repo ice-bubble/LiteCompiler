@@ -38,7 +38,7 @@ static void repl() {
         lexer::Lexer lexer = lexer::Lexer(line);
         List<token::Token> tokenlist = lexer.scanTokens();
 
-        printTokenList(tokenlist);
+        //printTokenList(tokenlist);
         if (lexer.hasError)
             std::cerr << "There are lexical errors in the source code" << std::endl;
         lexer.hasError = false;
@@ -100,7 +100,7 @@ static void runFile(const String &path) {
     List<token::Token> tokenlist = lexer.scanTokens();
 
     //打印词法分析结果
-    printTokenList(tokenlist);
+    //printTokenList(tokenlist);
     if (lexer.hasError)
         std::cerr << "There are lexical errors in the source code" << std::endl;
 

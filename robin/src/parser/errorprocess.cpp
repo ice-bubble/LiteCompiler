@@ -150,61 +150,61 @@ namespace parser {
 
     bool Parser::errorProcess(State errorState) {
         reportParserError(this, tokens[currentToken], errorMessage[errorState]);
-        printInfo("error here");
+        //printInfo("error here");
         switch (errorState) {
             case -1:
                 while (true) {
                     if (isAtTokenListEnd()) return false;
                     advance();
-                    printInfo("in error process");
+                    //printInfo("in error process");
                     symbol::Symbol currentSymbol = production::Production::tokenToSym[peek().getType()];
                     std::cout << peek().toString() << std::endl;
                     State currentState = stateStack.top();
                     auto action = slrTable.find({currentState, currentSymbol});
                     if (action->second.type != symbol::Error) { return true; }
                 }
-            case 44:///
-            case 45:///
-            case 49:///
-            case 59:///
-            case 67:///
-            case 68:///
-            case 72:///
-            case 74:///
-            case 76:///
-            case 78:///
-            case 79:///
-            case 81:///
-            case 82:///
-            case 83:///
-            case 84:///
-            case 86:///
-            case 87:///
-            case 89:///
-            case 90:///
-            case 91:///
-            case 106:///
-            case 139:///
-            case 144:///
+            case 44:
+            case 45:
+            case 49:
+            case 59:
+            case 67:
+            case 68:
+            case 72:
+            case 74:
+            case 76:
+            case 78:
+            case 79:
+            case 81:
+            case 82:
+            case 83:
+            case 84:
+            case 86:
+            case 87:
+            case 89:
+            case 90:
+            case 91:
+            case 106:
+            case 139:
+            case 144:
                 addTokenToProductionsAndStack(token::TOKEN_NIL, "nil", errorState);
                 return true;
             case 24:
             case 25:
-            case 26:///
+            case 26:
             case 27:
-            case 31:///
-            case 71:///
+            case 31:
+            case 71:
             case 103:
-            case 111:///
-            case 112:///
-            case 137:///
-            case 138:///
-            case 153:///
-            case 155:///
-            case 164:///
+            case 111:
+            case 112:
+            case 137:
+            case 138:
+            case 153:
+            case 155:
+            case 164:
             case 165:
-            case 167:///
-            case 169:///
+            case 167:
+            case 169:
                 addTokenToProductionsAndStack(token::TOKEN_SEMICOLON, ";", errorState);
                 return true;
             case 100:
@@ -214,8 +214,8 @@ namespace parser {
             case 154:
             case 156:
             case 129:
-            case 140:///
-            case 141:///
+            case 140:
+            case 141:
             case 145:
                 addTokenToProductionsAndStack(token::TOKEN_RIGHT_PAREN, ")", errorState);
                 return true;
@@ -226,9 +226,9 @@ namespace parser {
             case 109:
                 addTokenToProductionsAndStack(token::TOKEN_LEFT_PAREN, "(", errorState);
                 return true;
-            case 8:////
-            case 104:///
-            case 147:///
+            case 8:
+            case 104:
+            case 147:
                 addTokenToProductionsAndStack(token::TOKEN_IDENTIFIER, "temp", errorState);
                 return true;
             case 57:
@@ -246,7 +246,7 @@ namespace parser {
             case 102:
                 addTokenToProductionsAndStack(token::TOKEN_RIGHT_BRACKET, "]", errorState);
                 return true;
-            case 161:///
+            case 161:
                 addTokenToProductionsAndStack(token::TOKEN_VAR, "var", errorState);
                 callReduceFunctionByIndex(31);
                 stateStack.push(147);

@@ -1,0 +1,99 @@
+
+Input is parsed!
+
+visit all productions
+
+========irCode========
+0: miniRC:
+1: define delta INT_
+2: define a ARRAY_(5,ARRAY_(10,INT_))
+3: define b ARRAY_(5,ARRAY_(10,INT_))
+4: define i INT_
+5: define j INT_
+6: i=0
+7: T4=i<5
+8: if T4 goto 13
+9: goto 50
+10: T5=i+1
+11: i=T5
+12: goto 7
+13: j=0
+14: T6=j<10
+15: if T6 goto 20
+16: goto 49
+17: T7=j+1
+18: j=T7
+19: goto 14
+20: T8=j*8
+21: T9=0+T8
+22: T10=i*80
+23: T11=T9+T10
+24: T12=a+T11
+25: T13=i+j
+26: T12=T13
+27: T14=i>j
+28: if T14 goto 30
+29: goto 39
+30: T15=j*8
+31: T16=0+T15
+32: T17=i*80
+33: T18=T16+T17
+34: T19=b+T18
+35: T20=i*delta
+36: T21=T20+j
+37: T19=T21
+38: goto 48
+39: T22=j*8
+40: T23=0+T22
+41: T24=i*80
+42: T25=T23+T24
+43: T26=b+T25
+44: T27=j/delta
+45: T28=i-T27
+46: T26=T28
+47: goto 48
+48: goto 17
+49: goto 10
+50: define sum INT_
+51: j=0
+52: i=j
+53: sum=i
+54: T29=i>j
+55: if T29 goto 57
+56: goto 62
+57: T30=j+1
+58: j=T30
+59: T31=sum-1
+60: sum=T31
+61: goto 65
+62: T32=i+1
+63: i=T32
+64: goto 65
+65: T33=i<5
+66: if T33 goto 68
+67: goto 86
+68: T34=j<10
+69: if T34 goto 72
+70: goto 86
+71: T35=T33&&T34
+72: T36=j*8
+73: T37=0+T36
+74: T38=i*80
+75: T39=T37+T38
+76: T40=a+T39
+77: T41=j*8
+78: T42=0+T41
+79: T43=i*80
+80: T44=T42+T43
+81: T45=b+T44
+82: T46=T40*T45
+83: T47=sum+T46
+84: sum=T47
+85: goto 88
+86: goto 92
+87: goto 88
+88: goto 89
+89: T48=sum>=100
+90: if T48 goto 92
+91: goto 54
+92: return sum

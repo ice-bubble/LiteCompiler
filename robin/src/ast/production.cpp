@@ -99,7 +99,7 @@ namespace production {
     }
 
 
-    void mergeUniqueIntoA(List<size_t>* a, List<size_t>* b) {
+    void mergeUniqueIntoA(List<size_t> *a, List<size_t> *b) {
         // 使用unordered_set来存储唯一值
         Set<size_t> set(a->begin(), a->end());
         set.insert(b->begin(), b->end());

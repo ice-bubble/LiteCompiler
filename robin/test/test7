@@ -1,0 +1,7 @@
+integer b=-1;
+for(integer a=1;a<5;a++)
+{
+if(a==3) continue;
+	b=a+b;
+	}
+

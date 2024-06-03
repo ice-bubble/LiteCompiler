@@ -1,0 +1,22 @@
+
+Input is parsed!
+
+visit all productions
+
+========irCode========
+0: add:
+1: define a INT_
+2: define b INT_
+3: define c INT_
+4: T0=a>5
+5: if T0 goto 7
+6: goto 9
+7: return 1
+8: goto 9
+9: return 0
+10: define result INT_
+11: param 1
+12: param 2
+13: param 3
+14: T1=call add,3
+15: result=T1

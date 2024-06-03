@@ -1,0 +1,17 @@
+miniRC=function(integer delta){
+     integer a[5][10], b[5][10], i, j;
+     for(i=0; i<5; i++) for(j=0; j<10; j++){
+		a[i][j] = i + j;
+                if(i>j) b[i][j]=i*delta+j; else b[i][j]=i-j/delta;
+     }
+     integer sum;
+     sum = i = j = 0;
+     repeat{
+        if (i>j){
+           j++;
+           sum--;
+        }else i++;
+        if(i<5 && j<10) sum = sum + a[i][j]*b[i][j]; else break;
+    }until(sum>=100);
+    return(sum);   
+}

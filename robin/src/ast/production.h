@@ -740,6 +740,7 @@ namespace production {
         SharedPtr<ast::Type> returnType;
         List<size_t> *code1Jmp = nullptr;
         List<size_t> *nextJmp = nullptr;
+        bool ifExist=false;
 
         explicit ElseBranch(size_t line) : line(line) { thisSymbol = symbol::Symbol::elseBranch; }
 

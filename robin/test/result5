@@ -1,0 +1,14 @@
+
+Input is parsed!
+
+visit all productions
+
+========irCode========
+0: define a INT_
+1: a=1
+2: T0=a-1
+3: a=T0
+4: goto 5
+5: T1=a<0
+6: if T1 goto 8
+7: goto 2

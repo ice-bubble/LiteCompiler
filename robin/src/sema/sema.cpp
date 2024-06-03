@@ -7,7 +7,7 @@
 
 namespace sema {
 
-    Sema::Sema(SharedPtr<production::Production> program) : program(std::move(program)) {top=new ast::SymTab;}
+    Sema::Sema(SharedPtr<production::Production> program) : program(std::move(program)) { top = new ast::SymTab; }
 
     String Sema::genT() {
         static int Tindex = 0;
@@ -16,8 +16,7 @@ namespace sema {
 
     List<String> Sema::generateIRCODE() {
         program->visit(this);
-        fmt::print("visit all productions\n");
-        fmt::print("{}", top->offset);
+        fmt::print("\nvisit all productions\n");
         return irCode;
     }
 

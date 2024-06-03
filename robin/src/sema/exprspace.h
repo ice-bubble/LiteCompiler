@@ -17,8 +17,7 @@ namespace sema {
         explicit ExprSpace(List<String> *irCode) : irCode(irCode) {}
 
         void backpatch() {
-            for (auto i: rightSentences)
-            {
+            for (auto i: rightSentences) {
                 (*irCode)[i] = fmt::format((*irCode)[i], right);
             }
 

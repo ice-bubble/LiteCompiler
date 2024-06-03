@@ -61,14 +61,14 @@ namespace parser {
     List<SharedPtr<production::Production>> Parser::parserAst() {
         stateStack.push(0);
         while (true) {
-            printInfo("enter loop");
+            //printInfo("enter loop");
             //preAction,先处理goto操作;
             if (!productions.empty()) {
                 symbol::Symbol preSymbol = productions.back()->thisSymbol;
                 State preState = stateStack.top();
                 auto preAction = slrTable.find({preState, preSymbol});
                 if (preAction->second.type == symbol::Type::Goto) {
-                    printInfo("before goto");
+                    //printInfo("before goto");
                     stateStack.push(preAction->second.state);
                 }
             }
@@ -99,7 +99,7 @@ namespace parser {
 
             switch (action->second.type) {
                 case symbol::Type::Shift: {
-                    printInfo("before shift");
+                    //printInfo("before shift");
                     if (isAtTokenListEnd()) { ERRORRETURN("reach the end of tokenList! Input is parsed!") }
 
                     token::Token thisToken = advance();
@@ -108,18 +108,18 @@ namespace parser {
                     break;
                 }
                 case symbol::Type::Reduce:
-                    printInfo("before reduce");
+                    //printInfo("before reduce");
 
                     //规约，出错直接结束语法分析
                     if (!callReduceFunctionByIndex(action->second.state))
                         return productions;
                     break;
                 case symbol::Type::Accept:
-                    printInfo("before accept");
-                    std::cout << "Input is parsed!" << std::endl;
+                    //printInfo("before accept");
+                    fmt::print("\nInput is parsed!\n");
                     return productions;
                 case symbol::Type::Error:
-                    printInfo("before reportParserError");
+                    //printInfo("before reportParserError");
                     if (isAtTokenListEnd()) { ERRORRETURN("reach the end of tokenList! Input is parsed!") }
                     if (!errorProcess(action->second.state)) {
                         ERRORRETURN("reach the end of tokenList or ended due to unexpected error")

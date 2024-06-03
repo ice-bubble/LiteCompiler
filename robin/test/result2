@@ -1,0 +1,80 @@
+
+Input is parsed!
+
+visit all productions
+
+========irCode========
+0: floor:
+1: define a1 INT_
+2: return 1
+3: ceiling:
+4: define a2 INT_
+5: return 1
+6: miniRC:
+7: define N INT_
+8: define K INT_
+9: define rc REAL_
+10: define a ARRAY_(10,ARRAY_(20,INT_))
+11: define b ARRAY_(19,REAL_)
+12: T3=N==1
+13: if T3 goto 15
+14: goto 17
+15: return 0
+16: goto 17
+17: define KL INT_
+18: T4=(double)K
+19: T5=T4*rc
+20: param T5
+21: T6=call floor,1
+22: KL=T6
+23: T7=KL<1
+24: if T7 goto 31
+25: goto 26
+26: T8=K-1
+27: T9=KL>T8
+28: if T9 goto 31
+29: goto 33
+30: T10=T7||T9
+31: KL=1
+32: goto 46
+33: T11=(double)K
+34: T12=0.500000*T11
+35: T13=(double)KL
+36: T14=T13>T12
+37: if T14 goto 39
+38: goto 45
+39: T15=(double)KL
+40: T16=T15/2.000000
+41: param T16
+42: T17=call ceiling,1
+43: KL=T17
+44: goto 45
+45: goto 46
+46: define KR INT_
+47: T18=K-KL
+48: KR=T18
+49: define NL INT_
+50: T19=KL/K
+51: T20=N*T19
+52: param T20
+53: T21=call ceiling,1
+54: NL=T21
+55: define NR INT_
+56: T22=N-NL
+57: NR=T22
+58: param NL
+59: param KL
+60: param rc
+61: T23=call miniRC,3
+62: T24=(int)T23
+63: T25=NL*T24
+64: param NR
+65: param KR
+66: param rc
+67: T26=call miniRC,3
+68: T27=(int)T26
+69: T28=NR*T27
+70: T29=T25+T28
+71: T30=T29/N
+72: T31=1+T30
+73: return T31

@@ -1,0 +1,25 @@
+
+Input is parsed!
+
+visit all productions
+
+========irCode========
+0: define b INT_
+1: T0=-1
+2: b=T0
+3: define a INT_
+4: a=1
+5: T1=a<5
+6: if T1 goto 11
+7: goto 19
+8: T2=a+1
+9: a=T2
+10: goto 5
+11: T3=a==3
+12: if T3 goto 14
+13: goto 16
+14: goto 8
+15: goto 16
+16: T4=a+b
+17: b=T4
+18: goto 8

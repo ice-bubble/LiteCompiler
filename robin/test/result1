@@ -1,0 +1,9 @@
+
+Input is parsed!
+
+visit all productions
+
+========irCode========
+0: define a ARRAY_(4,ARRAY_(5,INT_))
+1: T2=a+104
+2: T2=1

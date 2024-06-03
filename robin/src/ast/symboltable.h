@@ -52,13 +52,12 @@ namespace ast {
             return outer->lookup(name);
         }
 
-        bool changeReturnType(const String& name, SharedPtr<Type> returnType) {
+        bool changeReturnType(const String &name, SharedPtr<Type> returnType) {
             auto thisVar = lookup(name);
             if (thisVar == nullptr) return false;
             thisVar->returnType = returnType->selfType;
             return true;
         }
-
 
 
         static SymTab *genNewSymTab(SymTab *thisTab) {

@@ -6,6 +6,7 @@
 #define ROBIN_PRESEMA_H
 
 #include "../common.h"
+
 namespace sema {
     class Sema;
 

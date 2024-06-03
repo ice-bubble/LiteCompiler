@@ -58,7 +58,7 @@ void insertToSymbolTable(const token::Token &t, List<String> &symboltable) {
 void printIRCODE(const List<String> &irCode) {
     fmt::print("\n========irCode========\n");
     for (int i = 0; i < irCode.size(); i++) {
-        std::cout<<i<<": "<<irCode[i]<<std::endl;
+        std::cout << i << ": " << irCode[i] << std::endl;
         //fmt::print("{}:{}\n", i, irCode[i]);
     }
 }
