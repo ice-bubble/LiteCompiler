@@ -40,6 +40,8 @@ namespace ast {
 
         static SharedPtr<Type> chooseReturnType(SharedPtr<Type> t1, SharedPtr<Type> t2, size_t line);
 
+        static bool isSameType(SharedPtr<Type> t1, SharedPtr<Type> t2);
+
         Type() = default;
 
         Type(const SharedPtr<Type> &varType, String width, String length)

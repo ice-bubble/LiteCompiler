@@ -138,6 +138,10 @@ namespace production {
             reportSemanticError(line, fmt::format("the variable '{}' is exist in symbol table", id));
         }
 
+        thisFun = semaAna->top->lookup(id);
+        if (thisFun == nullptr) return reportSemanticError(line, "the fun can't find itself in the symbol table");
+        paramList->thisFun = thisFun;
+
         semaAna->top = ast::SymTab::genNewSymTab(semaAna->top);
         if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
 
@@ -153,6 +157,10 @@ namespace production {
         }
         semaAna->top = ast::SymTab::throwThisSymTab(semaAna->top);
         if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
+
+        fmt::print(stderr, "count:{}\n", thisFun->paramCount);
+        for (const auto &t: thisFun->params)
+            fmt::print(stderr, "{}\n", t->toString());
     }
 
     void VarDecl::visit(sema::Sema *semaAna) {
@@ -303,7 +311,7 @@ namespace production {
         elseBranch->visit(semaAna);
 
         returnType = ast::Type::chooseReturnType(statement->returnType, elseBranch->returnType, line);
-        if (elseBranch->ifExist){
+        if (elseBranch->ifExist) {
             semaAna->irCode.emplace_back("goto {}");
             thisSpace.nextSentences.push_back(semaAna->irCode.size() - 1);
         }
@@ -318,7 +326,7 @@ namespace production {
     }
 
     void ElseBranch1::visit(sema::Sema *semaAna) {
-        ifExist=true;
+        ifExist = true;
         statement->code1Jmp = code1Jmp;
         statement->nextJmp = nextJmp;
 
@@ -531,6 +539,8 @@ namespace production {
     }
 
     void ParamList1::visit(sema::Sema *semaAna) {
+        parameter->thisFun = thisFun;
+        parameters->thisFun = thisFun;
         parameter->visit(semaAna);
         parameters->visit(semaAna);
     }
@@ -544,6 +554,8 @@ namespace production {
     }
 
     void Parameters1::visit(sema::Sema *semaAna) {
+        parameter->thisFun = thisFun;
+        parameters->thisFun = thisFun;
         parameter->visit(semaAna);
         parameters->visit(semaAna);
     }
@@ -558,8 +570,11 @@ namespace production {
         var->usage = Usage::define;
         var->t = type->type;
         var->w = type->width;
+        thisFun->paramCount += 1;
 
         var->visit(semaAna);
+
+        thisFun->params.push_back(var->type);
     }
 
     void Expression::visit(sema::Sema *semaAna) {
@@ -1000,8 +1015,18 @@ namespace production {
     }
 
     void Call_suffix1::visit(sema::Sema *semaAna) {
+        auto calleeInTop = semaAna->top->lookup(callee);
+        if (calleeInTop == nullptr) {
+            return reportSemanticError(line, fmt::format("function '{}' is not define in symbol table", callee));
+        }
+        argList->calleeFun = calleeInTop;
+
         argList->visit(semaAna);
 
+        if (argList->sum != calleeInTop->paramCount) {
+            return reportSemanticError(line, fmt::format("the function '{}' expect {} params but get {} params",
+                                                         callee, calleeInTop->paramCount, argList->sum));
+        }
         String tmpT1 = sema::Sema::genT();
         semaAna->irCode.emplace_back(fmt::format("{}=call {},{}",
                                                  tmpT1, callee, std::to_string(argList->sum)));
@@ -1010,12 +1035,7 @@ namespace production {
         call_suffix->visit(semaAna);
 
         isExist = true;
-        auto calleeInTop = semaAna->top->lookup(callee);
-        if (calleeInTop != nullptr) {
-            type = ast::Type::makeTypeInstance(calleeInTop->returnType);
-        } else {
-            type = std::make_shared<ast::NIL_Type>();
-        }
+        type = ast::Type::makeTypeInstance(calleeInTop->returnType);
         if (call_suffix->isExist) {
             val = call_suffix->val;
             type = call_suffix->type;
@@ -1035,7 +1055,15 @@ namespace production {
     void ArgList1::visit(sema::Sema *semaAna) {
         expression->visit(semaAna);
 
+        if (!ast::Type::isSameType(expression->type, calleeFun->params[argOffset])) {
+            return reportSemanticError(line, fmt::format(
+                    "in function '{}' call: the {} argument is not match.Expect {},but use {}",
+                    calleeFun->name, argOffset+1, calleeFun->params[argOffset]->toString(),
+                    expression->type->toString()));
+        }
         semaAna->irCode.emplace_back(fmt::format("param {}", expression->val));
+        arguments->calleeFun = calleeFun;
+        arguments->argOffset = argOffset + 1;
 
         arguments->visit(semaAna);
 
@@ -1043,7 +1071,7 @@ namespace production {
     }
 
     void ArgList2::visit(sema::Sema *semaAna) {
-        sum=0;
+        sum = 0;
     }
 
     void Arguments::visit(sema::Sema *semaAna) {
@@ -1053,7 +1081,15 @@ namespace production {
     void Arguments1::visit(sema::Sema *semaAna) {
         expression->visit(semaAna);
 
+        if (!ast::Type::isSameType(expression->type, calleeFun->params[argOffset])) {
+            return reportSemanticError(line, fmt::format(
+                    "in function '{}' call: the {} argument is not match.Expect {},but use {}",
+                    calleeFun->name, argOffset+1, calleeFun->params[argOffset]->toString(),
+                    expression->type->toString()));
+        }
         semaAna->irCode.emplace_back(fmt::format("param {}", expression->val));
+        arguments->calleeFun = calleeFun;
+        arguments->argOffset = argOffset + 1;
 
         arguments->visit(semaAna);
 
@@ -1061,7 +1097,7 @@ namespace production {
     }
 
     void Arguments2::visit(sema::Sema *semaAna) {
-        sum=0;
+        sum = 0;
     }
 
     void Primary::visit(sema::Sema *semaAna) {

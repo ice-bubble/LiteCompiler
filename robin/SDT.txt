@@ -39,6 +39,9 @@ class Variable{
     Type type;
     String name;
     Object value;
+    Type returnType;
+    List<Type> params;
+    size_t paramCount=0;
 };
 
 List<Variable> top;
@@ -176,6 +179,7 @@ Type chooseReturnType(Type t1,Type t2);
             {
                 funDecl.id=IDENTIFIER;
                 top.add(funDecl);
+                paramList.thisFun=top[id];
             }
             EQUAL FUNCTION LEFT_PAREN paramList RIGHT_PAREN block
             {
@@ -521,11 +525,20 @@ Type chooseReturnType(Type t1,Type t2);
                }
 
 
-44 paramList::parameter parameters
+44 paramList::{
+                parameter.thisFun=paramList.thisFun;
+                parameters.thisFun=paramList.thisFun;
+              }
+              parameter parameters
 
 45 paramList::ε
 
-46 parameters::COMMA parameter parameters
+46 parameters::COMMA
+               {
+                    parameter.thisFun=paramList.thisFun;
+                    parameters.thisFun=paramList.thisFun;
+               }
+               parameter parameters
 
 47 parameters::ε
 
@@ -536,6 +549,10 @@ Type chooseReturnType(Type t1,Type t2);
                     var.w=type.width;
               }
               var
+              {
+                thisFun.paramCount+=1;
+                thisFun.param.push_back(var.type);
+              }
 
 
 49 expression::
@@ -678,7 +695,7 @@ Type chooseReturnType(Type t1,Type t2);
                     {
                         logic_and_prime.op="&&";
                         logic_and_prime.val=logic_and.val;
-                        logic_and_prime.type=logic_and.type; 
+                        logic_and_prime.type=logic_and.type;
                     }
 
 57 logic_and_prime::ε
@@ -774,7 +791,7 @@ Type chooseReturnType(Type t1,Type t2);
                 term.val=factor.val;
                 term.type=factor.type;
             }
-         }       
+         }
 
 69 term_prime::MINUS term
                {term_prime.op="-";
@@ -869,7 +886,7 @@ Type chooseReturnType(Type t1,Type t2);
             unary.val=tmpT2;
             unary.type=BOOL;
            }
-           
+
 82 unary::MINUS unary1
            {
                 if(unary1.type<INTEGER)
@@ -912,8 +929,14 @@ Type chooseReturnType(Type t1,Type t2);
             }
         }
 
-85 call_suffix::LEFT_PAREN argList RIGHT_PAREN
+85 call_suffix::{
+                    call_suffix.calleeFun=top[call_suffix.callee];
+                    argList.calleeFun=call_suffix.calleeFun;
+                    argList.argOffset=0;
+                }
+                LEFT_PAREN argList RIGHT_PAREN
                 {
+                    if(argList.sum!=calleeFun.paramCount) reportError();
                     tmpT1=genT();
                     irCode.push_back("{tmpT1}=call {call_suffix.callee},{argList.sum}");
                     call_suffix1.callee=tmpT1;
@@ -921,7 +944,7 @@ Type chooseReturnType(Type t1,Type t2);
                 call_suffix1
                 {
                     call_suffix.exist=true;
-                    call_suffix.type=top[call_suffix.callee].returnType;
+                    call_suffix.type=calleeFun.returnType;
                     if(call_suffix1.exist)
                     {
                         call_suffix.val=call_suffix1.val;
@@ -940,7 +963,10 @@ Type chooseReturnType(Type t1,Type t2);
 
 87 argList::expression
             {
+                if(expression.val!=argList.calleeFun.param[argList.argOffset]) reportError();
                 irCode.push_back("param {expression.val}");
+                arguments.calleeFun=argList.calleeFun;
+                arguments.argOffset=argList.argOffset+1;
             }
             arguments
             {
@@ -954,7 +980,10 @@ Type chooseReturnType(Type t1,Type t2);
 
 89 arguments::COMMA expression
                {
+                if(expression.val!=argList.calleeFun.param[arguments.argOffset]) reportError();
                 irCode.push_back("param {expression.val}");
+                arguments.calleeFun=argList.calleeFun;
+                arguments1.argOffset=arguments.argOffset+1;
                }
                arguments1
                {

@@ -15,6 +15,8 @@ namespace ast {
         String name;
         SharedPtr<Type> varType;
         IdentifierType returnType;
+        List<SharedPtr<Type>> params;
+        size_t paramCount=0;
         String width;
         Object value;
 

@@ -441,6 +441,7 @@ namespace production {
 
         String id;
         SharedPtr<ast::Type> returnType;
+        ast::Variable *thisFun= nullptr;
 
         FunDecl(size_t line, SharedPtr<Token> token_IDENTIFIER, SharedPtr<Token> token_EQUAL,
                 SharedPtr<Token> token_FUNCTION, SharedPtr<Token> token_LEFT_PAREN, SharedPtr<ParamList> paramList,
@@ -966,6 +967,8 @@ namespace production {
     public:
         size_t line;
 
+        ast::Variable * thisFun= nullptr;
+
         explicit ParamList(size_t line) : line(line) { thisSymbol = symbol::Symbol::paramList; }
 
         ~ParamList() override = default;
@@ -1000,6 +1003,8 @@ namespace production {
     class Parameters : public Production {
     public:
         size_t line;
+
+        ast::Variable * thisFun= nullptr;
 
         explicit Parameters(size_t line) : line(line) { thisSymbol = symbol::Symbol::parameters; }
 
@@ -1037,8 +1042,10 @@ namespace production {
     class Parameter : public Production {
     public:
         size_t line;
+
         SharedPtr<Type> type;
         SharedPtr<Var> var;
+        ast::Variable * thisFun= nullptr;
 
         Parameter(size_t line, SharedPtr<Type> type, SharedPtr<Var> var)
                 : line(line),
@@ -1762,6 +1769,8 @@ namespace production {
         size_t line;
 
         int sum = 0;
+        int argOffset=0;
+        ast::Variable * calleeFun= nullptr;
 
         explicit ArgList(size_t line) : line(line) { thisSymbol = symbol::Symbol::argList; }
 
@@ -1799,6 +1808,8 @@ namespace production {
         size_t line;
 
         int sum = 0;
+        int argOffset=0;
+        ast::Variable * calleeFun= nullptr;
 
         explicit Arguments(size_t line)
                 : line(line) { thisSymbol = symbol::Symbol::arguments; }
