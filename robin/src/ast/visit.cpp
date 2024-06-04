@@ -157,10 +157,6 @@ namespace production {
         }
         semaAna->top = ast::SymTab::throwThisSymTab(semaAna->top);
         if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
-
-        fmt::print(stderr, "count:{}\n", thisFun->paramCount);
-        for (const auto &t: thisFun->params)
-            fmt::print(stderr, "{}\n", t->toString());
     }
 
     void VarDecl::visit(sema::Sema *semaAna) {
