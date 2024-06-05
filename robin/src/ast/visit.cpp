@@ -1058,6 +1058,9 @@ namespace production {
     void ArgList1::visit(sema::Sema *semaAna) {
         expression->visit(semaAna);
 
+        if (calleeFun->params.size() <= argOffset)
+            return reportSemanticError(line, fmt::format("the function '{}' expect {} params but get too much params",
+                                                         calleeFun->name, calleeFun->paramCount));
         if (!ast::Type::isSameType(expression->type, calleeFun->params[argOffset])) {
             return reportSemanticError(line, fmt::format(
                     "in function '{}' call: the {} argument is not match.Expect {},but use {}",
@@ -1084,6 +1087,9 @@ namespace production {
     void Arguments1::visit(sema::Sema *semaAna) {
         expression->visit(semaAna);
 
+        if (calleeFun->params.size() <= argOffset)
+            return reportSemanticError(line, fmt::format("the function '{}' expect {} params but get too much params",
+                                                         calleeFun->name, calleeFun->paramCount));
         if (!ast::Type::isSameType(expression->type, calleeFun->params[argOffset])) {
             return reportSemanticError(line, fmt::format(
                     "in function '{}' call: the {} argument is not match.Expect {},but use {}",
