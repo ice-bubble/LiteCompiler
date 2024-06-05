@@ -27,147 +27,27 @@ namespace ast {
     public:
         SharedPtr<Type> varType = nullptr;
         IdentifierType selfType = BASE_;
-        String width;
-        String length;
+        String width = "0";
+        String length = "0";
 
-        virtual String toString() { return "type"; }
+        Type() = default;//构造函数，类型为BASE_
+
+        Type(const SharedPtr<Type> &varType, String width, String length);
+
+        explicit Type(IdentifierType selfT);
+
+        String toString();
 
         static Map<Pair<IdentifierType, IdentifierType>, IdentifierType> typeTransform;
 
-        static Map<IdentifierType, String> typeToString;
+        static Map<Pair<IdentifierType, IdentifierType>, IdentifierType> typeForceTransform;
 
-        static SharedPtr<Type> makeTypeInstance(ast::IdentifierType requestedType);
+        static Map<IdentifierType, String> typeToString;
 
         static SharedPtr<Type> chooseReturnType(SharedPtr<Type> t1, SharedPtr<Type> t2, size_t line);
 
         static bool isSameType(SharedPtr<Type> t1, SharedPtr<Type> t2);
-
-        Type() = default;
-
-        Type(const SharedPtr<Type> &varType, String width, String length)
-                : varType(varType), width(width), length(length) {}
-
-        virtual ~Type() = default;
     };
-
-    class BASE_Type : public Type {
-    public:
-        String toString() override { return "BASE_"; }
-
-        BASE_Type() {
-            width = "0";
-            length = "0";
-            selfType = BASE_;
-        }
-    };
-
-
-    class INT_Type : public Type {
-    public:
-        String toString() override { return "INT_"; }
-
-        INT_Type() {
-            width = "8";
-            length = "1";
-            selfType = INT_;
-        }
-    };
-
-
-    class REAL_Type : public Type {
-    public:
-        String toString() override { return "REAL_"; }
-
-        REAL_Type() {
-            width = "8";
-            length = "1";
-            selfType = REAL_;
-        }
-    };
-
-
-    class CHAR_Type : public Type {
-    public:
-        String toString() override { return "CHAR_"; }
-
-        CHAR_Type() {
-            width = "1";
-            length = "1";
-            selfType = CHAR_;
-        }
-    };
-
-
-    class STRING_Type : public Type {
-    public:
-        String toString() override { return "STRING_"; }
-
-        STRING_Type() {
-            width = "8";
-            length = "1";
-            selfType = STRING_;
-        }
-    };
-
-
-    class BOOL_Type : public Type {
-    public:
-        String toString() override { return "BOOL_"; }
-
-        BOOL_Type() {
-            width = "1";
-            length = "1";
-            selfType = BOOL_;
-        }
-    };
-
-    class FUNC_Type : public Type {
-    public:
-        IdentifierType returnType = NIL_;
-
-        String toString() override { return "FUNC_"; }
-
-        FUNC_Type() {
-            width = "8";
-            length = "1";
-            selfType = FUNC_;
-        }
-    };
-
-
-    class VAR_Type : public Type {
-    public:
-        String toString() override { return "VAR_"; }
-
-        VAR_Type() {
-            width = "8";
-            length = "1";
-            selfType = VAR_;
-        }
-    };
-
-    class NIL_Type : public Type {
-    public:
-        String toString() override { return "NIL_"; }
-
-        NIL_Type() {
-            width = "8";
-            length = "1";
-            selfType = NIL_;
-        }
-    };
-
-    class ARRAY_Type : public Type {
-    public:
-        String toString() override { return fmt::format("ARRAY_({},{})", length, varType->toString()); }
-
-        ARRAY_Type(const SharedPtr<ast::Type> varType, String width, String length)
-                : Type(varType, width, length) { selfType = ARRAY_; }
-
-        ARRAY_Type()
-                : Type(std::make_shared<VAR_Type>(), "8", "1") { selfType = ARRAY_; }
-    };
-
 }
 
 #endif //ROBIN_TYPE_H

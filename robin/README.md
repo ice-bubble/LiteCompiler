@@ -12,7 +12,7 @@
         ├── ast                     语法树相关类的定义
         │   ├── codespace.h         代码的当前产生式空间，用于配合回填
         │   ├── production.cpp      语法树类成员和函数的定义
-        │   ├── production.h        语法树中产生式的类
+        │   ├── production.h        语法树中每个结点的类，一个类代表一个产生式
         │   ├── symbol.h            存放产生式相关定义
         │   ├── symboltable.h       存放符号栈相关定义
         │   ├── type.cpp			type类的成员和函数的定义
@@ -42,7 +42,7 @@
         │   ├── slrtableInit7.cpp   初始化SLR分析表函数7
         │   ├── slrtableInit8.cpp   初始化SLR分析表函数8
         │   └── slrtableInit9.cpp   初始化SLR分析表函数9
-        ├── sema
+        ├── sema                    语义分析相关
         │   ├── sema.cpp            语义分析类的函数定义
         │   └── sema.h              语义分析类的声明
         └── token                   token相关

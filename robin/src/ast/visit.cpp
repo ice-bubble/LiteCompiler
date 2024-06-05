@@ -4,7 +4,6 @@
 
 #include "production.h"
 #include "codespace.h"
-#include "../sema/sema.h"
 #include "../error/error.h"
 #include "../debug/debug.h"
 
@@ -33,7 +32,7 @@ namespace production {
     }
 
     void Declarations2::visit(sema::Sema *semaAna) {
-        returnType = std::make_shared<ast::BASE_Type>();
+        returnType = std::make_shared<ast::Type>(ast::IdentifierType::BASE_);
     }
 
     void Declaration::visit(sema::Sema *semaAna) {
@@ -42,12 +41,12 @@ namespace production {
 
     void Declaration1::visit(sema::Sema *semaAna) {
         funDecl->visit(semaAna);
-        returnType = std::make_shared<ast::BASE_Type>();
+        returnType = std::make_shared<ast::Type>(ast::IdentifierType::BASE_);
     }
 
     void Declaration2::visit(sema::Sema *semaAna) {
         varDecl->visit(semaAna);
-        returnType = std::make_shared<ast::BASE_Type>();
+        returnType = std::make_shared<ast::Type>(ast::IdentifierType::BASE_);
     }
 
     void Declaration3::visit(sema::Sema *semaAna) {
@@ -64,13 +63,13 @@ namespace production {
     void Statement1::visit(sema::Sema *semaAna) {
         breakStmt->nextJmp = nextJmp;
         breakStmt->visit(semaAna);
-        returnType = std::make_shared<ast::BASE_Type>();
+        returnType = std::make_shared<ast::Type>(ast::IdentifierType::BASE_);
     }
 
     void Statement2::visit(sema::Sema *semaAna) {
         continueStmt->code1Jmp = code1Jmp;
         continueStmt->visit(semaAna);
-        returnType = std::make_shared<ast::BASE_Type>();
+        returnType = std::make_shared<ast::Type>(ast::IdentifierType::BASE_);
     }
 
     void Statement3::visit(sema::Sema *semaAna) {
@@ -80,7 +79,7 @@ namespace production {
 
     void Statement4::visit(sema::Sema *semaAna) {
         exprStmt->visit(semaAna);
-        returnType = std::make_shared<ast::BASE_Type>();
+        returnType = std::make_shared<ast::Type>(ast::IdentifierType::BASE_);
     }
 
     void Statement5::visit(sema::Sema *semaAna) {
@@ -133,7 +132,7 @@ namespace production {
     void FunDecl::visit(sema::Sema *semaAna) {
         id = token_IDENTIFIER->toString();
         semaAna->irCode.emplace_back(fmt::format("{}:", id));
-        SharedPtr<ast::Type> thisType = std::make_shared<ast::FUNC_Type>();
+        SharedPtr<ast::Type> thisType = std::make_shared<ast::Type>(ast::IdentifierType::FUNC_);
         if (!semaAna->top->insert(id, thisType, thisType->width)) {
             reportSemanticError(line, fmt::format("the variable '{}' is exist in symbol table", id));
         }
@@ -149,7 +148,7 @@ namespace production {
         block->visit(semaAna);
         returnType = block->returnType;
         if (returnType->selfType == ast::IdentifierType::BASE_)
-            returnType = std::make_shared<ast::NIL_Type>();
+            returnType = std::make_shared<ast::Type>(ast::IdentifierType::NIL_);
         if (returnType->selfType == ast::IdentifierType::VAR_)
             reportSemanticError(line, "invalid return type for the function");
         if (!semaAna->top->changeReturnType(id, returnType)) {
@@ -228,33 +227,33 @@ namespace production {
     }
 
     void Type1::visit(sema::Sema *semaAna) {
-        type = std::make_shared<ast::INT_Type>();
-        width = "8";
+        type = std::make_shared<ast::Type>(ast::IdentifierType::INT_);
+        width = type->width;
     }
 
     void Type2::visit(sema::Sema *semaAna) {
-        type = std::make_shared<ast::REAL_Type>();
-        width = "8";
+        type = std::make_shared<ast::Type>(ast::IdentifierType::REAL_);
+        width = type->width;
     }
 
     void Type3::visit(sema::Sema *semaAna) {
-        type = std::make_shared<ast::STRING_Type>();
-        width = "8";
+        type = std::make_shared<ast::Type>(ast::IdentifierType::STRING_);
+        width = type->width;
     }
 
     void Type4::visit(sema::Sema *semaAna) {
-        type = std::make_shared<ast::BOOL_Type>();
-        width = "8";
+        type = std::make_shared<ast::Type>(ast::IdentifierType::BOOL_);
+        width = type->width;
     }
 
     void Type5::visit(sema::Sema *semaAna) {
-        type = std::make_shared<ast::CHAR_Type>();
-        width = "8";
+        type = std::make_shared<ast::Type>(ast::IdentifierType::CHAR_);
+        width = type->width;
     }
 
     void Type6::visit(sema::Sema *semaAna) {
-        type = std::make_shared<ast::VAR_Type>();
-        width = "8";
+        type = std::make_shared<ast::Type>(ast::IdentifierType::VAR_);
+        width = type->width;
     }
 
     void ExprStmt::visit(sema::Sema *semaAna) {
@@ -278,8 +277,8 @@ namespace production {
             trueJmp->push_back(semaAna->irCode.size() - 1);
         }
         val = "true";
-        type = std::make_shared<ast::BOOL_Type>();
-        returnType = std::make_shared<ast::NIL_Type>();
+        type = std::make_shared<ast::Type>(ast::IdentifierType::BOOL_);
+        returnType = std::make_shared<ast::Type>(ast::IdentifierType::NIL_);
     }
 
     void IfStmt::visit(sema::Sema *semaAna) {
@@ -332,7 +331,7 @@ namespace production {
     }
 
     void ElseBranch2::visit(sema::Sema *semaAna) {
-        returnType = std::make_shared<ast::BASE_Type>();
+        returnType = std::make_shared<ast::Type>(ast::IdentifierType::BASE_);
     }
 
     void WhileStmt::visit(sema::Sema *semaAna) {
@@ -636,7 +635,7 @@ namespace production {
                                              logic_or_prime->val, logic_or_prime->type->selfType,
                                              logic_or_prime->op, line, semaAna);
             val = resultPair.first;
-            type = std::make_shared<ast::BOOL_Type>();
+            type = std::make_shared<ast::Type>(ast::IdentifierType::BOOL_);
         } else {
             val = logic_and->val;
             type = logic_and->type;
@@ -692,7 +691,7 @@ namespace production {
                                              logic_and_prime->val, logic_and_prime->type->selfType,
                                              logic_and_prime->op, line, semaAna);
             val = resultPair.first;
-            type = std::make_shared<ast::BOOL_Type>();
+            type = std::make_shared<ast::Type>(ast::IdentifierType::BOOL_);
         } else {
             val = equality->val;
             type = equality->type;
@@ -734,7 +733,7 @@ namespace production {
                                              equality_prime->val, equality_prime->type->selfType,
                                              equality_prime->op, line, semaAna);
             val = resultPair.first;
-            type = std::make_shared<ast::BOOL_Type>();
+            type = std::make_shared<ast::Type>(ast::IdentifierType::BOOL_);
         } else {
             val = comparison->val;
             type = comparison->type;
@@ -776,7 +775,7 @@ namespace production {
                                              comparison_prime->val, comparison_prime->type->selfType,
                                              comparison_prime->op, line, semaAna);
             val = resultPair.first;
-            type = std::make_shared<ast::BOOL_Type>();
+            type = std::make_shared<ast::Type>(ast::IdentifierType::BOOL_);
         } else {
             val = term->val;
             type = term->type;
@@ -833,7 +832,7 @@ namespace production {
                                              term_prime->val, term_prime->type->selfType,
                                              term_prime->op, line, semaAna);
             val = resultPair.first;
-            type = ast::Type::makeTypeInstance(resultPair.second);
+            type = std::make_shared<ast::Type>(resultPair.second);
         } else {
             val = factor->val;
             type = factor->type;
@@ -874,7 +873,7 @@ namespace production {
                                              factor_prime->val, factor_prime->type->selfType,
                                              factor_prime->op, line, semaAna);
             val = resultPair.first;
-            type = ast::Type::makeTypeInstance(resultPair.second);
+            type = std::make_shared<ast::Type>(resultPair.second);
         } else {
             val = incr_exp->val;
             type = incr_exp->type;
@@ -927,8 +926,16 @@ namespace production {
             auto resultPair = autoConversion(unary->val, unary->type->selfType,
                                              numStr, ast::IdentifierType::INT_, op, line, semaAna);
             val = unary->val;
-            if (val != resultPair.first) semaAna->irCode.emplace_back(fmt::format("{}={}", val, resultPair.first));
-            type = ast::Type::makeTypeInstance(resultPair.second);
+            type = unary->type;
+            if (val != resultPair.first) {
+                if (type->selfType == ast::IdentifierType::INT_)
+                    semaAna->irCode.emplace_back(fmt::format("{}={}", val, resultPair.first));
+                else
+                    semaAna->irCode.emplace_back(fmt::format("{}=({}){}",
+                                                             val, ast::Type::typeToString[type->selfType],
+                                                             resultPair.first));
+            }
+
         }
     }
 
@@ -962,7 +969,7 @@ namespace production {
         String tmpT2 = sema::Sema::genT();
         semaAna->irCode.emplace_back(fmt::format("{}=!{}", tmpT2, tmpT1));
         val = tmpT2;
-        type = std::make_shared<ast::BOOL_Type>();
+        type = std::make_shared<ast::Type>(ast::IdentifierType::BOOL_);
     }
 
     void Unary2::visit(sema::Sema *semaAna) {
@@ -974,7 +981,7 @@ namespace production {
             String tmpT2 = sema::Sema::genT();
             semaAna->irCode.emplace_back(fmt::format("{}=-{}", tmpT2, tmpT1));
             val = tmpT2;
-            type = std::make_shared<ast::INT_Type>();
+            type = std::make_shared<ast::Type>(ast::IdentifierType::INT_);
         } else {
             String tmpT1 = sema::Sema::genT();
             semaAna->irCode.emplace_back(fmt::format("{}=-{}", tmpT1, unary->val));
@@ -1031,7 +1038,7 @@ namespace production {
         call_suffix->visit(semaAna);
 
         isExist = true;
-        type = ast::Type::makeTypeInstance(calleeInTop->returnType);
+        type = std::make_shared<ast::Type>(calleeInTop->returnType);
         if (call_suffix->isExist) {
             val = call_suffix->val;
             type = call_suffix->type;
@@ -1054,7 +1061,7 @@ namespace production {
         if (!ast::Type::isSameType(expression->type, calleeFun->params[argOffset])) {
             return reportSemanticError(line, fmt::format(
                     "in function '{}' call: the {} argument is not match.Expect {},but use {}",
-                    calleeFun->name, argOffset+1, calleeFun->params[argOffset]->toString(),
+                    calleeFun->name, argOffset + 1, calleeFun->params[argOffset]->toString(),
                     expression->type->toString()));
         }
         semaAna->irCode.emplace_back(fmt::format("param {}", expression->val));
@@ -1080,7 +1087,7 @@ namespace production {
         if (!ast::Type::isSameType(expression->type, calleeFun->params[argOffset])) {
             return reportSemanticError(line, fmt::format(
                     "in function '{}' call: the {} argument is not match.Expect {},but use {}",
-                    calleeFun->name, argOffset+1, calleeFun->params[argOffset]->toString(),
+                    calleeFun->name, argOffset + 1, calleeFun->params[argOffset]->toString(),
                     expression->type->toString()));
         }
         semaAna->irCode.emplace_back(fmt::format("param {}", expression->val));
@@ -1129,32 +1136,32 @@ namespace production {
 
     void ConstVal1::visit(sema::Sema *semaAna) {
         val = token_TRUE->toString();
-        type = std::make_shared<ast::BOOL_Type>();
+        type = std::make_shared<ast::Type>(ast::IdentifierType::BOOL_);
     }
 
     void ConstVal2::visit(sema::Sema *semaAna) {
         val = token_FALSE->toString();
-        type = std::make_shared<ast::BOOL_Type>();
+        type = std::make_shared<ast::Type>(ast::IdentifierType::BOOL_);
     }
 
     void ConstVal3::visit(sema::Sema *semaAna) {
         val = token_NIL->toString();
-        type = std::make_shared<ast::NIL_Type>();
+        type = std::make_shared<ast::Type>(ast::IdentifierType::NIL_);
     }
 
     void ConstVal4::visit(sema::Sema *semaAna) {
         val = token_INT_->toString();
-        type = std::make_shared<ast::INT_Type>();
+        type = std::make_shared<ast::Type>(ast::IdentifierType::INT_);
     }
 
     void ConstVal5::visit(sema::Sema *semaAna) {
         val = token_REAL_->toString();
-        type = std::make_shared<ast::REAL_Type>();
+        type = std::make_shared<ast::Type>(ast::IdentifierType::REAL_);
     }
 
     void ConstVal6::visit(sema::Sema *semaAna) {
         val = token_STRING_->toString();
-        type = std::make_shared<ast::STRING_Type>();
+        type = std::make_shared<ast::Type>(ast::IdentifierType::STRING_);
     }
 
     void Var::visit(sema::Sema *semaAna) {
@@ -1170,7 +1177,7 @@ namespace production {
                 type = thisVarInTop->varType;
             } else {
                 reportSemanticError(line, fmt::format("undefined variable: {}", id));
-                type = std::make_shared<ast::NIL_Type>();
+                type = std::make_shared<ast::Type>(ast::IdentifierType::NIL_);
             }
             varSuffix->usage = usage;
             varSuffix->type = type;
@@ -1224,7 +1231,7 @@ namespace production {
             width = sema::stringMul(varSuffix->width, varSuffix->length, semaAna);
             String tmpT1 = sema::Sema::genT();
             tmpT1 = sema::stringMul(length, width, semaAna);
-            type = std::make_shared<ast::ARRAY_Type>(varSuffix->type, tmpT1, length);
+            type = std::make_shared<ast::Type>(varSuffix->type, tmpT1, length);
 
         } else {
             width = sema::stringMul(varSuffix->width, varSuffix->length, semaAna);

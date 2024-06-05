@@ -119,7 +119,7 @@ namespace parser {
                     fmt::print("\nInput is parsed!\n");
                     return productions;
                 case symbol::Type::Error:
-                    //printInfo("before reportParserError");
+                    printInfo("before reportParserError");
                     if (isAtTokenListEnd()) { ERRORRETURN("reach the end of tokenList! Input is parsed!") }
                     if (!errorProcess(action->second.state)) {
                         ERRORRETURN("reach the end of tokenList or ended due to unexpected error")

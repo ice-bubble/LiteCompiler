@@ -4,7 +4,6 @@
 #include "production.h"
 #include "symbol.h"
 #include "../token/token.h"
-#include "../sema/sema.h"
 #include "../error/error.h"
 
 
@@ -63,7 +62,7 @@ namespace production {
 
     String Production::autoConversion(String originName, ast::IdentifierType originType,
                                       ast::IdentifierType expectType, size_t line, sema::Sema *semaAna) {
-        auto realT = ast::Type::typeTransform[{originType, expectType}];
+        auto realT = ast::Type::typeForceTransform[{originType, expectType}];
         if (realT != ast::IdentifierType::BASE_) {
             if (realT == originType) return originName;
             String tmpT = sema::Sema::genT();

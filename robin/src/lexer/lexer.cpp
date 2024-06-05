@@ -113,9 +113,9 @@ namespace lexer {
         if (tokentype == token::TOKEN_EOF) {
             return addToken(token::TOKEN_IDENTIFIER);
         } else if (tokentype == token::TOKEN_TRUE) {
-            return addToken(token::TOKEN_BOOL_, String("true"));
+            return addToken(token::TOKEN_TRUE, String("true"));
         } else if (tokentype == token::TOKEN_FALSE) {
-            return addToken(token::TOKEN_BOOL_, String("false"));
+            return addToken(token::TOKEN_FALSE, String("false"));
         }
         addToken(tokentype);
     }
