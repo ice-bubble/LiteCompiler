@@ -21,10 +21,10 @@ namespace sema {
     }
 
     String stringMul(String left, String right, Sema *semaAna) {
-        int intLeft;
+        long intLeft;
         bool signLeft = false;
         try {
-            intLeft = std::stoi(left);
+            intLeft = std::stol(left);
             signLeft = true;
         }
         catch (const std::invalid_argument &e) {
@@ -32,10 +32,10 @@ namespace sema {
         catch (const std::out_of_range &e) {
             reportSemanticError(0, "a integer variable is out of range");
         }
-        int intRight;
+        long intRight;
         bool signRight = false;
         try {
-            intRight = std::stoi(right);
+            intRight = std::stol(right);
             signRight = true;
         }
         catch (const std::invalid_argument &e) {
@@ -50,10 +50,10 @@ namespace sema {
     }
 
     String stringPlus(String left, String right, Sema *semaAna) {
-        int intLeft;
+        long intLeft;
         bool signLeft = false;
         try {
-            intLeft = std::stoi(left);
+            intLeft = std::stol(left);
             signLeft = true;
         }
         catch (const std::invalid_argument &e) {
@@ -61,10 +61,10 @@ namespace sema {
         catch (const std::out_of_range &e) {
             reportSemanticError(0, "a integer variable is out of range");
         }
-        int intRight;
+        long intRight;
         bool signRight = false;
         try {
-            intRight = std::stoi(right);
+            intRight = std::stol(right);
             signRight = true;
         }
         catch (const std::invalid_argument &e) {

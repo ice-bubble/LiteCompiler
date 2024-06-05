@@ -318,6 +318,7 @@ namespace ast {
     }
 
     bool Type::isSameType(SharedPtr<Type> t1, SharedPtr<Type> t2) {
+        if (t1 == nullptr || t2 == nullptr) return false;
         if (t1->selfType != t2->selfType) return false;
         if (t1->selfType == IdentifierType::ARRAY_)
             return isSameType(t1->varType, t2->varType);
