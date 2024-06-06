@@ -61,7 +61,9 @@ namespace parser {
     List<SharedPtr<production::Production>> Parser::parserAst() {
         stateStack.push(0);
         while (true) {
-            //printInfo("enter loop");
+#ifdef PRINT_PARSER_PROCESS
+            printInfo("enter loop");
+#endif
             //preAction,先处理goto操作;
             if (!productions.empty()) {
                 symbol::Symbol preSymbol = productions.back()->thisSymbol;
@@ -99,7 +101,9 @@ namespace parser {
 
             switch (action->second.type) {
                 case symbol::Type::Shift: {
-                    //printInfo("before shift");
+#ifdef PRINT_PARSER_PROCESS
+                    printInfo("before shift");
+#endif
                     if (isAtTokenListEnd()) { ERRORRETURN("reach the end of tokenList! Input is parsed!") }
 
                     token::Token thisToken = advance();
@@ -108,14 +112,17 @@ namespace parser {
                     break;
                 }
                 case symbol::Type::Reduce:
-                    //printInfo("before reduce");
-
+#ifdef PRINT_PARSER_PROCESS
+                    printInfo("before reduce");
+#endif
                     //规约，出错直接结束语法分析
                     if (!callReduceFunctionByIndex(action->second.state))
                         return productions;
                     break;
                 case symbol::Type::Accept:
-                    //printInfo("before accept");
+#ifdef PRINT_PARSER_PROCESS
+                    printInfo("before accept");
+#endif
                     fmt::print("\nInput is parsed!\n");
                     return productions;
                 case symbol::Type::Error:

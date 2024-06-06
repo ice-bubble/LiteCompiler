@@ -294,7 +294,7 @@ namespace ast {
             {NIL_,    "nil"},
             {BOOL_,   "bool"},
             {CHAR_,   "char"},
-            {INT_,    "int"},
+            {INT_,    "integer"},
             {REAL_,   "double"},
     };
 

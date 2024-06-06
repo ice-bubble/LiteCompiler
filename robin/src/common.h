@@ -23,7 +23,8 @@
 #include "fmt/core.h"
 
 
-#define DEBUG                       ///< 启用此宏定义使得主函数#include<debug.h>
+//#define PRINT_TOKENLIST
+//#define PRINT_PARSER_PROCESS
 
 #define toVarString(var) #var       ///< 将变量名转为字符串
 

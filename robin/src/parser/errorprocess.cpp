@@ -150,13 +150,17 @@ namespace parser {
 
     bool Parser::errorProcess(State errorState) {
         reportParserError(this, tokens[currentToken], errorMessage[errorState]);
-        //printInfo("error here");
+#ifdef PRINT_PARSER_PROCESS
+        printInfo("error here");
+#endif
         switch (errorState) {
             case -1:
                 while (true) {
                     if (isAtTokenListEnd()) return false;
                     advance();
-                    //printInfo("in error process");
+#ifdef PRINT_PARSER_PROCESS
+                    printInfo("in error process");
+#endif
                     symbol::Symbol currentSymbol = production::Production::tokenToSym[peek().getType()];
                     std::cout << peek().toString() << std::endl;
                     State currentState = stateStack.top();

@@ -11,12 +11,8 @@
 #include "src/parser/parser.h"
 #include "src/ast/production.h"
 #include "src/sema/sema.h"
-
-#ifdef DEBUG
-
 #include "src/debug/debug.h"
 
-#endif
 
 /**
  * @brief REPL（交互式解释器）循环。
@@ -37,8 +33,9 @@ static void repl() {
         }
         lexer::Lexer lexer = lexer::Lexer(line);
         List<token::Token> tokenlist = lexer.scanTokens();
-
-        //printTokenList(tokenlist);
+#ifdef PRINT_TOKENLIST
+        printTokenList(tokenlist);
+#endif
         if (lexer.hasError)
             std::cerr << "There are lexical errors in the source code" << std::endl;
         lexer.hasError = false;
@@ -99,8 +96,10 @@ static void runFile(const String &path) {
     lexer::Lexer lexer(source);
     List<token::Token> tokenlist = lexer.scanTokens();
 
+#ifdef PRINT_TOKENLIST
     //打印词法分析结果
-    //printTokenList(tokenlist);
+    printTokenList(tokenlist);
+#endif
     if (lexer.hasError)
         std::cerr << "There are lexical errors in the source code" << std::endl;
 
@@ -113,7 +112,6 @@ static void runFile(const String &path) {
         List<String> irCode = sema.generateIRCODE();
         printIRCODE(irCode);
     }
-
 }
 
 

@@ -156,6 +156,7 @@ namespace production {
         }
         semaAna->top = ast::SymTab::throwThisSymTab(semaAna->top);
         if (semaAna->top == nullptr) reportSemanticError(line, "invalid symbol table");
+        semaAna->irCode.push_back(fmt::format("{} end", id));
     }
 
     void VarDecl::visit(sema::Sema *semaAna) {
@@ -1069,13 +1070,10 @@ namespace production {
         if (calleeFun->params.size() <= argOffset)
             return reportSemanticError(line, fmt::format("the function '{}' expect {} params but get too much params",
                                                          calleeFun->name, calleeFun->paramCount));
-        if (!ast::Type::isSameType(expression->type, calleeFun->params[argOffset])) {
-            return reportSemanticError(line, fmt::format(
-                    "in function '{}' call: the {} argument is not match.Expect {},but use {}",
-                    calleeFun->name, argOffset + 1, calleeFun->params[argOffset]->toString(),
-                    expression->type->toString()));
-        }
-        semaAna->irCode.emplace_back(fmt::format("param {}", expression->val));
+        auto expectT = calleeFun->params[argOffset]->selfType;
+        String tmpT = autoConversion(expression->val, expression->type->selfType,
+                                     expectT, line, semaAna);
+        semaAna->irCode.emplace_back(fmt::format("param {}", tmpT));
         arguments->calleeFun = calleeFun;
         arguments->argOffset = argOffset + 1;
 
@@ -1098,13 +1096,9 @@ namespace production {
         if (calleeFun->params.size() <= argOffset)
             return reportSemanticError(line, fmt::format("the function '{}' expect {} params but get too much params",
                                                          calleeFun->name, calleeFun->paramCount));
-        if (!ast::Type::isSameType(expression->type, calleeFun->params[argOffset])) {
-            return reportSemanticError(line, fmt::format(
-                    "in function '{}' call: the {} argument is not match.Expect {},but use {}",
-                    calleeFun->name, argOffset + 1, calleeFun->params[argOffset]->toString(),
-                    expression->type->toString()));
-        }
-        semaAna->irCode.emplace_back(fmt::format("param {}", expression->val));
+        auto expectT = calleeFun->params[argOffset]->selfType;
+        String tmpT = autoConversion(expression->val, expression->type->selfType,
+                                     expectT, line, semaAna);
         arguments->calleeFun = calleeFun;
         arguments->argOffset = argOffset + 1;
 
