@@ -1099,6 +1099,7 @@ namespace production {
         auto expectT = calleeFun->params[argOffset]->selfType;
         String tmpT = autoConversion(expression->val, expression->type->selfType,
                                      expectT, line, semaAna);
+        semaAna->irCode.emplace_back(fmt::format("param {}", tmpT));
         arguments->calleeFun = calleeFun;
         arguments->argOffset = argOffset + 1;
 
