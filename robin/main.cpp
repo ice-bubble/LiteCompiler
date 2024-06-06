@@ -24,14 +24,16 @@
  * 用户可以在控制台输入代码，并对其进行词法分析,按下ctrl+C强制退出。
  *
  */
-static void repl() {
-
+static void repl()
+{
     char line[1024];
     parser::Parser::slrTableInit();
-    for (;;) {
+    for (;;)
+    {
         printf("> ");
 
-        if (!fgets(line, sizeof(line), stdin)) {
+        if (!fgets(line, sizeof(line), stdin))
+        {
             printf("\n");
             break;
         }
@@ -44,16 +46,15 @@ static void repl() {
         lexer.hasError = false;
 
         parser::Parser parser = parser::Parser(tokenlist);
-        List<SharedPtr<production::Production>> ast = parser.parserAst();
+        List<SharedPtr<production::Production> > ast = parser.parserAst();
         if (parser.hasError)
             std::cerr << "There are syntax errors in the source code" << std::endl;
-        else {
+        else
+        {
             sema::Sema sema = sema::Sema(ast[0]);
             List<String> irCode = sema.generateIRCODE();
             printIRCODE(irCode);
         }
-
-
     }
 }
 
@@ -62,15 +63,17 @@ static void repl() {
  * @param path 要读取的文件路径。
  * @return std::string 文件内容的字符串形式。
  */
-String readFile(const String &path) {
+String readFile(const String &path)
+{
     std::ifstream file(path, std::ios::binary);
-    if (!file) {
+    if (!file)
+    {
         throw std::runtime_error("Failed to open file: " + path);
     }
 
     std::stringstream buffer;
     buffer << file.rdbuf(); // 将文件内容读入缓冲区
-    return buffer.str();    // 返回缓冲区内容作为字符串
+    return buffer.str(); // 返回缓冲区内容作为字符串
 }
 
 /**
@@ -81,13 +84,16 @@ String readFile(const String &path) {
  *
  * @param path 要运行的文件路径。
  */
-static void runFile(const String &path) {
+static void runFile(const String &path)
+{
     String source;
-    try {
+    try
+    {
         // 读取文件内容
         source = readFile(path);
-
-    } catch (const std::exception &e) {
+    }
+    catch (const std::exception &e)
+    {
         // 捕获异常并输出错误信息
         std::cerr << e.what() << std::endl << 1 << std::endl;
 
@@ -105,15 +111,15 @@ static void runFile(const String &path) {
         std::cerr << "There are lexical errors in the source code" << std::endl;
 
     parser::Parser parser = parser::Parser(tokenlist);
-    List<SharedPtr<production::Production>> ast = parser.parserAst();
+    List<SharedPtr<production::Production> > ast = parser.parserAst();
     if (parser.hasError)
         std::cerr << "There are syntax errors in the source code" << std::endl;
-    else {
+    else
+    {
         sema::Sema sema = sema::Sema(ast[0]);
         List<String> irCode = sema.generateIRCODE();
         printIRCODE(irCode);
     }
-
 }
 
 
@@ -124,12 +130,18 @@ static void runFile(const String &path) {
  * @param argv 命令行参数数组。
  * @return int 程序执行结果。
  */
-int main(int argc, const char *argv[]) {
-    if (argc == 1) {
+int main(int argc, const char *argv[])
+{
+    if (argc == 1)
+    {
         repl();
-    } else if (argc == 2) {
+    }
+    else if (argc == 2)
+    {
         runFile(argv[1]);
-    } else {
+    }
+    else
+    {
         std::cerr << "Usage: robin [path]" << std::endl;
         exit(64);
     }
