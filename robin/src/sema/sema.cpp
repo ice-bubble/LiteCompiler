@@ -9,6 +9,8 @@ namespace sema {
 
     Sema::Sema(SharedPtr<production::Production> program) : program(std::move(program)) { top = new ast::SymTab; }
 
+    Sema::~Sema() { delete top; }
+
     String Sema::genT() {
         static int Tindex = 0;
         return fmt::format("T{}", Tindex++);

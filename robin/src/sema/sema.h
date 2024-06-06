@@ -23,6 +23,8 @@ namespace sema {
 
         explicit Sema(SharedPtr<production::Production> program);
 
+		~Sema();
+
         static String genT();
 
         List<String> generateIRCODE();
