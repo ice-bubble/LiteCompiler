@@ -631,10 +631,14 @@ namespace production {
         logic_or_prime->visit(semaAna);
 
         if (logic_or_prime->op == "||") {
-            auto resultPair = autoConversion(logic_and->val, logic_and->type->selfType,
-                                             logic_or_prime->val, logic_or_prime->type->selfType,
-                                             logic_or_prime->op, line, semaAna);
-            val = resultPair.first;
+            if (jmp) {
+                val = "true";
+            } else {
+                auto resultPair = autoConversion(logic_and->val, logic_and->type->selfType,
+                                                 logic_or_prime->val, logic_or_prime->type->selfType,
+                                                 logic_or_prime->op, line, semaAna);
+                val = resultPair.first;
+            }
             type = std::make_shared<ast::Type>(ast::IdentifierType::BOOL_);
         } else {
             val = logic_and->val;
@@ -687,10 +691,14 @@ namespace production {
         logic_and_prime->visit(semaAna);
 
         if (logic_and_prime->op == "&&") {
-            auto resultPair = autoConversion(equality->val, equality->type->selfType,
-                                             logic_and_prime->val, logic_and_prime->type->selfType,
-                                             logic_and_prime->op, line, semaAna);
-            val = resultPair.first;
+            if (jmp) {
+                val = "true";
+            } else {
+                auto resultPair = autoConversion(equality->val, equality->type->selfType,
+                                                 logic_and_prime->val, logic_and_prime->type->selfType,
+                                                 logic_and_prime->op, line, semaAna);
+                val = resultPair.first;
+            }
             type = std::make_shared<ast::Type>(ast::IdentifierType::BOOL_);
         } else {
             val = equality->val;
@@ -1058,6 +1066,9 @@ namespace production {
     void ArgList1::visit(sema::Sema *semaAna) {
         expression->visit(semaAna);
 
+        if (calleeFun->params.size() <= argOffset)
+            return reportSemanticError(line, fmt::format("the function '{}' expect {} params but get too much params",
+                                                         calleeFun->name, calleeFun->paramCount));
         if (!ast::Type::isSameType(expression->type, calleeFun->params[argOffset])) {
             return reportSemanticError(line, fmt::format(
                     "in function '{}' call: the {} argument is not match.Expect {},but use {}",
@@ -1084,6 +1095,9 @@ namespace production {
     void Arguments1::visit(sema::Sema *semaAna) {
         expression->visit(semaAna);
 
+        if (calleeFun->params.size() <= argOffset)
+            return reportSemanticError(line, fmt::format("the function '{}' expect {} params but get too much params",
+                                                         calleeFun->name, calleeFun->paramCount));
         if (!ast::Type::isSameType(expression->type, calleeFun->params[argOffset])) {
             return reportSemanticError(line, fmt::format(
                     "in function '{}' call: the {} argument is not match.Expect {},but use {}",

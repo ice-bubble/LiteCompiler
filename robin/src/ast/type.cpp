@@ -310,7 +310,7 @@ namespace ast {
             if (T2 == IdentifierType::VAR_)return t1;
             if (T2 == IdentifierType::BASE_)return t1;
             if (T1 != T2) {
-                fmt::print(stderr, "T1:{} ,T2:{}\n", (int) T1, (int) T2);
+                //fmt::print(stderr, "T1:{} ,T2:{}\n", (int) T1, (int) T2);
                 reportSemanticError(line, "this function has more then a type of return");
             }
             return t1;
