@@ -1229,6 +1229,9 @@ namespace production {
         } else {
             len = expression->val;
             varSuffix->usage = usage;
+            if (type->varType == nullptr) {
+                reportSemanticError(line, "Trying to index a variable that is not an array");
+            }
             varSuffix->type = type->varType;
             varSuffix->length = varSuffix->type->length;
         }
@@ -1243,9 +1246,9 @@ namespace production {
             type = std::make_shared<ast::Type>(varSuffix->type, tmpT1, length);
 
         } else {
-            width = sema::stringMul(varSuffix->width, varSuffix->length, semaAna);
-            String tmpT1 = sema::stringMul(len, width, semaAna);
+            String tmpT1 = sema::stringMul(len, varSuffix->width, semaAna);
             offset = sema::stringPlus(varSuffix->offset, tmpT1, semaAna);
+            width = sema::stringMul(width, length, semaAna);
             returnType = varSuffix->returnType;
         }
     }

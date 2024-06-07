@@ -23,7 +23,7 @@ namespace sema {
 
         explicit Sema(SharedPtr<production::Production> program);
 
-		~Sema();
+        ~Sema();
 
         static String genT();
 
