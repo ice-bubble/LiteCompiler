@@ -178,16 +178,11 @@ namespace production {
         var->visit(semaAna);
         varInit->visit(semaAna);
         if (!varInit->val.empty()) {
-            ast::IdentifierType legalType =
-                    ast::Type::typeTransform[{varInit->type->selfType, var->type->selfType}];
-            if (legalType != ast::IdentifierType::BASE_) {
-                auto varInTop = semaAna->top->lookup(var->id);
-                varInTop->value = varInit->val;
-                semaAna->irCode.emplace_back(fmt::format("{}={}", var->id, varInit->val));
-            } else {
-                String errorMsg = fmt::format("assignment from {} to {} is illegal",
-                                              varInit->type->toString(), var->type->toString());
-                reportSemanticError(line, errorMsg);
+            String tmpT = autoConversion(varInit->val, varInit->type->selfType,
+                                         var->type->selfType, line, semaAna);
+            semaAna->irCode.emplace_back(fmt::format("{}={}", var->id, tmpT));
+            if (var->type->selfType == ast::IdentifierType::VAR_) {
+                var->type = std::make_shared<ast::Type>(varInit->type->selfType);
             }
         }
     }
