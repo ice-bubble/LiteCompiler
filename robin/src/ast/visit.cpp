@@ -1243,7 +1243,7 @@ namespace production {
         } else {
             String tmpT1 = sema::stringMul(len, varSuffix->width, semaAna);
             offset = sema::stringPlus(varSuffix->offset, tmpT1, semaAna);
-            width = sema::stringMul(width, length, semaAna);
+            width = sema::stringMul(varSuffix->width, length, semaAna);
             returnType = varSuffix->returnType;
         }
     }
