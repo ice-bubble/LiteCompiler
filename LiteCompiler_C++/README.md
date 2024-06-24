@@ -31,49 +31,21 @@
 
 ## 构建方法🛠️
 
-构建平台：Linux或Window10及以上
+构建平台：linux或window10及以上
 
-### 方法一：（推荐使用）
+所需工具：g++(支持c++17及以上)，cmake(大于3.28版本)
 
-要求：安装[CLion](https://www.jetbrains.com/clion/)（可以使用学校邮箱注册官方正版）
+步骤：在robin文件夹下运行以下命令
 
-步骤：使用CLion打开LiteCompiler_C++文件夹运行该项目
-
-### 方法二：
-
-要求：安装[CMake](https://cmake.org/)和C编译器工具链（例如`gcc, g++, make, gdb`等，在Windows平台上推荐使用[msys2](https://code.visualstudio.com/docs/cpp/config-mingw#_installing-the-mingww64-toolchain))，**项目路径上不能有中文**
-
-#### Windows平台（这里以使用gnu工具链为例）[^1]：
-
-步骤：进入LiteCompiler_C++文件夹，运行以下四条命令
-
-```sh
-mkdir build
+```shell
+mkdir build && cd build && cmake .. && make                          #linux平台
 ```
 
-```sh
-cd build
+```shell
+mkdir build; cd build; cmake -G "MinGW Makefiles" ..; mingw32-make   #windows平台
 ```
 
-```sh
-cmake -G "MinGW Makefiles" ..
-```
 
-```sh
-mingw32-make        #mingw32-make是msys2中的make工具
-```
-
-build文件夹内会生成目标：`LiteCompiler_C++.exe`
-
-#### Linux平台：
-
-步骤：进入LiteCompiler_C++文件夹，运行这条命令
-
-```sh
-mkdir build && cd build && cmake .. && make
-```
-
-build文件夹内会生成目标：`LiteCompiler_C++`
 
 ## 词法分析器
 
