@@ -1,6 +1,8 @@
 # Bazel support
 
-To get [Bazel](https://bazel.build/) working with {fmt} you can copy the files `BUILD.bazel`, `WORKSPACE.bazel`, and `.bazelversion` from this folder (`support/bazel`) to the root folder of this project. This way {fmt} gets bazelized and can be used with Bazel (e.g. doing a `bazel build //...` on {fmt}). 
+To get [Bazel](https://bazel.build/) working with {fmt} you can copy the files `BUILD.bazel`, `WORKSPACE.bazel`,
+and `.bazelversion` from this folder (`support/bazel`) to the root folder of this project. This way {fmt} gets bazelized
+and can be used with Bazel (e.g. doing a `bazel build //...` on {fmt}).
 
 ## Using {fmt} as a dependency
 
@@ -53,7 +55,9 @@ git_repository(
 )
 ```
 
-In the *WORKSPACE* file, the {fmt} GitHub repository is fetched. Using the attribute `patch_cmds` the  files `BUILD.bazel`, `WORKSPACE.bazel`, and `.bazelversion` are moved to the root of the {fmt} repository. This way the {fmt} repository is recognized as a bazelized workspace. 
+In the *WORKSPACE* file, the {fmt} GitHub repository is fetched. Using the attribute `patch_cmds` the
+files `BUILD.bazel`, `WORKSPACE.bazel`, and `.bazelversion` are moved to the root of the {fmt} repository. This way the
+{fmt} repository is recognized as a bazelized workspace.
 
 *BUILD.bazel*:
 
@@ -71,4 +75,5 @@ To execute the binary you can run `bazel run //:Demo`.
 
 # Using Bzlmod
 
-The [Bazel Central Registry](https://github.com/bazelbuild/bazel-central-registry/tree/main/modules/fmt) also provides support for {fmt}.
+The [Bazel Central Registry](https://github.com/bazelbuild/bazel-central-registry/tree/main/modules/fmt) also provides
+support for {fmt}.

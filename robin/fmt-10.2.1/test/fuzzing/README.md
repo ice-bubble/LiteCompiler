@@ -6,6 +6,7 @@ Windows (using clang>=8) or on Mac, but the script will probably not work out of
 the box.
 
 Something along
+
 ```sh
 mkdir build
 cd build
@@ -14,9 +15,11 @@ export CXXFLAGS="-fsanitize=fuzzer-no-link -DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODU
 cmake .. -DFMT_SAFE_DURATION_CAST=On -DFMT_FUZZ=On -DFMT_FUZZ_LINKMAIN=Off -DFMT_FUZZ_LDFLAGS="-fsanitize=fuzzer"
 cmake --build .
 ```
+
 should work to build the fuzzers for all platforms which clang supports.
 
 Execute a fuzzer with for instance
+
 ```sh
 cd build
 export UBSAN_OPTIONS=halt_on_error=1

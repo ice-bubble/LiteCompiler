@@ -10,8 +10,10 @@ step = 8
 significand_size = 64
 exp_offset = 2000
 
+
 class fp:
     pass
+
 
 powers = []
 for i, exp in enumerate(range(min_exponent, max_exponent + 1, step)):

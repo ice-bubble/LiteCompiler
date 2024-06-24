@@ -13,7 +13,8 @@ import csv
 import os
 import subprocess
 
-NUM_CODEPOINTS=0x110000
+NUM_CODEPOINTS = 0x110000
+
 
 def to_ranges(iter):
     current = None
@@ -27,10 +28,12 @@ def to_ranges(iter):
     if current is not None:
         yield tuple(current)
 
+
 def get_escaped(codepoints):
     for c in codepoints:
         if (c.class_ or "Cn") in "Cc Cf Cs Co Cn Zl Zp Zs".split() and c.value != ord(' '):
             yield c.value
+
 
 def get_file(f):
     try:
@@ -39,7 +42,9 @@ def get_file(f):
         subprocess.run(["curl", "-O", f], check=True)
         return open(os.path.basename(f))
 
+
 Codepoint = namedtuple('Codepoint', 'value class_')
+
 
 def get_codepoints(f):
     r = csv.reader(f, delimiter=";")
@@ -70,8 +75,9 @@ def get_codepoints(f):
     for c in range(prev_codepoint + 1, NUM_CODEPOINTS):
         yield Codepoint(c, None)
 
+
 def compress_singletons(singletons):
-    uppers = [] # (upper, # items in lowers)
+    uppers = []  # (upper, # items in lowers)
     lowers = []
 
     for i in singletons:
@@ -86,10 +92,11 @@ def compress_singletons(singletons):
 
     return uppers, lowers
 
+
 def compress_normal(normal):
     # lengths 0x00..0x7f are encoded as 00, 01, ..., 7e, 7f
     # lengths 0x80..0x7fff are encoded as 80 80, 80 81, ..., ff fe, ff ff
-    compressed = [] # [truelen, (truelenaux), falselen, (falselenaux)]
+    compressed = []  # [truelen, (truelenaux), falselen, (falselenaux)]
 
     prev_start = 0
     for start, count in normal:
@@ -114,6 +121,7 @@ def compress_normal(normal):
 
     return compressed
 
+
 def print_singletons(uppers, lowers, uppersname, lowersname):
     print("  static constexpr singleton {}[] = {{".format(uppersname))
     for u, c in uppers:
@@ -121,8 +129,9 @@ def print_singletons(uppers, lowers, uppersname, lowersname):
     print("  };")
     print("  static constexpr unsigned char {}[] = {{".format(lowersname))
     for i in range(0, len(lowers), 8):
-        print("    {}".format(" ".join("{:#04x},".format(l) for l in lowers[i:i+8])))
+        print("    {}".format(" ".join("{:#04x},".format(l) for l in lowers[i:i + 8])))
     print("  };")
+
 
 def print_normal(normal, normalname):
     print("  static constexpr unsigned char {}[] = {{".format(normalname))
@@ -130,12 +139,13 @@ def print_normal(normal, normalname):
         print("    {}".format(" ".join("{:#04x},".format(i) for i in v)))
     print("  };")
 
+
 def main():
     file = get_file("https://www.unicode.org/Public/UNIDATA/UnicodeData.txt")
 
     codepoints = get_codepoints(file)
 
-    CUTOFF=0x10000
+    CUTOFF = 0x10000
     singletons0 = []
     singletons1 = []
     normal0 = []
@@ -196,6 +206,7 @@ FMT_FUNC auto is_printable(uint32_t cp) -> bool {\
   return cp < 0x{:x};
 }}\
 """.format(NUM_CODEPOINTS))
+
 
 if __name__ == '__main__':
     main()

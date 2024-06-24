@@ -1,9 +1,3 @@
-/**
- * @file common.h
- * @brief 一些项目用到的宏定义和头文件存放在这里
- * @date 24-4-22
- */
-
 #ifndef ROBIN_COMMON_H
 #define ROBIN_COMMON_H
 

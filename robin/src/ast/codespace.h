@@ -1,7 +1,3 @@
-//
-// Created by icelake on 24-6-4.
-//
-
 #ifndef ROBIN_CODESPACE_H
 #define ROBIN_CODESPACE_H
 
@@ -9,6 +5,9 @@
 
 namespace ast {
 
+    /**
+     * 辅助语句进行回填的类
+     */
     class CodeSpace {
     public:
         int compare = -1;
@@ -25,6 +24,9 @@ namespace ast {
 
         explicit CodeSpace(List<String> *irCode) : irCode(irCode) {}
 
+        /**
+         * @brief 进行回填
+         */
         void backpatch() {
             for (auto i: compareSentences)
                 (*irCode)[i] = fmt::format((*irCode)[i], compare);

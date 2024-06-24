@@ -36,7 +36,10 @@ void printSymbolTable(const List<token::Token> &tokenlist);
  */
 void insertToSymbolTable(const token::Token &t, List<String> &symboltable);
 
-
+/**
+ * @brief 打印中间代码。
+ * @param irCode 中间代码列表。
+ */
 void printIRCODE(const List<String> &irCode);
 
 #endif //ROBIN_DEBUG_H

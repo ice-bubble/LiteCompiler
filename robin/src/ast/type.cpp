@@ -1,7 +1,3 @@
-//
-// Created by icelake on 24-5-19.
-//
-
 #include "type.h"
 #include "../error/error.h"
 

@@ -1,7 +1,3 @@
-//
-// Created by icelake on 24-5-30.
-//
-
 #include "production.h"
 #include "codespace.h"
 #include "../error/error.h"
@@ -630,9 +626,9 @@ namespace production {
             if (jmp) {
                 val = "true";
             } else {
-                auto resultPair = autoConversion(logic_and->val, logic_and->type->selfType,
-                                                 logic_or_prime->val, logic_or_prime->type->selfType,
-                                                 logic_or_prime->op, line, semaAna);
+                auto resultPair = binaryOperation(logic_and->val, logic_and->type->selfType,
+                                                  logic_or_prime->val, logic_or_prime->type->selfType,
+                                                  logic_or_prime->op, line, semaAna);
                 val = resultPair.first;
             }
             type = std::make_shared<ast::Type>(ast::IdentifierType::BOOL_);
@@ -690,9 +686,9 @@ namespace production {
             if (jmp) {
                 val = "true";
             } else {
-                auto resultPair = autoConversion(equality->val, equality->type->selfType,
-                                                 logic_and_prime->val, logic_and_prime->type->selfType,
-                                                 logic_and_prime->op, line, semaAna);
+                auto resultPair = binaryOperation(equality->val, equality->type->selfType,
+                                                  logic_and_prime->val, logic_and_prime->type->selfType,
+                                                  logic_and_prime->op, line, semaAna);
                 val = resultPair.first;
             }
             type = std::make_shared<ast::Type>(ast::IdentifierType::BOOL_);
@@ -733,9 +729,9 @@ namespace production {
         equality_prime->visit(semaAna);
 
         if (equality_prime->op == "!=" || equality_prime->op == "==") {
-            auto resultPair = autoConversion(comparison->val, comparison->type->selfType,
-                                             equality_prime->val, equality_prime->type->selfType,
-                                             equality_prime->op, line, semaAna);
+            auto resultPair = binaryOperation(comparison->val, comparison->type->selfType,
+                                              equality_prime->val, equality_prime->type->selfType,
+                                              equality_prime->op, line, semaAna);
             val = resultPair.first;
             type = std::make_shared<ast::Type>(ast::IdentifierType::BOOL_);
         } else {
@@ -775,9 +771,9 @@ namespace production {
 
         if (comparison_prime->op == ">" || comparison_prime->op == ">=" || comparison_prime->op == "<" ||
             comparison_prime->op == "<=") {
-            auto resultPair = autoConversion(term->val, term->type->selfType,
-                                             comparison_prime->val, comparison_prime->type->selfType,
-                                             comparison_prime->op, line, semaAna);
+            auto resultPair = binaryOperation(term->val, term->type->selfType,
+                                              comparison_prime->val, comparison_prime->type->selfType,
+                                              comparison_prime->op, line, semaAna);
             val = resultPair.first;
             type = std::make_shared<ast::Type>(ast::IdentifierType::BOOL_);
         } else {
@@ -832,9 +828,9 @@ namespace production {
         term_prime->visit(semaAna);
 
         if (term_prime->op == "+" || term_prime->op == "-") {
-            auto resultPair = autoConversion(factor->val, factor->type->selfType,
-                                             term_prime->val, term_prime->type->selfType,
-                                             term_prime->op, line, semaAna);
+            auto resultPair = binaryOperation(factor->val, factor->type->selfType,
+                                              term_prime->val, term_prime->type->selfType,
+                                              term_prime->op, line, semaAna);
             val = resultPair.first;
             type = std::make_shared<ast::Type>(resultPair.second);
         } else {
@@ -873,9 +869,9 @@ namespace production {
         factor_prime->visit(semaAna);
 
         if (factor_prime->op == "/" || factor_prime->op == "*" || factor_prime->op == "%") {
-            auto resultPair = autoConversion(incr_exp->val, incr_exp->type->selfType,
-                                             factor_prime->val, factor_prime->type->selfType,
-                                             factor_prime->op, line, semaAna);
+            auto resultPair = binaryOperation(incr_exp->val, incr_exp->type->selfType,
+                                              factor_prime->val, factor_prime->type->selfType,
+                                              factor_prime->op, line, semaAna);
             val = resultPair.first;
             type = std::make_shared<ast::Type>(resultPair.second);
         } else {
@@ -927,8 +923,8 @@ namespace production {
         } else {
             String op = incr_op->val > 0 ? "+" : "-";
             String numStr = std::to_string(incr_op->val > 0 ? incr_op->val : -incr_op->val);
-            auto resultPair = autoConversion(unary->val, unary->type->selfType,
-                                             numStr, ast::IdentifierType::INT_, op, line, semaAna);
+            auto resultPair = binaryOperation(unary->val, unary->type->selfType,
+                                              numStr, ast::IdentifierType::INT_, op, line, semaAna);
             val = unary->val;
             type = unary->type;
             if (val != resultPair.first) {

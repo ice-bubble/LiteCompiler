@@ -1,6 +1,6 @@
 name: windows
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 permissions:
   contents: read
@@ -13,12 +13,12 @@ jobs:
         # windows-2019 has MSVC 2019 installed;
         # windows-2022 has MSVC 2022 installed:
         # https://github.com/actions/virtual-environments.
-        os: [windows-2019]
-        platform: [Win32, x64]
-        toolset: [v140, v141, v142]
-        standard: [14, 17, 20]
-        shared: ["", -DBUILD_SHARED_LIBS=ON]
-        build_type: [Debug, Release]
+        os: [ windows-2019 ]
+        platform: [ Win32, x64 ]
+        toolset: [ v140, v141, v142 ]
+        standard: [ 14, 17, 20 ]
+        shared: [ "", -DBUILD_SHARED_LIBS=ON ]
+        build_type: [ Debug, Release ]
         exclude:
           - { toolset: v140, standard: 17 }
           - { toolset: v140, standard: 20 }
@@ -41,35 +41,35 @@ jobs:
             standard: 20
 
     steps:
-    - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
 
-    - name: Set timezone
-      run: tzutil /s "Ekaterinburg Standard Time"
+      - name: Set timezone
+        run: tzutil /s "Ekaterinburg Standard Time"
 
-    - name: Create Build Environment
-      run: cmake -E make_directory ${{runner.workspace}}/build
+      - name: Create Build Environment
+        run: cmake -E make_directory ${{runner.workspace}}/build
 
-    - name: Configure
-      # Use a bash shell for $GITHUB_WORKSPACE.
-      shell: bash
-      working-directory: ${{runner.workspace}}/build
-      run: |
-        cmake -A ${{matrix.platform}} -T ${{matrix.toolset}} \
-              -DCMAKE_CXX_STANDARD=${{matrix.standard}} \
-              ${{matrix.shared}} -DCMAKE_BUILD_TYPE=${{matrix.build_type}} \
-              $GITHUB_WORKSPACE
+      - name: Configure
+        # Use a bash shell for $GITHUB_WORKSPACE.
+        shell: bash
+        working-directory: ${{runner.workspace}}/build
+        run: |
+          cmake -A ${{matrix.platform}} -T ${{matrix.toolset}} \
+                -DCMAKE_CXX_STANDARD=${{matrix.standard}} \
+                ${{matrix.shared}} -DCMAKE_BUILD_TYPE=${{matrix.build_type}} \
+                $GITHUB_WORKSPACE
 
-    - name: Build
-      working-directory: ${{runner.workspace}}/build
-      run: |
-        $threads = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors
-        cmake --build . --config ${{matrix.build_type}} --parallel $threads
+      - name: Build
+        working-directory: ${{runner.workspace}}/build
+        run: |
+          $threads = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors
+          cmake --build . --config ${{matrix.build_type}} --parallel $threads
 
-    - name: Test
-      working-directory: ${{runner.workspace}}/build
-      run: ctest -C ${{matrix.build_type}} -V
-      env:
-        CTEST_OUTPUT_ON_FAILURE: True
+      - name: Test
+        working-directory: ${{runner.workspace}}/build
+        run: ctest -C ${{matrix.build_type}} -V
+        env:
+          CTEST_OUTPUT_ON_FAILURE: True
 
   mingw:
     runs-on: windows-latest
@@ -80,21 +80,21 @@ jobs:
       matrix:
         sys: [ mingw64, ucrt64 ]
     steps:
-    - name: Set timezone
-      run: tzutil /s "Ekaterinburg Standard Time"
-      shell: cmd
-    - uses: msys2/setup-msys2@7efe20baefed56359985e327d329042cde2434ff # v2
-      with:
-        release: false
-        msystem: ${{matrix.sys}}
-        pacboy: cc:p cmake:p ninja:p lld:p
-    - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
-    - name: Configure
-      run: cmake -B ../build -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Debug
-      env: { LDFLAGS: -fuse-ld=lld }
-    - name: Build
-      run: cmake --build ../build
-    - name: Test
-      run: ctest -j `nproc` --test-dir ../build
-      env:
-        CTEST_OUTPUT_ON_FAILURE: True
+      - name: Set timezone
+        run: tzutil /s "Ekaterinburg Standard Time"
+        shell: cmd
+      - uses: msys2/setup-msys2@7efe20baefed56359985e327d329042cde2434ff # v2
+        with:
+          release: false
+          msystem: ${{matrix.sys}}
+          pacboy: cc:p cmake:p ninja:p lld:p
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+      - name: Configure
+        run: cmake -B ../build -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Debug
+        env: { LDFLAGS: -fuse-ld=lld }
+      - name: Build
+        run: cmake --build ../build
+      - name: Test
+        run: ctest -j `nproc` --test-dir ../build
+        env:
+          CTEST_OUTPUT_ON_FAILURE: True

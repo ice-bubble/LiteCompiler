@@ -54,9 +54,9 @@
                   GTEST_NONFATAL_FAILURE_)
 
 inline std::string system_error_message(int error_code,
-                                        const std::string& message) {
-  auto ec = std::error_code(error_code, std::generic_category());
-  return std::system_error(ec, message).what();
+                                        const std::string &message) {
+    auto ec = std::error_code(error_code, std::generic_category());
+    return std::system_error(ec, message).what();
 }
 
 #define EXPECT_SYSTEM_ERROR(statement, error_code, message) \
@@ -68,24 +68,27 @@ inline std::string system_error_message(int error_code,
 // Captures file output by redirecting it to a pipe.
 // The output it can handle is limited by the pipe capacity.
 class output_redirect {
- private:
-  FILE* file_;
-  fmt::file original_;  // Original file passed to redirector.
-  fmt::file read_end_;  // Read end of the pipe where the output is redirected.
+private:
+    FILE *file_;
+    fmt::file original_;  // Original file passed to redirector.
+    fmt::file read_end_;  // Read end of the pipe where the output is redirected.
 
-  void flush();
-  void restore();
+    void flush();
 
- public:
-  explicit output_redirect(FILE* file, bool flush = true);
-  ~output_redirect() noexcept;
+    void restore();
 
-  output_redirect(const output_redirect&) = delete;
-  void operator=(const output_redirect&) = delete;
+public:
+    explicit output_redirect(FILE *file, bool flush = true);
 
-  // Restores the original file, reads output from the pipe into a string
-  // and returns it.
-  std::string restore_and_read();
+    ~output_redirect() noexcept;
+
+    output_redirect(const output_redirect &) = delete;
+
+    void operator=(const output_redirect &) = delete;
+
+    // Restores the original file, reads output from the pipe into a string
+    // and returns it.
+    std::string restore_and_read();
 };
 
 #  define FMT_TEST_WRITE_(statement, expected_output, file, fail)              \
@@ -146,7 +149,7 @@ class suppress_assert {
     EXPECT_SYSTEM_ERROR(SUPPRESS_ASSERT(statement), error_code, message)
 
 // Attempts to read count characters from a file.
-std::string read(fmt::file& f, size_t count);
+std::string read(fmt::file &f, size_t count);
 
 #  define EXPECT_READ(file, expected_content) \
     EXPECT_EQ(expected_content,               \

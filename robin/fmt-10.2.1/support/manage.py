@@ -73,8 +73,10 @@ class Runner:
 
 def create_build_env():
     """Create a build environment."""
+
     class Env:
         pass
+
     env = Env()
 
     # Import the documentation build module.
@@ -96,6 +98,7 @@ def create_build_env():
 def rewrite(filename):
     class Buffer:
         pass
+
     buffer = Buffer()
     if not os.path.exists(filename):
         buffer.data = ''
@@ -144,7 +147,7 @@ def update_site(env):
                 b.data = re.sub(pattern, r'doxygenfunction:: \1(int)', b.data)
                 b.data = b.data.replace('std::FILE*', 'std::FILE *')
                 b.data = b.data.replace('unsigned int', 'unsigned')
-                #b.data = b.data.replace('operator""_', 'operator"" _')
+                # b.data = b.data.replace('operator""_', 'operator"" _')
                 b.data = b.data.replace(
                     'format_to_n(OutputIt, size_t, string_view, Args&&',
                     'format_to_n(OutputIt, size_t, const S&, const Args&')
@@ -207,7 +210,7 @@ def update_site(env):
             link = os.path.join(html_dir, link) + '.html'
             target += '.html'
             if os.path.exists(os.path.join(html_dir, target)) and \
-               not os.path.exists(link):
+                    not os.path.exists(link):
                 os.symlink(target, link)
         # Copy docs to the website.
         version_doc_dir = os.path.join(doc_repo.dir, version)
@@ -285,10 +288,10 @@ def release(args):
     script = os.path.join('doc', 'build.py')
     script_path = os.path.join(fmt_repo.dir, script)
     for line in fileinput.input(script_path, inplace=True):
-      m = re.match(r'( *versions \+= )\[(.+)\]', line)
-      if m:
-        line = '{}[{}, \'{}\']\n'.format(m.group(1), m.group(2), version)
-      sys.stdout.write(line)
+        m = re.match(r'( *versions \+= )\[(.+)\]', line)
+        if m:
+            line = '{}[{}, \'{}\']\n'.format(m.group(1), m.group(2), version)
+        sys.stdout.write(line)
 
     fmt_repo.checkout('-B', 'release')
     fmt_repo.add(changelog, cmakelists, script)

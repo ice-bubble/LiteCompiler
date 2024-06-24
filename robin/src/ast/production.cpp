@@ -1,6 +1,3 @@
-//
-// Created by icelake on 24-6-2.
-//
 #include "production.h"
 #include "symbol.h"
 #include "../token/token.h"
@@ -77,9 +74,9 @@ namespace production {
         return "";
     }
 
-    Pair<String, ast::IdentifierType> Production::autoConversion(String leftName, ast::IdentifierType leftType,
-                                                                 String rightName, ast::IdentifierType rightType,
-                                                                 String op, size_t line, sema::Sema *semaAna) {
+    Pair<String, ast::IdentifierType> Production::binaryOperation(String leftName, ast::IdentifierType leftType,
+                                                                  String rightName, ast::IdentifierType rightType,
+                                                                  String op, size_t line, sema::Sema *semaAna) {
         ast::IdentifierType leftT = ast::Type::typeTransform[{leftType, rightType}];
         ast::IdentifierType rightT = ast::Type::typeTransform[{rightType, leftType}];
         if (leftT != rightT || leftT == ast::IdentifierType::BASE_ || rightType == ast::IdentifierType::BASE_) {

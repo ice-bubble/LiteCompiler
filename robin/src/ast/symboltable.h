@@ -1,7 +1,3 @@
-//
-// Created by icelake on 24-5-29.
-//
-
 #ifndef ROBIN_SYMBOLTABLE_H
 #define ROBIN_SYMBOLTABLE_H
 
@@ -16,7 +12,7 @@ namespace ast {
         SharedPtr<Type> varType;
         IdentifierType returnType;
         List<SharedPtr<Type>> params;
-        size_t paramCount=0;
+        size_t paramCount = 0;
         String width;
         Object value;
 
@@ -35,6 +31,13 @@ namespace ast {
 
         SymTab() = default;
 
+        /**
+         * @param name 变量名
+         * @param varType 变量类型
+         * @param width 变量总宽度
+         * @brief 以输入的参数构造一个变量，将变量插入符号表
+         * @return 插入成功返回1，否则返回0
+         */
         bool insert(const String &name, const SharedPtr<Type> &varType, String width) {
             if (varTab.find(name) != varTab.end()) {
                 return false; // 插入失败，变量名已存在
@@ -47,6 +50,11 @@ namespace ast {
             return true; // 插入成功
         }
 
+        /**
+         * @param name 变量名
+         * @brief 在符号表中查找变量，返回变量在表中的指针
+         * @return 返回变量在表中的指针
+         */
         Variable *lookup(const String &name) {
             auto it = varTab.find(name);
             if (it != varTab.end()) return &(it->second);
@@ -54,6 +62,12 @@ namespace ast {
             return outer->lookup(name);
         }
 
+        /**
+         * @param name 函数名
+         * @param returnType 函数返回类型
+         * @brief 修改符号表中一个函数的返回类型
+         * @return 修改成功返回1，否则返回0
+         */
         bool changeReturnType(const String &name, SharedPtr<Type> returnType) {
             auto thisVar = lookup(name);
             if (thisVar == nullptr) return false;
@@ -61,7 +75,11 @@ namespace ast {
             return true;
         }
 
-
+        /**
+         * @param thisTab 当前符号表
+         * @brief 建立一个新符号表，其外层为当前符号表
+         * @return 返回新建立的符号表的指针
+         */
         static SymTab *genNewSymTab(SymTab *thisTab) {
             if (thisTab == nullptr) return nullptr;
             auto newTab = new SymTab;
@@ -69,7 +87,11 @@ namespace ast {
             return newTab;
         }
 
-
+        /**
+         * @param thisTab 当前符号表
+         * @brief 丢弃当前符号表，返回外层符号表
+         * @return 返回当前符号表的外层符号表的指针
+         */
         static SymTab *throwThisSymTab(SymTab *thisTab) {
             if (thisTab == nullptr) return nullptr;
             SymTab *outerTab = thisTab->outer;
@@ -78,6 +100,7 @@ namespace ast {
         }
 
     private:
+        ///< 真正的符号表
         Map<String, Variable> varTab;
     };
 }

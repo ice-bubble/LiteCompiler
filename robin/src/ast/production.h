@@ -1,5 +1,3 @@
-
-
 #ifndef ROBIN_PRODUCTION_H
 #define ROBIN_PRODUCTION_H
 
@@ -16,6 +14,7 @@ namespace production {
         reference,
         define
     };
+
 
     class S;
 
@@ -128,19 +127,27 @@ namespace production {
 
         virtual void visit(sema::Sema *semaAna) = 0;
 
+        /**
+         * @brief 对于输入的变量，它的类型以及期望的类型进行判断，如果是合法转换会生成转换的中间代码
+         * @return 返回成功转换的临时变量或者不需要转换直接返回自身
+         */
         static String autoConversion(String originName, ast::IdentifierType originType,
                                      ast::IdentifierType expectType, size_t line, sema::Sema *semaAna);
 
-        static Pair<String, ast::IdentifierType> autoConversion(String leftName, ast::IdentifierType leftType,
-                                                                String rightName, ast::IdentifierType rightType,
-                                                                String op, size_t line, sema::Sema *semaAna);
+        /**
+         * @brief 对于输入的两个变量和它们的类型以及运算符号进行判断，生成运行的中间代码，如果需要转换，会自动完成转换
+         * @return 返回运算生成的临时变量
+         */
+        static Pair<String, ast::IdentifierType> binaryOperation(String leftName, ast::IdentifierType leftType,
+                                                                 String rightName, ast::IdentifierType rightType,
+                                                                 String op, size_t line, sema::Sema *semaAna);
 
         virtual String toString() = 0;
 
         virtual ~Production() = default;
     };
 
-
+    ///< S::program
     class S : public Production {
     public:
         size_t line;
@@ -155,6 +162,7 @@ namespace production {
     };
 
 
+    ///< program::declarations
     class Program : public Production {
     public:
         size_t line;
@@ -186,6 +194,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< declarations::declaration declarations
     class Declarations1 : public Declarations {
     public:
         SharedPtr<Declaration> declaration;
@@ -199,14 +208,13 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///<  declarations::ε
     class Declarations2 : public Declarations {
     public:
         explicit Declarations2(size_t line) : Declarations(line) {}
 
         void visit(sema::Sema *semaAna) override;
     };
-
 
     class Declaration : public Production {
     public:
@@ -225,6 +233,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< declaration::funDecl
     class Declaration1 : public Declaration {
     public:
         SharedPtr<FunDecl> funDecl;
@@ -235,7 +244,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< declaration::varDecl
     class Declaration2 : public Declaration {
     public:
         SharedPtr<VarDecl> varDecl;
@@ -246,7 +255,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< declaration::statement
     class Declaration3 : public Declaration {
     public:
         SharedPtr<Statement> statement;
@@ -256,7 +265,6 @@ namespace production {
 
         void visit(sema::Sema *semaAna) override;
     };
-
 
     class Statement : public Production {
     public:
@@ -275,6 +283,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< statement::breakStmt
     class Statement1 : public Statement {
     public:
         SharedPtr<BreakStmt> breakStmt;
@@ -285,7 +294,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< statement::continueStmt
     class Statement2 : public Statement {
     public:
         SharedPtr<ContinueStmt> continueStmt;
@@ -296,7 +305,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< statement::returnStmt
     class Statement3 : public Statement {
     public:
         SharedPtr<ReturnStmt> returnStmt;
@@ -307,7 +316,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< statement::exprStmt
     class Statement4 : public Statement {
     public:
         SharedPtr<ExprStmt> exprStmt;
@@ -318,7 +327,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< statement::ifStmt
     class Statement5 : public Statement {
     public:
         SharedPtr<IfStmt> ifStmt;
@@ -329,7 +338,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< statement::whileStmt
     class Statement6 : public Statement {
     public:
         SharedPtr<WhileStmt> whileStmt;
@@ -340,7 +349,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< statement::repeatStmt
     class Statement7 : public Statement {
     public:
         SharedPtr<RepeatStmt> repeatStmt;
@@ -351,7 +360,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< statement::block
     class Statement8 : public Statement {
     public:
         SharedPtr<Block> block;
@@ -361,6 +370,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< statement::forStmt
     class Statement9 : public Statement {
     public:
         SharedPtr<ForStmt> forStmt;
@@ -370,7 +380,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< breakStmt::BREAK SEMICOLON
     class BreakStmt : public Production {
     public:
         size_t line;
@@ -389,7 +399,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///<  continueStmt::CONTINUE SEMICOLON
     class ContinueStmt : public Production {
     public:
         size_t line;
@@ -408,7 +418,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< returnStmt::RETURN exprStmt
     class ReturnStmt : public Production {
     public:
         size_t line;
@@ -427,7 +437,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< funDecl::IDENTIFIER EQUAL FUNCTION LEFT_PAREN paramList RIGHT_PAREN block
     class FunDecl : public Production {
     public:
         size_t line;
@@ -441,7 +451,7 @@ namespace production {
 
         String id;
         SharedPtr<ast::Type> returnType;
-        ast::Variable *thisFun= nullptr;
+        ast::Variable *thisFun = nullptr;
 
         FunDecl(size_t line, SharedPtr<Token> token_IDENTIFIER, SharedPtr<Token> token_EQUAL,
                 SharedPtr<Token> token_FUNCTION, SharedPtr<Token> token_LEFT_PAREN, SharedPtr<ParamList> paramList,
@@ -460,7 +470,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< varDecl::type varDef varDefs SEMICOLON
     class VarDecl : public Production {
     public:
         size_t line;
@@ -482,7 +492,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< varDef::var varInit
     class VarDef : public Production {
     public:
         size_t line;
@@ -501,7 +511,6 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
     class VarDefs : public Production {
     public:
         size_t line;
@@ -518,6 +527,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< varDefs::COMMA varDef varDefs
     class VarDefs1 : public VarDefs {
     public:
         SharedPtr<Token> token_COMMA;
@@ -533,14 +543,13 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< varDefs::ε
     class VarDefs2 : public VarDefs {
     public:
         explicit VarDefs2(size_t line) : VarDefs(line) {}
 
         void visit(sema::Sema *semaAna) override;
     };
-
 
     class VarInit : public Production {
     public:
@@ -558,6 +567,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< varInit::EQUAL expression
     class VarInit1 : public VarInit {
     public:
         SharedPtr<Token> token_EQUAL;
@@ -571,14 +581,13 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< varInit::ε
     class VarInit2 : public VarInit {
     public:
         explicit VarInit2(size_t line) : VarInit(line) {}
 
         void visit(sema::Sema *semaAna) override;
     };
-
 
     class Type : public Production {
     public:
@@ -596,6 +605,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< type::INTEGER
     class Type1 : public Type {
     public:
         SharedPtr<Token> token_INTEGER;
@@ -605,7 +615,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< type::DOUBLE
     class Type2 : public Type {
     public:
         SharedPtr<Token> token_DOUBLE;
@@ -615,7 +625,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< type::STRING
     class Type3 : public Type {
     public:
         SharedPtr<Token> token_STRING;
@@ -625,7 +635,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< type::BOOL
     class Type4 : public Type {
     public:
         SharedPtr<Token> token_BOOL;
@@ -635,7 +645,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< type::CHAR
     class Type5 : public Type {
     public:
         SharedPtr<Token> token_CHAR;
@@ -645,7 +655,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< type::VAR
     class Type6 : public Type {
     public:
         SharedPtr<Token> token_VAR;
@@ -654,7 +664,6 @@ namespace production {
 
         void visit(sema::Sema *semaAna) override;
     };
-
 
     class ExprStmt : public Production {
     public:
@@ -676,6 +685,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< exprStmt::expression SEMICOLON
     class ExprStmt1 : public ExprStmt {
     public:
         SharedPtr<Expression> expression;
@@ -689,7 +699,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< exprStmt::SEMICOLON
     class ExprStmt2 : public ExprStmt {
     public:
         SharedPtr<Token> token_SEMICOLON;
@@ -700,7 +710,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< ifStmt::IF LEFT_PAREN expression RIGHT_PAREN statement elseBranch
     class IfStmt : public Production {
     public:
         size_t line;
@@ -731,7 +741,6 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
     class ElseBranch : public Production {
     public:
         size_t line;
@@ -739,7 +748,7 @@ namespace production {
         SharedPtr<ast::Type> returnType;
         List<size_t> *code1Jmp = nullptr;
         List<size_t> *nextJmp = nullptr;
-        bool ifExist=false;
+        bool ifExist = false;
 
         explicit ElseBranch(size_t line) : line(line) { thisSymbol = symbol::Symbol::elseBranch; }
 
@@ -750,6 +759,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< elseBranch::ELSE statement
     class ElseBranch1 : public ElseBranch {
     public:
         SharedPtr<Token> token_ELSE;
@@ -763,7 +773,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< elseBranch::ε
     class ElseBranch2 : public ElseBranch {
     public:
         explicit ElseBranch2(size_t line) : ElseBranch(line) {}
@@ -771,7 +781,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< whileStmt::WHILE LEFT_PAREN expression RIGHT_PAREN statement
     class WhileStmt : public Production {
     public:
         size_t line;
@@ -797,7 +807,6 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
     class ForStmt : public Production {
     public:
         size_t line;
@@ -813,6 +822,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< forStmt::FOR LEFT_PAREN varDecl exprStmt RIGHT_PAREN statement
     class ForStmt1 : public ForStmt {
     public:
         SharedPtr<Token> token_FOR;
@@ -831,7 +841,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< forStmt::FOR LEFT_PAREN varDecl exprStmt expression RIGHT_PAREN statement
     class ForStmt2 : public ForStmt {
     public:
         SharedPtr<Token> token_FOR;
@@ -857,7 +867,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< forStmt::FOR LEFT_PAREN exprStmt exprStmt RIGHT_PAREN statement
     class ForStmt3 : public ForStmt {
     public:
         SharedPtr<Token> token_FOR;
@@ -881,7 +891,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< forStmt::FOR LEFT_PAREN exprStmt exprStmt expression RIGHT_PAREN statement
     class ForStmt4 : public ForStmt {
     public:
         SharedPtr<Token> token_FOR;
@@ -907,7 +917,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< block::LEFT_BRACE declarations RIGHT_BRACE
     class Block : public Production {
     public:
         size_t line;
@@ -931,7 +941,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< repeatStmt::REPEAT statement UNTIL LEFT_PAREN expression RIGHT_PAREN SEMICOLON
     class RepeatStmt : public Production {
     public:
         size_t line;
@@ -962,12 +972,11 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
     class ParamList : public Production {
     public:
         size_t line;
 
-        ast::Variable * thisFun= nullptr;
+        ast::Variable *thisFun = nullptr;
 
         explicit ParamList(size_t line) : line(line) { thisSymbol = symbol::Symbol::paramList; }
 
@@ -978,6 +987,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< paramList::parameter parameters
     class ParamList1 : public ParamList {
     public:
         SharedPtr<Parameter> parameter;
@@ -991,7 +1001,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< paramList::ε
     class ParamList2 : public ParamList {
     public:
         explicit ParamList2(size_t line) : ParamList(line) {}
@@ -999,12 +1009,11 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
     class Parameters : public Production {
     public:
         size_t line;
 
-        ast::Variable * thisFun= nullptr;
+        ast::Variable *thisFun = nullptr;
 
         explicit Parameters(size_t line) : line(line) { thisSymbol = symbol::Symbol::parameters; }
 
@@ -1015,6 +1024,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< parameters::COMMA parameter parameters
     class Parameters1 : public Parameters {
     public:
         SharedPtr<Token> token_COMMA;
@@ -1030,7 +1040,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< parameters::ε
     class Parameters2 : public Parameters {
     public:
         explicit Parameters2(size_t line) : Parameters(line) {}
@@ -1038,14 +1048,14 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< parameter::type var
     class Parameter : public Production {
     public:
         size_t line;
 
         SharedPtr<Type> type;
         SharedPtr<Var> var;
-        ast::Variable * thisFun= nullptr;
+        ast::Variable *thisFun = nullptr;
 
         Parameter(size_t line, SharedPtr<Type> type, SharedPtr<Var> var)
                 : line(line),
@@ -1056,7 +1066,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< expression::assignment
     class Expression : public Production {
     public:
         size_t line;
@@ -1077,7 +1087,6 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
     class Assignment : public Production {
     public:
         size_t line;
@@ -1097,6 +1106,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< assignment::var EQUAL assignment
     class Assignment1 : public Assignment {
     public:
         SharedPtr<Var> var;
@@ -1112,7 +1122,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< assignment::logic_or
     class Assignment2 : public Assignment {
     public:
         SharedPtr<Logic_or> logic_or;
@@ -1122,7 +1132,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< logic_or::logic_and logic_or_prime
     class Logic_or : public Production {
     public:
         size_t line;
@@ -1145,7 +1155,6 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
     class Logic_or_prime : public Production {
     public:
         size_t line;
@@ -1166,6 +1175,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< logic_or_prime::OR logic_or
     class Logic_or_prime1 : public Logic_or_prime {
     public:
         SharedPtr<Token> token_OR;
@@ -1177,7 +1187,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< logic_or_prime::ε
     class Logic_or_prime2 : public Logic_or_prime {
     public:
         explicit Logic_or_prime2(size_t line) : Logic_or_prime(line) {}
@@ -1185,7 +1195,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< logic_and::equality logic_and_prime
     class Logic_and : public Production {
     public:
         size_t line;
@@ -1208,7 +1218,6 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
     class Logic_and_prime : public Production {
     public:
         size_t line;
@@ -1229,6 +1238,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< logic_and_prime::AND logic_and
     class Logic_and_prime1 : public Logic_and_prime {
     public:
         SharedPtr<Token> token_AND;
@@ -1240,7 +1250,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< logic_and_prime::ε
     class Logic_and_prime2 : public Logic_and_prime {
     public:
         explicit Logic_and_prime2(size_t line) : Logic_and_prime(line) {}
@@ -1248,7 +1258,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< equality::comparison equality_prime
     class Equality : public Production {
     public:
         size_t line;
@@ -1268,7 +1278,6 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
     class Equality_prime : public Production {
     public:
         size_t line;
@@ -1286,6 +1295,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< equality_prime::NOT_EQUAL equality
     class Equality_prime1 : public Equality_prime {
     public:
         SharedPtr<Token> token_NOT_EQUAL;
@@ -1299,7 +1309,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< equality_prime::EQUAL_EQUAL equality
     class Equality_prime2 : public Equality_prime {
     public:
         SharedPtr<Token> token_EQUAL_EQUAL;
@@ -1313,7 +1323,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< equality_prime::ε
     class Equality_prime3 : public Equality_prime {
     public:
         explicit Equality_prime3(size_t line) : Equality_prime(line) {}
@@ -1321,7 +1331,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< comparison::term comparison_prime
     class Comparison : public Production {
     public:
         size_t line;
@@ -1341,7 +1351,6 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
     class Comparison_prime : public Production {
     public:
         size_t line;
@@ -1359,6 +1368,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< comparison_prime::GREATER comparison
     class Comparison_prime1 : public Comparison_prime {
     public:
         SharedPtr<Token> token_GREATER;
@@ -1372,7 +1382,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< comparison_prime::GREATER_EQUAL comparison
     class Comparison_prime2 : public Comparison_prime {
     public:
         SharedPtr<Token> token_GREATER_EQUAL;
@@ -1386,7 +1396,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< comparison_prime::LESS comparison
     class Comparison_prime3 : public Comparison_prime {
     public:
         SharedPtr<Token> token_LESS;
@@ -1400,7 +1410,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< comparison_prime::LESS_EQUAL comparison
     class Comparison_prime4 : public Comparison_prime {
     public:
         SharedPtr<Token> token_LESS_EQUAL;
@@ -1414,7 +1424,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< comparison_prime::ε
     class Comparison_prime5 : public Comparison_prime {
     public:
         explicit Comparison_prime5(size_t line) : Comparison_prime(line) {}
@@ -1422,7 +1432,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< term::factor term_prime
     class Term : public Production {
     public:
         size_t line;
@@ -1442,7 +1452,6 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
     class Term_prime : public Production {
     public:
         size_t line;
@@ -1460,6 +1469,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< term_prime::MINUS term
     class Term_prime1 : public Term_prime {
     public:
         SharedPtr<Token> token_MINUS;
@@ -1471,7 +1481,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< term_prime::PLUS term
     class Term_prime2 : public Term_prime {
     public:
         SharedPtr<Token> token_PLUS;
@@ -1483,7 +1493,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< term_prime::ε
     class Term_prime3 : public Term_prime {
     public:
         explicit Term_prime3(size_t line) : Term_prime(line) {}
@@ -1491,7 +1501,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< factor::incr_exp factor_prime
     class Factor : public Production {
     public:
         size_t line;
@@ -1511,7 +1521,6 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
     class Factor_prime : public Production {
     public:
         size_t line;
@@ -1529,6 +1538,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< factor_prime::DIV factor
     class Factor_prime1 : public Factor_prime {
     public:
         SharedPtr<Token> token_DIV;
@@ -1540,7 +1550,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< factor_prime::STAR factor
     class Factor_prime2 : public Factor_prime {
     public:
         SharedPtr<Token> token_STAR;
@@ -1552,7 +1562,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< factor_prime::MOD factor
     class Factor_prime3 : public Factor_prime {
     public:
         SharedPtr<Token> token_MOD;
@@ -1564,7 +1574,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< factor_prime::ε
     class Factor_prime4 : public Factor_prime {
     public:
         explicit Factor_prime4(size_t line) : Factor_prime(line) {}
@@ -1572,7 +1582,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< incr_exp::unary incr_op
     class Incr_exp : public Production {
     public:
         size_t line;
@@ -1592,7 +1602,6 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
     class Incr_op : public Production {
     public:
         size_t line;
@@ -1609,6 +1618,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< incr_op::DOUBLE_ADD incr_op
     class Incr_op1 : public Incr_op {
     public:
         SharedPtr<Token> token_DOUBLE_ADD;
@@ -1622,7 +1632,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< incr_op::DOUBLE_MINUS incr_op
     class Incr_op2 : public Incr_op {
     public:
         SharedPtr<Token> token_DOUBLE_MINUS;
@@ -1636,14 +1646,13 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< incr_op::ε
     class Incr_op3 : public Incr_op {
     public:
         explicit Incr_op3(size_t line) : Incr_op(line) {}
 
         void visit(sema::Sema *semaAna) override;
     };
-
 
     class Unary : public Production {
     public:
@@ -1661,6 +1670,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< unary::NOT unary
     class Unary1 : public Unary {
     public:
         SharedPtr<Token> token_NOT;
@@ -1674,7 +1684,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< unary::MINUS unary
     class Unary2 : public Unary {
     public:
         SharedPtr<Token> token_MINUS;
@@ -1688,7 +1698,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< unary::call
     class Unary3 : public Unary {
     public:
         SharedPtr<Call> call;
@@ -1698,7 +1708,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< call::primary call_suffix
     class Call : public Production {
     public:
         size_t line;
@@ -1718,7 +1728,6 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
     class Call_suffix : public Production {
     public:
         size_t line;
@@ -1737,6 +1746,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< call_suffix::LEFT_PAREN argList RIGHT_PAREN call_suffix
     class Call_suffix1 : public Call_suffix {
     public:
         SharedPtr<Token> token_LEFT_PAREN;
@@ -1755,7 +1765,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< call_suffix::ε
     class Call_suffix2 : public Call_suffix {
     public:
         explicit Call_suffix2(size_t line) : Call_suffix(line) {}
@@ -1763,14 +1773,13 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
     class ArgList : public Production {
     public:
         size_t line;
 
         int sum = 0;
-        int argOffset=0;
-        ast::Variable * calleeFun= nullptr;
+        int argOffset = 0;
+        ast::Variable *calleeFun = nullptr;
 
         explicit ArgList(size_t line) : line(line) { thisSymbol = symbol::Symbol::argList; }
 
@@ -1781,6 +1790,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< argList::expression arguments
     class ArgList1 : public ArgList {
     public:
         SharedPtr<Expression> expression;
@@ -1794,7 +1804,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< argList::ε
     class ArgList2 : public ArgList {
     public:
         explicit ArgList2(size_t line) : ArgList(line) {}
@@ -1802,14 +1812,13 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
     class Arguments : public Production {
     public:
         size_t line;
 
         int sum = 0;
-        int argOffset=0;
-        ast::Variable * calleeFun= nullptr;
+        int argOffset = 0;
+        ast::Variable *calleeFun = nullptr;
 
         explicit Arguments(size_t line)
                 : line(line) { thisSymbol = symbol::Symbol::arguments; }
@@ -1821,6 +1830,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< arguments::COMMA expression arguments
     class Arguments1 : public Arguments {
     public:
         SharedPtr<Token> token_COMMA;
@@ -1836,14 +1846,13 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< arguments::ε
     class Arguments2 : public Arguments {
     public:
         explicit Arguments2(size_t line) : Arguments(line) {}
 
         void visit(sema::Sema *semaAna) override;
     };
-
 
     class Primary : public Production {
     public:
@@ -1862,6 +1871,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< primary::constVal
     class Primary1 : public Primary {
     public:
         SharedPtr<ConstVal> constVal;
@@ -1872,7 +1882,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< primary::LEFT_PAREN expression RIGHT_PAREN
     class Primary2 : public Primary {
     public:
         SharedPtr<Token> token_LEFT_PAREN;
@@ -1888,7 +1898,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< primary::var
     class Primary3 : public Primary {
     public:
         SharedPtr<Var> var;
@@ -1898,7 +1908,6 @@ namespace production {
 
         void visit(sema::Sema *semaAna) override;
     };
-
 
     class ConstVal : public Production {
     public:
@@ -1917,6 +1926,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< constVal::TRUE
     class ConstVal1 : public ConstVal {
     public:
         SharedPtr<Token> token_TRUE;
@@ -1927,7 +1937,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< constVal::FALSE
     class ConstVal2 : public ConstVal {
     public:
         SharedPtr<Token> token_FALSE;
@@ -1938,7 +1948,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< constVal::NIL
     class ConstVal3 : public ConstVal {
     public:
         SharedPtr<Token> token_NIL;
@@ -1949,7 +1959,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< constVal::INT_
     class ConstVal4 : public ConstVal {
     public:
         SharedPtr<Token> token_INT_;
@@ -1960,7 +1970,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< constVal::REAL_
     class ConstVal5 : public ConstVal {
     public:
         SharedPtr<Token> token_REAL_;
@@ -1971,7 +1981,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< constVal::STRING_
     class ConstVal6 : public ConstVal {
     public:
         SharedPtr<Token> token_STRING_;
@@ -1982,7 +1992,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< var::IDENTIFIER varSuffix
     class Var : public Production {
     public:
         size_t line;
@@ -2008,7 +2018,6 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
     class VarSuffix : public Production {
     public:
         size_t line;
@@ -2033,6 +2042,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
+    ///< varSuffix::LEFT_BRACKET expression RIGHT_BRACKET varSuffix
     class VarSuffix1 : public VarSuffix {
     public:
         SharedPtr<Token> token_LEFT_BRACKET;
@@ -2051,7 +2061,7 @@ namespace production {
         void visit(sema::Sema *semaAna) override;
     };
 
-
+    ///< varSuffix::ε
     class VarSuffix2 : public VarSuffix {
     public:
         explicit VarSuffix2(size_t line) : VarSuffix(line) {}

@@ -1,7 +1,3 @@
-//
-// Created by icelake on 24-5-29.
-//
-
 #include "sema.h"
 #include "../error/error.h"
 

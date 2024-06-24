@@ -9,7 +9,7 @@
   background-color: @panel-bg;
   border: 1px solid transparent;
   border-radius: @panel-border-radius;
-  .box-shadow(0 1px 1px rgba(0,0,0,.05));
+  .box-shadow(0 1px 1px rgba(0, 0, 0, .05));
 }
 
 // Panel contents
@@ -76,6 +76,7 @@
         .border-top-radius((@panel-border-radius - 1));
       }
     }
+
     // Add border bottom radius for last one
     &:last-child {
       .list-group-item:last-child {
@@ -85,12 +86,14 @@
     }
   }
 }
+
 // Collapse space between when there's no additional content.
 .panel-heading + .list-group {
   .list-group-item:first-child {
     border-top-width: 0;
   }
 }
+
 .list-group + .panel-footer {
   border-top-width: 0;
 }
@@ -111,6 +114,7 @@
       padding-right: @panel-body-padding;
     }
   }
+
   // Add border top radius for first one
   > .table:first-child,
   > .table-responsive:first-child > .table:first-child {
@@ -126,6 +130,7 @@
         th:first-child {
           border-top-left-radius: (@panel-border-radius - 1);
         }
+
         td:last-child,
         th:last-child {
           border-top-right-radius: (@panel-border-radius - 1);
@@ -133,6 +138,7 @@
       }
     }
   }
+
   // Add border bottom radius for last one
   > .table:last-child,
   > .table-responsive:last-child > .table:last-child {
@@ -148,6 +154,7 @@
         th:first-child {
           border-bottom-left-radius: (@panel-border-radius - 1);
         }
+
         td:last-child,
         th:last-child {
           border-bottom-right-radius: (@panel-border-radius - 1);
@@ -155,19 +162,23 @@
       }
     }
   }
+
   > .panel-body + .table,
   > .panel-body + .table-responsive,
   > .table + .panel-body,
   > .table-responsive + .panel-body {
     border-top: 1px solid @table-border-color;
   }
+
   > .table > tbody:first-child > tr:first-child th,
   > .table > tbody:first-child > tr:first-child td {
     border-top: 0;
   }
+
   > .table-bordered,
   > .table-responsive > .table-bordered {
     border: 0;
+
     > thead,
     > tbody,
     > tfoot {
@@ -176,12 +187,14 @@
         > td:first-child {
           border-left: 0;
         }
+
         > th:last-child,
         > td:last-child {
           border-right: 0;
         }
       }
     }
+
     > thead,
     > tbody {
       > tr:first-child {
@@ -191,6 +204,7 @@
         }
       }
     }
+
     > tbody,
     > tfoot {
       > tr:last-child {
@@ -201,6 +215,7 @@
       }
     }
   }
+
   > .table-responsive {
     border: 0;
     margin-bottom: 0;
@@ -237,6 +252,7 @@
 
   .panel-footer {
     border-top: 0;
+
     + .panel-collapse .panel-body {
       border-bottom: 1px solid @panel-inner-border;
     }
@@ -248,18 +264,23 @@
 .panel-default {
   .panel-variant(@panel-default-border; @panel-default-text; @panel-default-heading-bg; @panel-default-border);
 }
+
 .panel-primary {
   .panel-variant(@panel-primary-border; @panel-primary-text; @panel-primary-heading-bg; @panel-primary-border);
 }
+
 .panel-success {
   .panel-variant(@panel-success-border; @panel-success-text; @panel-success-heading-bg; @panel-success-border);
 }
+
 .panel-info {
   .panel-variant(@panel-info-border; @panel-info-text; @panel-info-heading-bg; @panel-info-border);
 }
+
 .panel-warning {
   .panel-variant(@panel-warning-border; @panel-warning-text; @panel-warning-heading-bg; @panel-warning-border);
 }
+
 .panel-danger {
   .panel-variant(@panel-danger-border; @panel-danger-text; @panel-danger-heading-bg; @panel-danger-border);
 }

@@ -13,186 +13,240 @@
 #include "gmock/gmock.h"
 #include "gtest-extra.h"
 
-TEST(iterator_test, counting_iterator) {
-  auto it = fmt::detail::counting_iterator();
-  auto prev = it++;
-  EXPECT_EQ(prev.count(), 0);
-  EXPECT_EQ(it.count(), 1);
-  EXPECT_EQ((it + 41).count(), 42);
+TEST(iterator_test, counting_iterator
+) {
+auto it = fmt::detail::counting_iterator();
+auto prev = it++;
+EXPECT_EQ(prev
+.
+
+count(),
+
+0);
+EXPECT_EQ(it
+.
+
+count(),
+
+1);
+EXPECT_EQ((it
++ 41).
+
+count(),
+
+42);
 }
 
-TEST(compile_test, compile_fallback) {
-  // FMT_COMPILE should fallback on runtime formatting when `if constexpr` is
-  // not available.
-  EXPECT_EQ("42", fmt::format(FMT_COMPILE("{}"), 42));
+TEST(compile_test, compile_fallback
+) {
+// FMT_COMPILE should fallback on runtime formatting when `if constexpr` is
+// not available.
+EXPECT_EQ("42", fmt::format(FMT_COMPILE("{}"), 42));
 }
 
 struct type_with_get {
-  template <int> friend void get(type_with_get);
+    template<int>
+    friend void get(type_with_get);
 };
 
 FMT_BEGIN_NAMESPACE
-template <> struct formatter<type_with_get> : formatter<int> {
-  template <typename FormatContext>
-  auto format(type_with_get, FormatContext& ctx) -> decltype(ctx.out()) {
-    return formatter<int>::format(42, ctx);
-  }
-};
+        template<>
+        struct formatter<type_with_get> : formatter<int> {
+            template<typename FormatContext>
+            auto format(type_with_get, FormatContext &ctx) -> decltype(ctx.out()) {
+                return formatter<int>::format(42, ctx);
+            }
+        };
 FMT_END_NAMESPACE
 
-TEST(compile_test, compile_type_with_get) {
-  EXPECT_EQ("42", fmt::format(FMT_COMPILE("{}"), type_with_get()));
+TEST(compile_test, compile_type_with_get
+) {
+EXPECT_EQ("42", fmt::format(FMT_COMPILE("{}"),
+
+type_with_get()
+
+));
 }
 
 #if defined(__cpp_if_constexpr) && defined(__cpp_return_type_deduction)
-struct test_formattable {};
+struct test_formattable {
+};
 
 FMT_BEGIN_NAMESPACE
-template <> struct formatter<test_formattable> : formatter<const char*> {
-  char word_spec = 'f';
-  constexpr auto parse(format_parse_context& ctx) {
-    auto it = ctx.begin(), end = ctx.end();
-    if (it == end || *it == '}') return it;
-    if (it != end && (*it == 'f' || *it == 'b')) word_spec = *it++;
-    if (it != end && *it != '}') throw format_error("invalid format");
-    return it;
-  }
-  template <typename FormatContext>
-  constexpr auto format(test_formattable, FormatContext& ctx) const
-      -> decltype(ctx.out()) {
-    return formatter<const char*>::format(word_spec == 'f' ? "foo" : "bar",
-                                          ctx);
-  }
-};
+        template<>
+        struct formatter<test_formattable> : formatter<const char *> {
+            char word_spec = 'f';
+
+            constexpr auto parse(format_parse_context &ctx) {
+                auto it = ctx.begin(), end = ctx.end();
+                if (it == end || *it == '}') return it;
+                if (it != end && (*it == 'f' || *it == 'b')) word_spec = *it++;
+                if (it != end && *it != '}') throw format_error("invalid format");
+                return it;
+            }
+
+            template<typename FormatContext>
+            constexpr auto format(test_formattable, FormatContext &ctx) const
+            -> decltype(ctx.out()) {
+                return formatter<const char *>::format(word_spec == 'f' ? "foo" : "bar",
+                                                       ctx);
+            }
+        };
 FMT_END_NAMESPACE
 
-TEST(compile_test, format_default) {
-  EXPECT_EQ("42", fmt::format(FMT_COMPILE("{}"), 42));
-  EXPECT_EQ("42", fmt::format(FMT_COMPILE("{}"), 42u));
-  EXPECT_EQ("42", fmt::format(FMT_COMPILE("{}"), 42ll));
-  EXPECT_EQ("42", fmt::format(FMT_COMPILE("{}"), 42ull));
-  EXPECT_EQ("true", fmt::format(FMT_COMPILE("{}"), true));
-  EXPECT_EQ("x", fmt::format(FMT_COMPILE("{}"), 'x'));
-  EXPECT_EQ("4.2", fmt::format(FMT_COMPILE("{}"), 4.2));
-  EXPECT_EQ("foo", fmt::format(FMT_COMPILE("{}"), "foo"));
-  EXPECT_EQ("foo", fmt::format(FMT_COMPILE("{}"), std::string("foo")));
-  EXPECT_EQ("foo", fmt::format(FMT_COMPILE("{}"), test_formattable()));
-  auto t = std::chrono::system_clock::now();
-  EXPECT_EQ(fmt::format("{}", t), fmt::format(FMT_COMPILE("{}"), t));
+TEST(compile_test, format_default
+) {
+EXPECT_EQ("42", fmt::format(FMT_COMPILE("{}"), 42));
+EXPECT_EQ("42", fmt::format(FMT_COMPILE("{}"), 42u));
+EXPECT_EQ("42", fmt::format(FMT_COMPILE("{}"), 42ll));
+EXPECT_EQ("42", fmt::format(FMT_COMPILE("{}"), 42ull));
+EXPECT_EQ("true", fmt::format(FMT_COMPILE("{}"), true));
+EXPECT_EQ("x", fmt::format(FMT_COMPILE("{}"), 'x'));
+EXPECT_EQ("4.2", fmt::format(FMT_COMPILE("{}"), 4.2));
+EXPECT_EQ("foo", fmt::format(FMT_COMPILE("{}"), "foo"));
+EXPECT_EQ("foo", fmt::format(FMT_COMPILE("{}"), std::string("foo")));
+EXPECT_EQ("foo", fmt::format(FMT_COMPILE("{}"),
+
+test_formattable()
+
+));
+auto t = std::chrono::system_clock::now();
+EXPECT_EQ(fmt::format("{}", t), fmt::format(FMT_COMPILE("{}"), t)
+);
 #  ifdef __cpp_lib_byte
-  EXPECT_EQ("42", fmt::format(FMT_COMPILE("{}"), std::byte{42}));
+EXPECT_EQ("42", fmt::format(FMT_COMPILE("{}"), std::byte{
+42}));
 #  endif
 }
 
-TEST(compile_test, format_wide_string) {
-  EXPECT_EQ(L"42", fmt::format(FMT_COMPILE(L"{}"), 42));
+TEST(compile_test, format_wide_string
+) {
+EXPECT_EQ(L"42", fmt::format(FMT_COMPILE(L"{}"), 42));
 }
 
-TEST(compile_test, format_specs) {
-  EXPECT_EQ("42", fmt::format(FMT_COMPILE("{:x}"), 0x42));
-  EXPECT_EQ("1.2 ms ",
-            fmt::format(FMT_COMPILE("{:7.1%Q %q}"),
-                        std::chrono::duration<double, std::milli>(1.234)));
+TEST(compile_test, format_specs
+) {
+EXPECT_EQ("42", fmt::format(FMT_COMPILE("{:x}"), 0x42));
+EXPECT_EQ("1.2 ms ",
+fmt::format(FMT_COMPILE("{:7.1%Q %q}"),
+std::chrono::duration<double, std::milli>(1.234)));
 }
 
-TEST(compile_test, dynamic_format_specs) {
-  EXPECT_EQ("foo  ", fmt::format(FMT_COMPILE("{:{}}"), "foo", 5));
-  EXPECT_EQ("  3.14", fmt::format(FMT_COMPILE("{:{}.{}f}"), 3.141592, 6, 2));
-  EXPECT_EQ(
-      "=1.234ms=",
-      fmt::format(FMT_COMPILE("{:=^{}.{}}"),
-                  std::chrono::duration<double, std::milli>(1.234), 9, 3));
+TEST(compile_test, dynamic_format_specs
+) {
+EXPECT_EQ("foo  ", fmt::format(FMT_COMPILE("{:{}}"), "foo", 5));
+EXPECT_EQ("  3.14", fmt::format(FMT_COMPILE("{:{}.{}f}"), 3.141592, 6, 2));
+EXPECT_EQ(
+"=1.234ms=",
+fmt::format(FMT_COMPILE("{:=^{}.{}}"),
+std::chrono::duration<double, std::milli>(1.234), 9, 3));
 }
 
-TEST(compile_test, manual_ordering) {
-  EXPECT_EQ("42", fmt::format(FMT_COMPILE("{0}"), 42));
-  EXPECT_EQ(" -42", fmt::format(FMT_COMPILE("{0:4}"), -42));
-  EXPECT_EQ("41 43", fmt::format(FMT_COMPILE("{0} {1}"), 41, 43));
-  EXPECT_EQ("41 43", fmt::format(FMT_COMPILE("{1} {0}"), 43, 41));
-  EXPECT_EQ("41 43", fmt::format(FMT_COMPILE("{0} {2}"), 41, 42, 43));
-  EXPECT_EQ("  41   43", fmt::format(FMT_COMPILE("{1:{2}} {0:4}"), 43, 41, 4));
-  EXPECT_EQ("42 1.2 ms ",
-            fmt::format(FMT_COMPILE("{0} {1:7.1%Q %q}"), 42,
-                        std::chrono::duration<double, std::milli>(1.234)));
-  EXPECT_EQ(
-      "true 42 42 foo 0x1234 foo",
-      fmt::format(FMT_COMPILE("{0} {1} {2} {3} {4} {5}"), true, 42, 42.0f,
-                  "foo", reinterpret_cast<void*>(0x1234), test_formattable()));
-  EXPECT_EQ(L"42", fmt::format(FMT_COMPILE(L"{0}"), 42));
+TEST(compile_test, manual_ordering
+) {
+EXPECT_EQ("42", fmt::format(FMT_COMPILE("{0}"), 42));
+EXPECT_EQ(" -42", fmt::format(FMT_COMPILE("{0:4}"), -42));
+EXPECT_EQ("41 43", fmt::format(FMT_COMPILE("{0} {1}"), 41, 43));
+EXPECT_EQ("41 43", fmt::format(FMT_COMPILE("{1} {0}"), 43, 41));
+EXPECT_EQ("41 43", fmt::format(FMT_COMPILE("{0} {2}"), 41, 42, 43));
+EXPECT_EQ("  41   43", fmt::format(FMT_COMPILE("{1:{2}} {0:4}"), 43, 41, 4));
+EXPECT_EQ("42 1.2 ms ",
+fmt::format(FMT_COMPILE("{0} {1:7.1%Q %q}"), 42,
+std::chrono::duration<double, std::milli>(1.234)));
+EXPECT_EQ(
+"true 42 42 foo 0x1234 foo",
+fmt::format(FMT_COMPILE("{0} {1} {2} {3} {4} {5}"), true, 42, 42.0f,
+"foo", reinterpret_cast<void *>(0x1234),
+
+test_formattable()
+
+));
+EXPECT_EQ(L"42", fmt::format(FMT_COMPILE(L"{0}"), 42));
 }
 
-TEST(compile_test, named) {
-  auto runtime_named_field_compiled =
-      fmt::detail::compile<decltype(fmt::arg("arg", 42))>(FMT_COMPILE("{arg}"));
-  static_assert(std::is_same_v<decltype(runtime_named_field_compiled),
-                               fmt::detail::runtime_named_field<char>>);
+TEST(compile_test, named
+) {
+auto runtime_named_field_compiled =
+        fmt::detail::compile<decltype(fmt::arg("arg", 42))>(FMT_COMPILE("{arg}"));
+static_assert(std::is_same_v<decltype(runtime_named_field_compiled),
+        fmt::detail::runtime_named_field<char>>);
 
-  EXPECT_EQ("42", fmt::format(FMT_COMPILE("{}"), fmt::arg("arg", 42)));
-  EXPECT_EQ("41 43", fmt::format(FMT_COMPILE("{} {}"), fmt::arg("arg", 41),
-                                 fmt::arg("arg", 43)));
+EXPECT_EQ("42", fmt::format(FMT_COMPILE("{}"), fmt::arg("arg", 42)));
+EXPECT_EQ("41 43", fmt::format(FMT_COMPILE("{} {}"), fmt::arg("arg", 41),
+fmt::arg("arg", 43)));
 
-  EXPECT_EQ("foobar",
-            fmt::format(FMT_COMPILE("{a0}{a1}"), fmt::arg("a0", "foo"),
-                        fmt::arg("a1", "bar")));
-  EXPECT_EQ("foobar", fmt::format(FMT_COMPILE("{}{a1}"), fmt::arg("a0", "foo"),
-                                  fmt::arg("a1", "bar")));
-  EXPECT_EQ("foofoo", fmt::format(FMT_COMPILE("{a0}{}"), fmt::arg("a0", "foo"),
-                                  fmt::arg("a1", "bar")));
-  EXPECT_EQ("foobar", fmt::format(FMT_COMPILE("{0}{a1}"), fmt::arg("a0", "foo"),
-                                  fmt::arg("a1", "bar")));
-  EXPECT_EQ("foobar", fmt::format(FMT_COMPILE("{a0}{1}"), fmt::arg("a0", "foo"),
-                                  fmt::arg("a1", "bar")));
+EXPECT_EQ("foobar",
+fmt::format(FMT_COMPILE("{a0}{a1}"), fmt::arg("a0", "foo"),
+fmt::arg("a1", "bar")));
+EXPECT_EQ("foobar", fmt::format(FMT_COMPILE("{}{a1}"), fmt::arg("a0", "foo"),
+fmt::arg("a1", "bar")));
+EXPECT_EQ("foofoo", fmt::format(FMT_COMPILE("{a0}{}"), fmt::arg("a0", "foo"),
+fmt::arg("a1", "bar")));
+EXPECT_EQ("foobar", fmt::format(FMT_COMPILE("{0}{a1}"), fmt::arg("a0", "foo"),
+fmt::arg("a1", "bar")));
+EXPECT_EQ("foobar", fmt::format(FMT_COMPILE("{a0}{1}"), fmt::arg("a0", "foo"),
+fmt::arg("a1", "bar")));
 
-  EXPECT_EQ("foobar",
-            fmt::format(FMT_COMPILE("{}{a1}"), "foo", fmt::arg("a1", "bar")));
-  EXPECT_EQ("foobar",
-            fmt::format(FMT_COMPILE("{a0}{a1}"), fmt::arg("a1", "bar"),
-                        fmt::arg("a2", "baz"), fmt::arg("a0", "foo")));
-  EXPECT_EQ(" bar foo ",
-            fmt::format(FMT_COMPILE(" {foo} {bar} "), fmt::arg("foo", "bar"),
-                        fmt::arg("bar", "foo")));
+EXPECT_EQ("foobar",
+fmt::format(FMT_COMPILE("{}{a1}"), "foo", fmt::arg("a1", "bar")));
+EXPECT_EQ("foobar",
+fmt::format(FMT_COMPILE("{a0}{a1}"), fmt::arg("a1", "bar"),
+fmt::arg("a2", "baz"), fmt::arg("a0", "foo")));
+EXPECT_EQ(" bar foo ",
+fmt::format(FMT_COMPILE(" {foo} {bar} "), fmt::arg("foo", "bar"),
+fmt::arg("bar", "foo")));
 
-  EXPECT_THROW(fmt::format(FMT_COMPILE("{invalid}"), fmt::arg("valid", 42)),
-               fmt::format_error);
+EXPECT_THROW(fmt::format(FMT_COMPILE("{invalid}"), fmt::arg("valid", 42)),
+        fmt::format_error
+);
 
 #  if FMT_USE_NONTYPE_TEMPLATE_ARGS
-  using namespace fmt::literals;
-  auto statically_named_field_compiled =
-      fmt::detail::compile<decltype("arg"_a = 42)>(FMT_COMPILE("{arg}"));
-  static_assert(std::is_same_v<decltype(statically_named_field_compiled),
-                               fmt::detail::field<char, int, 0>>);
+using namespace fmt::literals;
+auto statically_named_field_compiled =
+    fmt::detail::compile<decltype("arg"_a = 42)>(FMT_COMPILE("{arg}"));
+static_assert(std::is_same_v<decltype(statically_named_field_compiled),
+                             fmt::detail::field<char, int, 0>>);
 
-  EXPECT_EQ("41 43",
-            fmt::format(FMT_COMPILE("{a0} {a1}"), "a0"_a = 41, "a1"_a = 43));
-  EXPECT_EQ("41 43",
-            fmt::format(FMT_COMPILE("{a1} {a0}"), "a0"_a = 43, "a1"_a = 41));
+EXPECT_EQ("41 43",
+          fmt::format(FMT_COMPILE("{a0} {a1}"), "a0"_a = 41, "a1"_a = 43));
+EXPECT_EQ("41 43",
+          fmt::format(FMT_COMPILE("{a1} {a0}"), "a0"_a = 43, "a1"_a = 41));
 #  endif
 }
 
-TEST(compile_test, join) {
-  unsigned char data[] = {0x1, 0x2, 0xaf};
-  EXPECT_EQ("0102af", fmt::format(FMT_COMPILE("{:02x}"), fmt::join(data, "")));
+TEST(compile_test, join
+) {
+unsigned char data[] = {0x1, 0x2, 0xaf};
+EXPECT_EQ("0102af", fmt::format(FMT_COMPILE("{:02x}"),
+fmt::join(data,
+"")));
 }
 
-TEST(compile_test, format_to) {
-  char buf[8];
-  auto end = fmt::format_to(buf, FMT_COMPILE("{}"), 42);
-  *end = '\0';
-  EXPECT_STREQ("42", buf);
-  end = fmt::format_to(buf, FMT_COMPILE("{:x}"), 42);
-  *end = '\0';
-  EXPECT_STREQ("2a", buf);
+TEST(compile_test, format_to
+) {
+char buf[8];
+auto end = fmt::format_to(buf, FMT_COMPILE("{}"), 42);
+*
+end = '\0';
+EXPECT_STREQ("42", buf);
+end = fmt::format_to(buf, FMT_COMPILE("{:x}"), 42);
+*
+end = '\0';
+EXPECT_STREQ("2a", buf);
 }
 
-TEST(compile_test, format_to_n) {
-  constexpr auto buffer_size = 8;
-  char buffer[buffer_size];
-  auto res = fmt::format_to_n(buffer, buffer_size, FMT_COMPILE("{}"), 42);
-  *res.out = '\0';
-  EXPECT_STREQ("42", buffer);
-  res = fmt::format_to_n(buffer, buffer_size, FMT_COMPILE("{:x}"), 42);
-  *res.out = '\0';
-  EXPECT_STREQ("2a", buffer);
+TEST(compile_test, format_to_n
+) {
+constexpr auto buffer_size = 8;
+char buffer[buffer_size];
+auto res = fmt::format_to_n(buffer, buffer_size, FMT_COMPILE("{}"), 42);
+*res.
+out = '\0';
+EXPECT_STREQ("42", buffer);
+res = fmt::format_to_n(buffer, buffer_size, FMT_COMPILE("{:x}"), 42);
+*res.
+out = '\0';
+EXPECT_STREQ("2a", buffer);
 }
 
 #  ifdef __cpp_lib_bit_cast
@@ -217,56 +271,80 @@ TEST(compile_test, constexpr_formatted_size) {
 }
 #  endif
 
-TEST(compile_test, text_and_arg) {
-  EXPECT_EQ(">>>42<<<", fmt::format(FMT_COMPILE(">>>{}<<<"), 42));
-  EXPECT_EQ("42!", fmt::format(FMT_COMPILE("{}!"), 42));
+TEST(compile_test, text_and_arg
+) {
+EXPECT_EQ(">>>42<<<", fmt::format(FMT_COMPILE(">>>{}<<<"), 42));
+EXPECT_EQ("42!", fmt::format(FMT_COMPILE("{}!"), 42));
 }
 
-TEST(compile_test, unknown_format_fallback) {
-  EXPECT_EQ(" 42 ",
-            fmt::format(FMT_COMPILE("{name:^4}"), fmt::arg("name", 42)));
+TEST(compile_test, unknown_format_fallback
+) {
+EXPECT_EQ(" 42 ",
+fmt::format(FMT_COMPILE("{name:^4}"), fmt::arg("name", 42)));
 
-  std::vector<char> v;
-  fmt::format_to(std::back_inserter(v), FMT_COMPILE("{name:^4}"),
-                 fmt::arg("name", 42));
-  EXPECT_EQ(" 42 ", fmt::string_view(v.data(), v.size()));
+std::vector<char> v;
+fmt::format_to(std::back_inserter(v), FMT_COMPILE("{name:^4}"),
+fmt::arg("name", 42));
+EXPECT_EQ(" 42 ",
+fmt::string_view(v
+.
 
-  char buffer[4];
-  auto result = fmt::format_to_n(buffer, 4, FMT_COMPILE("{name:^5}"),
-                                 fmt::arg("name", 42));
-  EXPECT_EQ(5u, result.size);
-  EXPECT_EQ(buffer + 4, result.out);
-  EXPECT_EQ(" 42 ", fmt::string_view(buffer, 4));
+data(), v
+
+.
+
+size()
+
+));
+
+char buffer[4];
+auto result = fmt::format_to_n(buffer, 4, FMT_COMPILE("{name:^5}"),
+                               fmt::arg("name", 42));
+EXPECT_EQ(5u, result.size);
+EXPECT_EQ(buffer
++ 4, result.out);
+EXPECT_EQ(" 42 ",
+fmt::string_view(buffer,
+4));
 }
 
-TEST(compile_test, empty) { EXPECT_EQ("", fmt::format(FMT_COMPILE(""))); }
+TEST(compile_test, empty
+) {
+EXPECT_EQ("", fmt::format(FMT_COMPILE(""))); }
 
 struct to_stringable {
-  friend fmt::string_view to_string_view(to_stringable) { return {}; }
+    friend fmt::string_view to_string_view(to_stringable) { return {}; }
 };
 
 FMT_BEGIN_NAMESPACE
-template <> struct formatter<to_stringable> {
-  auto parse(format_parse_context& ctx) const -> decltype(ctx.begin()) {
-    return ctx.begin();
-  }
+        template<>
+        struct formatter<to_stringable> {
+            auto parse(format_parse_context &ctx) const -> decltype(ctx.begin()) {
+                return ctx.begin();
+            }
 
-  template <typename FormatContext>
-  auto format(const to_stringable&, FormatContext& ctx) -> decltype(ctx.out()) {
-    return ctx.out();
-  }
-};
+            template<typename FormatContext>
+            auto format(const to_stringable &, FormatContext &ctx) -> decltype(ctx.out()) {
+                return ctx.out();
+            }
+        };
 FMT_END_NAMESPACE
 
-TEST(compile_test, to_string_and_formatter) {
-  fmt::format(FMT_COMPILE("{}"), to_stringable());
+TEST(compile_test, to_string_and_formatter
+) {
+fmt::format(FMT_COMPILE("{}"),
+
+to_stringable()
+
+);
 }
 
-TEST(compile_test, print) {
-  EXPECT_WRITE(stdout, fmt::print(FMT_COMPILE("Don't {}!"), "panic"),
-               "Don't panic!");
-  EXPECT_WRITE(stderr, fmt::print(stderr, FMT_COMPILE("Don't {}!"), "panic"),
-               "Don't panic!");
+TEST(compile_test, print
+) {
+EXPECT_WRITE(stdout, fmt::print(FMT_COMPILE("Don't {}!"), "panic"),
+             "Don't panic!");
+EXPECT_WRITE(stderr, fmt::print(stderr, FMT_COMPILE("Don't {}!"), "panic"),
+             "Don't panic!");
 }
 #endif
 
@@ -285,12 +363,12 @@ TEST(compile_test, compile_format_string_literal) {
 //  (compiler file
 //  'D:\a\_work\1\s\src\vctools\Compiler\CxxFE\sl\p1\c\constexpr\constexpr.cpp',
 //  line 8635)
-#if (FMT_CPLUSPLUS >= 202002L ||                                \
-     (FMT_CPLUSPLUS >= 201709L && FMT_GCC_VERSION >= 1002)) &&  \
-    ((!defined(_GLIBCXX_RELEASE) || _GLIBCXX_RELEASE >= 10) &&  \
+#if (FMT_CPLUSPLUS >= 202002L || \
+     (FMT_CPLUSPLUS >= 201709L && FMT_GCC_VERSION >= 1002)) && \
+    ((!defined(_GLIBCXX_RELEASE) || _GLIBCXX_RELEASE >= 10) && \
      (!defined(_LIBCPP_VERSION) || _LIBCPP_VERSION >= 10000) && \
-     (!FMT_MSC_VERSION ||                                       \
-      (FMT_MSC_VERSION >= 1928 && FMT_MSC_VERSION < 1930))) &&  \
+     (!FMT_MSC_VERSION || \
+      (FMT_MSC_VERSION >= 1928 && FMT_MSC_VERSION < 1930))) && \
     defined(__cpp_lib_is_constant_evaluated)
 template <size_t max_string_length, typename Char = char> struct test_string {
   template <typename T> constexpr bool operator==(const T& rhs) const noexcept {

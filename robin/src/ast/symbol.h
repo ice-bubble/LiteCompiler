@@ -1,8 +1,10 @@
 
-
 #ifndef ROBIN_SYMBOL_H
 #define ROBIN_SYMBOL_H
 namespace symbol {
+    /**
+     * 对于不同产生式的枚举类型
+     */
     enum Symbol {
         BASE,
         DOLLAR,
@@ -106,6 +108,9 @@ namespace symbol {
         varSuffix,
     };
 
+    /**
+     * SLR分析表的动作
+     */
     enum Type {
         Shift,
         Reduce,

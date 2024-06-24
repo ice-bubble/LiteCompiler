@@ -46,6 +46,10 @@ namespace parser {
 
         explicit Parser(List<token::Token> tokens);
 
+        /**
+         * @brief 进行语法分析
+         * @return 返回分析的结果，成功分析时列表只有一项，且类型为SharedPtr\<production::S>
+         */
         List<SharedPtr<production::Production>> parserAst();
 
     private:
@@ -71,8 +75,8 @@ namespace parser {
 
         void addTokenToProductionsAndStack(token::TokenType type, const std::string &lexeme, int errorState);
 
-        /////以下是reduce函数
 
+        /////以下是reduce函数
 
         void reduceByS();
 

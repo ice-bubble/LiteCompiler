@@ -10,26 +10,27 @@
 
 #include <stdexcept>
 
-void throw_assertion_failure(const char* message);
+void throw_assertion_failure(const char *message);
+
 #define FMT_ASSERT(condition, message) \
   if (!(condition)) throw_assertion_failure(message);
 
 #include "gtest/gtest.h"
 
 class assertion_failure : public std::logic_error {
- public:
-  explicit assertion_failure(const char* message) : std::logic_error(message) {}
+public:
+    explicit assertion_failure(const char *message) : std::logic_error(message) {}
 
- private:
-  virtual void avoid_weak_vtable();
+private:
+    virtual void avoid_weak_vtable();
 };
 
 void assertion_failure::avoid_weak_vtable() {}
 
 // We use a separate function (rather than throw directly from FMT_ASSERT) to
 // avoid GCC's -Wterminate warning when FMT_ASSERT is used in a destructor.
-inline void throw_assertion_failure(const char* message) {
-  throw assertion_failure(message);
+inline void throw_assertion_failure(const char *message) {
+    throw assertion_failure(message);
 }
 
 // Expects an assertion failure.
