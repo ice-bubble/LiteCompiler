@@ -17,12 +17,15 @@
 │   │   ├── FileHandler             文件处理【主要为对文件进行输入输出】
 │   │   │   ├── FileHandler.cpp     文件处理类相关成员函数及变量定义
 │   │   │   └── FileHandler.h       文件处理类声明
-│   │   ├── LexicalAnalysis         词法分析器
+│   │   ├── LexicalAnalysis         词法分析器【语法分析程序的子程序，其结果（Token序列）直接作为语法分析程序的输入】
 │   │   │   ├── Lexer.cpp           词法分析器类相关成员函数及变量定义
 │   │   │   └── Lexer.h             词法分析器类声明
+│   │   ├── Parser                  语法分析器【语法分析程序的主要部分】
+│   │   │   ├── Parser.cpp          语法分析器类相关成员函数及变量定义
+│   │   │   └── Parser.h            语法分析器类声明
 │   │   └── Token                   Token相关文件
 │   │       ├── Token.cpp           KEYWORD定义、Token类相关成员函数及变量定义
-│   │       └── Token.h             TokenType枚举类型声明、Token类声明
+│   │       └── Token.h             TokenType枚举类型声明、Token类声明、产生式非终结符声明
 │   ├── Pictures                    README.md文件中可能用到的图片文件
 │   └── VisioSourceDocuments        Visio绘图源文件
 └── README.md                       项目介绍【本文件】
